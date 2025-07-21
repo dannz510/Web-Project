@@ -1,0 +1,498 @@
+:root {
+    --color-a1: #FFD297;
+    --color-a2: #F9B470;
+    --color-a3: #DE9F5D;
+    --color-a4: #cc9154;
+}
+//black -pink
+$color-00: #1F1F1D;
+$color-01: #D36B62;
+//brown
+//white
+$color-b1: #FFFFFF;
+$color-b2: #E2E2E2;
+$color-b3: #D9D9D9;
+//blue
+$color-c1: #00699D;
+$color-c2: #00526E;
+
+/***********************/
+/***********************/
+@mixin cube($width, $height, $depth) {
+    &__front{ @include cube-front($width, $height, $depth); }
+    &__back{ @include cube-back($width, $height, $depth); }
+    &__right{ @include cube-right($width, $height, $depth); }
+    &__left{ @include cube-left($width, $height, $depth); }
+    &__top{ @include cube-top($width, $height, $depth);}
+    &__bottom{ @include cube-bottom($width, $height, $depth); }
+}
+/************************/
+/* Mixin para crear cubo ( Caras siempre al frente ) */
+/************************/
+@mixin cube-front($width, $height, $depth) {
+    width: $width;
+    height: $height;
+    transform-origin: bottom left;
+    transform: rotateX(-90deg) translateZ( -($height - ($depth * 2) ) );
+}
+@mixin cube-back($width, $height, $depth) {
+    width: $width;
+    height: $height;
+    transform-origin: top left;
+    transform: rotateX(-90deg) rotateY(180deg) translateX(-$width) translateY(-$height) ;
+}
+@mixin cube-right($width, $height, $depth) {
+    width: $depth * 2;
+    height: $height;
+    transform-origin: top left;
+    transform: rotateY(90deg) rotateZ(-90deg) translateZ($width) translateX(-$depth * 2) translateY(-$height);
+}
+@mixin cube-left($width, $height, $depth) {
+    width: $depth * 2;
+    height: $height;
+    transform-origin: top left;
+    transform: rotateY(-90deg) rotateZ(90deg) translateY(-$height);
+}
+@mixin cube-top($width, $height, $depth) {
+    width: $width;
+    height: $depth * 2;
+    transform-origin: top left;
+    transform: translateZ($height) ;
+}
+@mixin cube-bottom($width, $height, $depth) {
+    width: $width;
+    height: $depth * 2;
+    transform-origin: top left;
+    transform: rotateY(180deg) translateX(-$width);
+}
+
+/**/
+*, *::after, *::before {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+    transform-style: preserve-3d;
+    -webkit-tap-highlight-color: transparent;
+}
+/* Generic */
+body{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+    width: 100%;
+    height: 100vh;
+    background-color: complement($color-00);
+    cursor: pointer;
+    font-size: 1vw;
+    font-family: monospace;
+    color: $color-b1;
+
+}
+/***********************/
+.main{
+    display: flex;
+    justify-content: center;
+    margin-top: 5vw;
+    width: 25vw;
+    height: 30vw;
+    position: relative;
+    @media(max-width: 700px){ height: 35vw; }
+    @media(max-width: 600px){ height: 50vw; }
+}
+.face{ position: absolute; }
+.btns{
+    display: flex;
+    position: absolute;
+    bottom: 0;
+    z-index: 20000;
+    transform: translateZ(20000px);
+}
+.btn{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin: 0 5px;
+    cursor: pointer;
+    transition: .25s ease;
+    &:hover{
+        border: 3px solid $color-c1;
+        transition: .25s ease;
+    }
+    &:nth-of-type(1){ background-color: #FFD297; }
+    &:nth-of-type(2){ background-color: #DC7945; }
+    &:nth-of-type(3){ background-color: #FFFFFF; }
+}
+.skills{
+    position: absolute;
+    right: -13vw;
+}
+.skill{
+    position: relative;
+    width: 10vw;
+    margin-bottom: .5vw;
+    padding-left: 1vw;
+    line-height: 1.6;
+    border-radius: .5vw;
+    overflow: hidden;
+    background-color: rgba($color-b1, .2);
+
+    &:nth-of-type(1){ .skill-p{width: 90%;} }
+    &:nth-of-type(2){ .skill-p{width: 95%;} }
+    &:nth-of-type(3){ .skill-p{width: 35%;} }
+    &:nth-of-type(4){ .skill-p{width: 85%;} }
+
+
+    &-p{
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 50%;
+        height: 100%;
+        background-color: rgba($color-c2, .8);
+        z-index: -1;
+        transition: .35s ease;
+
+    }
+}
+
+/***********************/
+.dog{
+    position: relative;
+    width: 11vw;
+    height: 20vw;
+    transform:
+        perspective(10000px)
+        rotateX(62deg)
+        rotateZ(-36deg)
+        translateZ(-10vw)
+    ;
+    background-color: lighten(black, 8);
+    box-shadow:
+        1vw 1vw 0 lighten(black, 8),
+        -1vw -1vw 0 lighten(black, 8),
+        1vw -1vw 0 lighten(black, 8),
+        -1vw 1vw 0 lighten(black, 8)
+    ;
+    transition: .2s;
+}
+
+/***********************/
+$width-bd: 11vw;
+$height-bd: 8vw;
+$depth-bd: 10vw;
+
+.body{
+    @include cube($width-bd, $height-bd, $depth-bd);
+    width: $width-bd;
+    height: $depth-bd;
+    transform: translateZ(7vw);
+
+    animation: body 1s ease-in-out infinite alternate;
+
+    &__front{
+        background-color: var(--color-a1);
+        &::before{
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 30%;
+            height: 55%;
+            width: 40%;
+            background-color: $color-b1;
+        }
+    }
+    &__back{ background-color: var(--color-a4); }
+    &__right{ background-color: var(--color-a1);}
+    &__left{background-color: var(--color-a2); }
+    &__top{ background-color: var(--color-a4); }
+    &__bottom{ background-color: var(--color-a4); }
+}
+/***************/
+$width-pb: 3.5vw;
+$height-pb: 7vw;
+$depth-pb: 1.25vw;
+
+.paws{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+
+.paw-b{
+    @include cube($width-pb, $height-pb, $depth-pb);
+    width: $width-pb;
+    height: $depth-pb;
+
+    &:nth-of-type(1){ top: 1vw; left: 0; }
+    &:nth-of-type(2){ top: 1vw; right: 0; }
+    &:nth-of-type(3){ top: calc(100% - 4.5vw); left: 0; }
+    &:nth-of-type(4){ top: calc(100% - 4.5vw); right: 0; }
+
+    &__front{ background-color: var(--color-a1); }
+    &__back{ background-color: var(--color-a4); }
+    &__right{ background-color: var(--color-a1);}
+    &__left{background-color: var(--color-a2); }
+    &__top{ background-color: var(--color-a4); }
+    &__bottom{ background-color: var(--color-a4); }
+}
+
+/***************/
+$width-pf: 3.5vw;
+$height-pf: 2.5vw;
+$depth-pf: 1vw;
+
+.paw-f{
+    @include cube($width-pf, $height-pf, $depth-pf);
+    width: $width-pf;
+    height: $depth-pf;
+
+    &:nth-of-type(1){ top: 3.5vw; left: 0; }
+    &:nth-of-type(2){ top: 3.5vw; right: 0; }
+    &:nth-of-type(3){ top: calc(100% - 2vw); left: 0; }
+    &:nth-of-type(4){ top: calc(100% - 2vw); right: 0; }
+
+    &__front{ background-color: $color-b1; }
+    &__back{ background-color: $color-b3; }
+    &__right{ background-color: $color-b1;}
+    &__left{background-color: $color-b2; }
+    &__top{ background-color: $color-b3; }
+    &__bottom{ background-color: $color-b3; }
+}
+/***************/
+$width-tl: 3.5vw;
+$height-tl: 2.5vw;
+$depth-tl: .8vw;
+
+.tail{
+    @include cube($width-tl, $height-tl, $depth-tl);
+    width: $width-tl;
+    height: $depth-tl;
+    top: calc(0% - #{$depth-tl});
+    left: calc(50% - #{$width-pf / 2});
+
+    animation: tail .125s ease infinite alternate;
+
+    &__front{ background-color: var(--color-a1); }
+    &__back{ background-color: var(--color-a4); }
+    &__right{ background-color: var(--color-a1);}
+    &__left{background-color: var(--color-a2); }
+    &__top{ background-color: var(--color-a4); }
+    &__bottom{ background-color: var(--color-a4); }
+}
+
+/***************/
+$width-nc: 5vw;
+$height-nc: 4vw;
+$depth-nc: 1.75vw;
+
+.neck{
+    @include cube($width-nc, $height-nc, $depth-nc);
+    width: $width-nc;
+    height: $depth-nc;
+    bottom: 3vw;
+    left: calc(50% - #{$width-nc / 2});
+
+    &__front{
+        background-color: var(--color-a2);
+        border-bottom: 1vw solid $color-c1;
+    }
+    &__back{
+        background-color: var(--color-a4);
+        border-bottom: 1vw solid $color-c1;
+    }
+    &__right{
+        background-color: var(--color-a1);
+        border-bottom: 1vw solid $color-c1;
+    }
+    &__left{
+        background-color: var(--color-a3);
+        border-bottom: 1vw solid $color-c2;
+    }
+    &__top{ background-color: var(--color-a4); }
+    &__bottom{ background-color: var(--color-a4); }
+}
+
+/***************/
+$width-hd: 11vw;
+$height-hd: 9vw;
+$depth-hd: 3vw;
+
+.head{
+    @include cube($width-hd, $height-hd, $depth-hd);
+    width: $width-hd;
+    height: $depth-hd;
+    bottom: 3vw;
+    left: calc(50% - #{$width-hd / 2});
+
+
+    animation: head 8s ease infinite;
+
+
+    &__front{ background-color: var(--color-a1); }
+    &__back{ background-color: var(--color-a4); }
+    &__right{ background-color: var(--color-a1);}
+    &__left{background-color: var(--color-a3); }
+    &__top{ background-color: var(--color-a2); }
+    &__bottom{ background-color: var(--color-a4); }
+}
+.eyes{
+    width: 100%;
+    padding: 1.25vw 2.1vw;
+    display: flex;
+    justify-content: space-between;
+}
+    .eye{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 1.75vw;
+        height: 1.75vw;
+        border-radius: 50%;
+        background-color: $color-00;
+
+        animation: eye 8s infinite;
+
+        &::before{
+            content: '';
+            position: absolute;
+            width: 35%;
+            height: 35%;
+            border-radius: 50%;
+            background-color: $color-b1;
+        }
+    }
+.ears{
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+    $width-er: 4vw;
+    $height-er: 3vw;
+    $depth-er: 1vw;
+
+    .ear{
+
+        @include cube($width-er, $height-er, $depth-er);
+        width: $width-er;
+        height: $depth-er;
+
+        &:nth-of-type(1){
+            left: calc(0% - #{$width-er / 2} );
+
+            transform-origin: bottom right;
+            animation: ear-l 1s ease infinite;
+        }
+        &:nth-of-type(2){
+            right: calc(0% - #{$width-er / 2} );
+
+            transform-origin: bottom left;
+            animation: ear-r 2s ease infinite;
+        }
+
+        &__front{ background-color: var(--color-a1); }
+        &__back{ background-color: var(--color-a3); }
+        &__right{ background-color: var(--color-a1);}
+        &__left{background-color: var(--color-a3); }
+        &__top{ background-color: var(--color-a2); }
+        &__bottom{ background-color: var(--color-a4); }
+    }
+
+/***************/
+$width-sn: 4vw;
+$height-sn: 2.5vw;
+$depth-sn: 1.75vw;
+
+.snout{
+    @include cube($width-sn, $height-sn, $depth-sn);
+    width: $width-sn;
+    height: $depth-sn;
+    bottom: 3vw;
+    left: calc(50% - #{$width-sn / 2});
+
+
+    &__front{ background-color: var(--color-a4); }
+    &__back{ background-color: var(--color-a2); }
+    &__right{ background-color: var(--color-a1);}
+    &__left{background-color: var(--color-a3); }
+    &__top{
+        background-color: var(--color-a1);
+
+        &::before{
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            border-top: 1.5vw solid $color-00;
+            border-bottom: 1vw solid transparent;
+            border-left: 0.8vw solid transparent;
+            border-right: 0.8vw solid transparent;
+
+            animation: nose .5s ease infinite;
+        }
+        &::after{
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            border-top: 1vw solid transparent;
+            border-bottom: .75vw solid $color-01;
+            border-left: 0.8vw solid transparent;
+            border-right: 0.8vw solid transparent;
+        }
+    }
+    &__bottom{ background-color: var(--color-a4); }
+}
+/***************/
+/***************/
+
+
+@keyframes head {
+    0%, 100%{ transform: translateZ(-.75vw) translateY(1.25vw) rotateY(0) rotateX(0); }
+    25%{ transform: translateZ(-.75vw) translateY(1.25vw) rotateY(10deg) rotateX(10deg); }
+    50%{ transform: translateZ(-.75vw) translateY(1.25vw) rotateY(-3deg) rotateX(5deg); }
+    75%{ transform: translateZ(-.75vw) translateY(1.25vw) rotateY(3deg) rotateX(-5deg); }
+}
+@keyframes body {
+    0%, 10%{ transform: translateZ(6vw) rotateY(-3deg) ; }
+    90%, 100%{ transform: translateZ(6vw) rotateY(3deg) ; }
+}
+@keyframes eye {
+    0%, 20%, 100%{ transform: translateY(0) translateX(0); }
+    25%, 40%{ transform: translateY(-.25vw) translateX(0); }
+    50%, 60%{ transform: translateY(.15vw) translateX(0); }
+    70%, 90%{ transform: translateY(0) translateX(.5vw); }
+
+}
+@keyframes ear-l {
+    0%, 100%{ transform: rotateY(0); }
+    50%{ transform: rotateY(5deg); }
+}
+@keyframes ear-r {
+    0%, 100%{ transform: rotateY(0) rotateX(0); }
+    25%{ transform: rotateY(0) rotateX(15deg); }
+    50%{ transform: rotateY(-5deg) rotateX(5deg); }
+}
+@keyframes tail {
+    0%{ transform: rotateY(5deg);  }
+    100%{ transform: rotateY(-5deg); }
+}
+
+@keyframes nose {
+    0%{
+        border-top: 1.5vw solid $color-00;
+        border-bottom: 1vw solid transparent;
+        border-left: 0.8vw solid transparent;
+        border-right: 0.8vw solid transparent;
+    }
+    100%{
+        border-top: 1.35vw solid $color-00;
+        border-bottom: 1vw solid transparent;
+        border-left: 0.8vw solid transparent;
+        border-right: 0.8vw solid transparent;
+    }
+
+}

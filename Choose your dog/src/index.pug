@@ -1,0 +1,109 @@
+doctype html
+html(lang="es", dir="ltr")
+    head
+        meta(name="viewport", content="width=device-width, user-scalable=no, initial-scale=1.0")
+        meta(charset="utf-8")
+        // Link to the compiled CSS (main.css)
+        link(rel="stylesheet", type="text/css", href="main.css")
+    body
+
+        div.main#m
+            div.btns
+                a()#btn-0.btn
+                a()#btn-1.btn
+                a()#btn-2.btn
+
+            div.dog#d
+                div.body.face
+                    div.body__front.face
+                    div.body__back.face
+                    div.body__right.face
+                    div.body__left.face
+                    div.body__top.face
+
+                        div.tail.face
+                            div.tail__front.face
+                            div.tail__back.face
+                            div.tail__right.face
+                            div.tail__left.face
+                            div.tail__top.face
+                            div.tail__bottom.face
+
+                        div.neck.face
+                            div.neck__front.face
+                            div.neck__back.face
+                            div.neck__right.face
+                            div.neck__left.face
+                            div.neck__top.face
+
+
+                                div.head.face
+                                    div.head__front.face
+
+
+                                        div.skills
+                                            div.skill Ternura #[div.skill-p ]
+                                            div.skill Hermosura #[div.skill-p ]
+                                            div.skill Agrevisidad #[div.skill-p ]
+                                            div.skill Valentía #[div.skill-p ]
+
+                                        div.eyes
+                                            div.eye
+                                            div.eye
+                                        div.snout.face
+                                            div.snout__back.face
+                                            div.snout__front.face
+                                            div.snout__right.face
+                                            div.snout__left.face
+                                            div.snout__top.face
+                                            div.snout__bottom.face
+
+                                    div.head__back.face
+                                    div.head__right.face
+                                    div.head__left.face
+                                    div.head__top.face
+                                        div.ears
+                                            div.ear.face
+                                                div.ear__back.face
+                                                div.ear__front.face
+                                                div.ear__right.face
+                                                div.ear__left.face
+                                                div.ear__top.face
+                                                div.ear__bottom.face
+                                            div.ear.face
+                                                div.ear__back.face
+                                                div.ear__front.face
+                                                div.ear__right.face
+                                                div.ear__left.face
+                                                div.ear__top.face
+                                                div.ear__bottom.face
+                                    div.head__bottom.face
+                            div.neck__bottom.face
+
+                    div.body__bottom.face
+
+                div.paws
+                    - var n = 0
+                    while n < 4
+                        div.paw-b.face
+                            div.paw-b__front.face
+                            div.paw-b__back.face
+                            div.paw-b__right.face
+                            div.paw-b__left.face
+                            div.paw-b__top.face
+                            div.paw-b__bottom.face
+                        - n++
+                div.paws
+                    - var n = 0
+                    while n < 4
+                        div.paw-f.face
+                            div.paw-f__front.face
+                            div.paw-f__back.face
+                            div.paw-f__right.face
+                            div.paw-f__left.face
+                            div.paw-f__top.face
+                            div.paw-f__bottom.face
+                        - n++
+
+        // Link to the JavaScript file (main.js)
+        script(src="main.js")

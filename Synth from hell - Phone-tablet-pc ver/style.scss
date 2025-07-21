@@ -1,0 +1,444 @@
+* {
+    padding: 0;
+    margin: 0; 
+}
+$colorMenu: #09184a;
+body {
+    background-image: radial-gradient(#273e8a 15%, #142d80 60%);
+    font: 20px/20px "Lucida Grande", Tahoma, Verdana, sans-serif;
+    color:#C1B8B7;
+    overflow: hidden;
+}
+html, body {
+    height: 100%;
+}
+@mixin createKey( $colorLeft, $colorRight, $colorTop, $colorFront, $borderColor, $keyWidth, $keyHeight, $keyDeep ) {
+    transform-style:preserve-3d; 
+    width: $keyWidth;
+    height: $keyHeight;
+    position: absolute;
+    transform-origin: 0% 0% (-$keyDeep);
+    backface-visibility: hidden;
+    transition:.2s;
+
+    .size-lr {
+        width: $keyDeep;
+        height: $keyHeight;
+    }
+    .size-t {
+        width: $keyWidth;
+        height: $keyDeep;
+    }
+   .tec {
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform-origin:0% 0%;
+        border:1px solid $borderColor;
+   }
+   .y90-left {
+        transform: rotateY(90deg);
+        background: $colorLeft;
+        background-image: linear-gradient(to bottom right, $colorTop, $colorLeft);
+    }
+   .y90-right {
+        transform: rotateY(90deg);
+        left: $keyWidth;
+        background: $colorRight;
+        background-image: linear-gradient(to bottom right, $colorTop, $colorRight);
+    }
+   .x90-top {
+        transform: rotateX(-90deg);
+        background: $colorTop;
+        background-image: linear-gradient(to bottom right, $colorFront, $colorTop);
+    }
+   .x90-front {
+        transform: rotateX(0deg);
+        width: $keyWidth;
+        height: $keyHeight;
+        background: $colorFront;
+        background-image: linear-gradient(to top bottom, $colorTop, $colorFront);
+        position: relative;
+    }
+    .x90-front2 {
+        transform: rotateY(0deg);
+        margin-left: $keyWidth;
+        width: $keyWidth;
+        height: $keyHeight;
+        background: $colorFront;
+        background-image: linear-gradient(to bottom right, $colorRight, $colorFront);
+
+    }
+}
+.pressed {
+    transform: rotateX(-10deg);
+}
+.pressed-black {
+    transform: rotateX(-10deg) translateZ(-150px) !important;
+    margin-top: -20px !important;
+}
+.piano {
+    transform-style:preserve-3d; 
+    perspective:1500; 
+    position: absolute;
+    width: 1260px;
+    height: 70px;
+    top:0;
+    left:0;
+    right: 0;
+    bottom: 0;
+    margin:auto;
+    margin-top: 300px;
+    transform:translateZ(10px) rotateY(0deg) rotateX(-50deg);            
+}
+
+.white-key-group {
+    z-index: 1;
+    @include createKey( #999, #999, #fff, #eee, #ccc, 60px, 70px, 400px );    
+}
+.black-key-group {
+    margin-top: -42px;
+    transform: translateZ(-150px);
+    z-index: 100;
+    @include createKey( #222, #222, #111, #333, #222, 30px, 40px, 250px );
+
+    .f-notes {
+        color:#eee;
+        top:5%;
+    }
+    .f-keymap {
+        color:#eee;
+        bottom:5%;
+    }
+}
+
+.active {
+    box-shadow: 0px 0px 150px 10px #72ECFC
+}
+.scene {
+    position: absolute;
+    width: 1200px;
+    height: 200px;
+    top:-20%;
+    left:-5%;
+    right: 0;
+    bottom:0;
+    margin: auto;
+}
+.menu {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 70px;
+    background: $colorMenu; 
+    text-align: center;
+    color:#C1B8B7;
+    font-size: 14px;
+    line-height: 70px;
+    .options {
+        border-left: 1px solid lighten( $colorMenu, 10 );
+        float: right;
+        height: 70px;
+        line-height: 70px;
+        &.left {
+           width: 400px;
+        }
+        &.right {
+            width: 350px;
+        }
+    }
+    .title {
+        float: left;
+        font-size: 20px;
+        margin-left: 7%;
+    }
+    label {
+        margin: 0 15px;
+        vertical-align: middle;
+        padding-top: 3px;
+        line-height: 20px;
+    }
+}
+
+.f-notes {
+    text-align: center;
+    font-weight: bold;
+    font-size: 16px;
+    color:#222;
+    position: absolute;
+    top: 10%;
+    width: 100%;
+    text-align: center;
+    visibility: hidden;
+}
+.f-keymap {
+    text-align: center;
+    font-weight: bold;
+    font-size: 12px;
+    color:#222;
+    position: absolute;
+    bottom: 10%;
+    width: 100%;
+    text-align: center;
+    visibility: hidden;
+}
+.info-active {
+    visibility: visible;
+}
+.info {
+   position: absolute;
+   left: 50px;
+   bottom:30px;
+   font-size: 14px;
+}
+.credits {
+    position: absolute;
+    right: 50px;
+    bottom: 30px;
+    font-size: 14px;
+}
+.octave {
+    position: absolute;
+    top: 100px;
+    left:25px; 
+    z-index:300;
+    p {
+        font-size: 14px;
+        margin-bottom: 5px;
+    }
+    .box {
+        float: left;
+        line-height: 50px;
+        text-align: center;
+        width: 50px;
+        height: 50px;
+        border:1px solid #ccc;
+        border-radius: 7px;
+        margin-right: 10px;
+        transition:.4s;
+        cursor:pointer;
+
+        &.b-active {
+            background: #ccc;
+            color:#191426;
+            &:hover {
+                background: #ccc;
+            }
+        }
+        &:hover {
+            background: lighten( $colorMenu, 20 );
+
+        }
+    }
+}
+.volume {
+    position: absolute;
+    top: 130px;
+    right: -30px;
+    height: 50px;
+    font-size: 14px;
+    transform: rotate(-90deg);
+    opacity: 0.2;
+    z-index: 1000;
+    transition:.2s;
+
+    &:hover {
+        opacity: 0.9;
+    }
+    label {
+        display: block;
+        text-align: center; 
+    }
+}
+
+//Animate
+.animate {
+    animation-name: expand;
+    animation-duration: 10s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+@keyframes expand {
+  0% {    
+    // transform:translateZ(-100px) rotateY(-10deg) rotateX(-10deg);    
+    transform: rotateY(-30deg) rotateX(-40deg);            
+  } 
+  100% {
+    transform: rotateY(20deg) rotateX(-35deg);            
+  }
+}
+
+/* 
+ * CUSTOM DROP 
+ * https://codepen.io/Thibaut/pen/Jasci
+ */
+
+.dropdown {
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  vertical-align: middle;
+  height: 28px;
+  width: 150px;
+  background: #f2f2f2;
+  line-height: 20px;
+  border: 1px solid;
+  border-color: white #f7f7f7 whitesmoke;
+  border-radius: 3px;
+  background-image: -webkit-linear-gradient(top, transparent, rgba(0, 0, 0, 0.06));
+  background-image: -moz-linear-gradient(top, transparent, rgba(0, 0, 0, 0.06));
+  background-image: -o-linear-gradient(top, transparent, rgba(0, 0, 0, 0.06));
+  background-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.06));
+  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08);
+}
+
+.dropdown:before, .dropdown:after {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  top: 9px;
+  right: 10px;
+  width: 0;
+  height: 0;
+  border: 4px dashed;
+  border-color: #888888 transparent;
+  pointer-events: none;
+}
+
+.dropdown:before {
+  border-bottom-style: solid;
+  border-top: none;
+}
+
+.dropdown:after {
+  margin-top: 7px;
+  border-top-style: solid;
+  border-bottom: none;
+}
+
+.dropdown-select {
+  position: relative;
+  width: 130%;
+  margin: 0;
+  padding: 6px 8px 6px 10px;
+  height: 28px;
+  line-height: 14px;
+  font-size: 16px;
+  color: #62717a;
+  text-shadow: 0 1px white;
+  background: #f2f2f2; /* Fallback for IE 8 */
+  background: rgba(0, 0, 0, 0) !important; /* "transparent" doesn't work with Opera */
+  border: 0;
+  border-radius: 0;
+  -webkit-appearance: none;
+}
+
+.dropdown-select:focus {
+  z-index: 3;
+  width: 100%;
+  color: #394349;
+  outline: 2px solid #49aff2;
+  outline: 2px solid -webkit-focus-ring-color;
+  outline-offset: -2px;
+}
+
+.dropdown-select > option {
+  margin: 3px;
+  padding: 6px 8px;
+  text-shadow: none;
+  background: #f2f2f2;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+/* Fix for IE 8 putting the arrows behind the select element. */
+
+.lt-ie9 .dropdown {
+  z-index: 1;
+}
+
+.lt-ie9 .dropdown-select {
+  z-index: -1;
+}
+
+.lt-ie9 .dropdown-select:focus {
+  z-index: 3;
+}
+
+/* Dirty fix for Firefox adding padding where it shouldn't. */
+
+@-moz-document url-prefix() {
+  .dropdown-select {
+    padding-left: 6px;
+  }
+}
+
+/* 
+ * CUSTOM CHECKBOX  
+ * https://codepen.io/CreativeJuiz/pen/BiHzp 
+ */
+
+/* Base for label styling */
+[type="checkbox"]:not(:checked),
+[type="checkbox"]:checked {
+    position: absolute;
+    left: -9999px;
+}
+[type="checkbox"]:not(:checked) + label,
+[type="checkbox"]:checked + label {
+    position: relative;
+    padding-left: 25px;
+    cursor: pointer;
+}
+/* checkbox aspect */
+[type="checkbox"]:not(:checked) + label:before,
+[type="checkbox"]:checked + label:before {
+    content: '';
+    position: absolute;
+    left:0; top: 2px;
+    width: 17px; height: 17px;
+    border: 1px solid #aaa;
+    background: #f8f8f8;
+    border-radius: 3px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,.3)
+}
+/* checked mark aspect */
+[type="checkbox"]:not(:checked) + label:after,
+[type="checkbox"]:checked + label:after {
+    content: '✔';
+    position: absolute;
+    top: 0; 
+    left: -2px;
+    font-size: 35px;
+    color: #47AFC4;
+    transition: all .2s;
+}
+/* checked mark aspect changes */
+[type="checkbox"]:not(:checked) + label:after {
+    opacity: 0;
+    transform: scale(0);
+}
+[type="checkbox"]:checked + label:after {
+    opacity: 1;
+    transform: scale(1);
+}
+/* disabled checkbox */
+[type="checkbox"]:disabled:not(:checked) + label:before,
+[type="checkbox"]:disabled:checked + label:before {
+    box-shadow: none;
+    border-color: #bbb;
+    background-color: #ddd;
+}
+[type="checkbox"]:disabled:checked + label:after {
+    color: #999;
+}
+[type="checkbox"]:disabled + label {
+    color: #aaa;
+}
+/* accessibility */
+[type="checkbox"]:checked:focus + label:before,
+[type="checkbox"]:not(:checked):focus + label:before {
+    border: 1px dotted blue;
+}

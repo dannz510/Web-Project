@@ -1,0 +1,1132 @@
+/* Custom font import */
+@font-face {
+  font-family: 'AddLGBitmap09';
+  src: url('https://assets.codepen.io/217233/AddLGBitmap09.woff2') format('woff2'),
+    url('https://assets.codepen.io/217233/AddLGBitmap09.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Base styles */
+body {
+  background: black;
+  color: white;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: 'AddLGBitmap09', 'Inter', sans-serif; /* Fallback to Inter */
+}
+
+/* Game Over/Win screens */
+.game_lose,
+.game_win {
+  position: absolute;
+  background: rgba(14, 3, 13, 0.94);
+  z-index: 99999;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  display: none;
+}
+.game_lose.show,
+.game_win.show {
+  display: block;
+}
+.game_lose .inner,
+.game_win .inner {
+  position: absolute;
+  width: 500px;
+  left: 0;
+  right: 0;
+  margin: auto;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.game_lose p,
+.game_win p {
+  font-size: 12px;
+  line-height: 20px;
+}
+
+/* App container */
+#app {
+  background: url('https://assets.codepen.io/217233/ssBg.png');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  width: 100%;
+  position: relative;
+  transition: all .1s;
+  position: relative;
+}
+@keyframes shake {
+  0% {
+    left: -3px;
+    top: 3px;
+  }
+  20% {
+    left: 3px;
+    top: -3px;
+  }
+  40% {
+    left: 3px;
+    top: 3px;
+  }
+  60% {
+    left: -3px;
+    top: -3px;
+  }
+  80% {
+    left: 3px;
+    top: 3px;
+  }
+  100% {
+    left: 0;
+    top: 0px;
+  }
+}
+#app.pressed {
+  animation: shake .1s forwards;
+}
+
+/* Game intro screen */
+.game_intro {
+  background: rgba(14, 3, 13, 0.94);
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  z-index: 99;
+  transition: all .3s;
+}
+.game_intro.gamestarted {
+  opacity: 0;
+  pointer-events: none;
+}
+.game_intro__inner {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: auto;
+  top: 50%;
+  width: 680px;
+  transform: translateY(-50%);
+  text-align: center;
+  transition: all .3s;
+  font-size: 12px;
+  line-height: 30px;
+}
+.game_intro__inner .begin {
+  text-align: center;
+  margin-top: 80px;
+  cursor: pointer;
+  transition: all .3s;
+}
+.game_intro__inner .begin:hover {
+  color: #76ece2;
+}
+.game_intro__inner .dialogue {
+  float: left;
+  width: 60%;
+  background: black;
+  color: white;
+  border-radius: 20px;
+  padding: 20px 31px;
+  position: relative;
+}
+.game_intro__inner p {
+  text-align: left;
+  clear: both;
+}
+.game_intro__inner span {
+  display: block;
+  color: #76ece2;
+  font-size: 9px;
+  text-align: left;
+  margin-bottom: -11px;
+  text-transform: uppercase;
+}
+.game_intro__inner .king {
+  float: right;
+  width: 140px !important;
+}
+.game_intro__inner.start {
+  transition: all 1s;
+}
+.game_intro__inner.start.gamestarted {
+  opacity: 0;
+  pointer-events: none;
+}
+.game_intro__inner .continue {
+  position: absolute;
+  z-index: 1;
+  cursor: pointer;
+  right: 20px;
+  font-size: 10px;
+  top: 175px;
+  transition: all .3s;
+}
+.game_intro__inner .continue:hover {
+  color: #76ece2;
+}
+.game_intro__inner.end {
+  opacity: 1;
+  pointer-events: all;
+  transition: all 1s 1s;
+}
+.game_intro__inner.end .continue {
+  opacity: 1;
+  transition: all .3s 6s;
+}
+.game_intro__inner.end.gamestarted {
+  opacity: 0;
+}
+.game_intro__inner.end.gamestarted .continue {
+  opacity: 0;
+}
+.game_intro__inner.gamestarted {
+  pointer-events: none;
+}
+.game_intro__inner img:nth-of-type(1) {
+  width: 400px;
+  image-rendering: pixelated;
+}
+.game_intro__inner img:nth-of-type(2) {
+  position: relative;
+  left: 0px;
+}
+.game_intro__inner img:nth-of-type(2) {
+  cursor: pointer;
+  margin-top: 40px;
+}
+
+/* Game inner content */
+.game_inner__tooltip {
+  width: 390px;
+  margin: 0 auto;
+  text-align: left;
+  position: absolute;
+  top: calc(50% + 240px);
+  left: 0;
+  right: 0;
+  margin: auto;
+  opacity: 0;
+  transition: all .3s;
+}
+.game_inner__tooltip.active {
+  opacity: 1;
+}
+.game_inner__tooltip .smash {
+  width: 100%;
+  text-align: center;
+  margin-top: 23px;
+  font-size: 9px;
+}
+.game_inner__tooltip .space {
+  width: 390px;
+  margin-top: 50px;
+  height: 50px;
+  background: white;
+  position: relative;
+  top: 0;
+  border-radius: 6px;
+  box-shadow: 0 10px #d6d6d6;
+  animation: press2 .1s infinite;
+}
+@keyframes press2 {
+  0% {
+    box-shadow: 0 10px #d6d6d6;
+    top: 0px;
+  }
+  100% {
+    box-shadow: 0 0px #d6d6d6;
+    top: 10px;
+  }
+}
+
+/* Footer */
+.game_inner__footer {
+  position: fixed;
+  left: 50px;
+  font-size: 7px;
+  z-index: 2;
+  bottom: 40px;
+  width: calc(100% - 100px);
+}
+.game_inner__footer .madeby {
+  position: relative;
+  top: 50px;
+}
+.game_inner__footer .resources {
+  float: right;
+}
+.game_inner__footer .resources div {
+  margin: 0 0 10px 0;
+  font-size: 12px;
+}
+.game_inner__footer .resources div img {
+  position: relative;
+  top: 3px;
+  margin-right: 8px;
+}
+.game_inner__footer a {
+  color: #d0295f;
+  text-decoration: none;
+}
+
+/* Left section of game inner */
+.game_inner__left {
+  text-align: center;
+  float: left;
+  position: relative;
+  width: calc(100%);
+  height: 100vh;
+}
+.game_inner__left .buttons {
+  float: right;
+  padding: 50px;
+}
+.game_inner__left .buttons img {
+  width: 32px;
+  float: left;
+  margin-left: 12px;
+  cursor: pointer;
+}
+.game_inner__left .buttons img.off {
+  opacity: 0.3;
+}
+.game_inner__left .logo {
+  padding: 50px;
+  float: left;
+}
+.game_inner__left .ui {
+  width: 100%;
+}
+.game_inner__left .ui_spaces {
+  font-size: 24px;
+  margin-bottom: 7px;
+}
+.game_inner__left .ui_progress {
+  width: 500px;
+  margin: 0 auto;
+  text-align: left;
+  position: absolute;
+  top: calc(50% - 300px);
+  left: 0;
+  right: 0;
+  margin: auto;
+}
+.game_inner__left .ui_progress__stage {
+  font-size: 9px;
+  margin-bottom: 11px;
+}
+.game_inner__left .ui_progress__bar {
+  width: 100%;
+  position: relative;
+}
+.game_inner__left .ui_progress__bar .inner {
+  background: url('https://assets.codepen.io/217233/ktkProgressInner.png');
+  height: 7px;
+  width: calc(100% - 6px);
+  background-size: 494px 7px;
+  position: absolute;
+  top: 10px;
+  z-index: 1;
+  left: 3px;
+  transition: all .4s;
+  max-width: 494px;
+}
+.game_inner__left .ui_progress__bar .outer {
+  background: url('https://assets.codepen.io/217233/ktkProgressOuter.png');
+  height: 12px;
+  width: 100%;
+  background-size: 500px 12px;
+  position: absolute;
+  top: 8px;
+}
+.game_inner__left .ui_progress__icons {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  z-index: 1;
+  padding: 0 14px;
+}
+.game_inner__left .ui_progress__icons .icon {
+  flex-grow: 1;
+  text-align: center;
+}
+.game_inner__left .ui_progress__icons .icon_bg {
+  width: 28px;
+  height: 28px;
+  margin: auto;
+  background: url('https://assets.codepen.io/217233/ktkStageLocked.png');
+}
+.game_inner__left .ui_progress__icons .icon_bg.active::after {
+  width: 10px;
+  height: 10px;
+  content: '▲';
+  display: block;
+  position: relative;
+  top: 31px;
+  left: 9px;
+  font-size: 10px;
+}
+.game_inner__left .ui_progress__icons .icon_bg.complete {
+  background: url('https://assets.codepen.io/217233/ktkStageComplete.png');
+}
+.game_inner__left .ui_presses {
+  font-size: 12px;
+  opacity: 0.4;
+}
+
+/* Center section of game inner */
+.game_inner__left .center {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: auto;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 390px;
+}
+.game_inner__left .center .player_sprite,
+.game_inner__left .center .enemy_sprite {
+  width: 150px;
+  height: 150px;
+  animation: idle .5s steps(7, end) infinite;
+  transform: scale(5);
+  image-rendering: pixelated;
+}
+.game_inner__left .center .player_sprite.pressed {
+  animation: attack .15s steps(3, end);
+}
+.game_inner__left .center .characters {
+  width: 400px;
+  margin: 80px auto;
+}
+.game_inner__left .center .characters .stand {
+  width: 100%;
+  height: 100px;
+  background: #141627;
+  border-radius: 100%;
+  position: absolute;
+  bottom: -20px;
+  left: 9px;
+}
+.game_inner__left .center .characters .player {
+  z-index: 1;
+  position: relative;
+  left: 10px;
+  top: 60px;
+  transition: all 1s .3s;
+}
+.game_inner__left .center .characters .player.run {
+  left: 400px;
+  opacity: 0;
+}
+.game_inner__left .center .characters .player .stats {
+  position: absolute;
+  left: -110px;
+  text-align: left;
+  transform: translateY(4px);
+  font-size: 8px;
+  animation: health 2s infinite;
+}
+.game_inner__left .center .characters .player .stats span {
+  font-size: 6px;
+  opacity: 0.75;
+  display: block;
+  padding-left: 24px;
+  padding-top: 4px;
+}
+.game_inner__left .center .characters .player .stats div {
+  margin-bottom: 10px;
+}
+.game_inner__left .center .characters .player .stats img {
+  position: relative;
+  margin-right: 4px;
+  top: 3px;
+}
+.game_inner__left .center .characters .enemy {
+  position: relative;
+  top: -134px;
+  left: -40px;
+  transition: all .3s;
+}
+.game_inner__left .center .characters .enemy.run {
+  opacity: 0;
+}
+.game_inner__left .center .characters .enemy,
+.game_inner__left .center .characters .player {
+  width: 50%;
+  float: left;
+}
+.game_inner__left .center .enemy {
+  width: 100px;
+}
+.game_inner__left .center .enemy_hit,
+.game_inner__left .center .enemy_gold,
+.game_inner__left .center .enemy_xp {
+  position: absolute;
+  left: 98px;
+  top: 40px;
+  z-index: 1;
+  opacity: 0;
+}
+.game_inner__left .center .enemy_hit.pressed {
+  animation: hit .15s forwards;
+}
+.game_inner__left .center .enemy_gold.killed {
+  animation: hit .3s .1s forwards;
+}
+.game_inner__left .center .enemy_xp {
+  left: 0;
+  right: 0;
+}
+.game_inner__left .center .enemy_xp.killed {
+  animation: hit .3s .12s forwards;
+}
+.game_inner__left .center .enemy_sprite {
+  background: url('https://assets.codepen.io/217233/ssEnemyIdle_1.png');
+  animation: none;
+  width: 200px;
+  animation: enemyIdle .5s steps(7, end) infinite;
+  transform: scaleX(-5) scaleY(5);
+  position: relative;
+}
+.game_inner__left .center .enemy_sprite.boss {
+  background: url('https://assets.codepen.io/217233/ktkTrostIdle.png');
+  animation: bossIdle 1s steps(7, end) infinite;
+  width: 160px;
+  top: 10px;
+  left: 40px;
+  height: 105px;
+  filter: hue-rotate(0deg) !important;
+}
+.game_inner__left .center .enemy_sprite.boss.pressed {
+  animation: bossHit .15s steps(3, end);
+}
+.game_inner__left .center .enemy_sprite.boss.killed {
+  animation: bossKilled .8s steps(5, end);
+}
+.game_inner__left .center .enemy_sprite.pressed {
+  animation: enemyHit .15s steps(3, end);
+}
+.game_inner__left .center .enemy_sprite.killed {
+  animation: enemyKilled .8s steps(5, end);
+}
+.game_inner__left .center .enemy_health {
+  width: 190px;
+  height: 12px;
+  position: absolute;
+  left: 0;
+  font-size: 13px;
+  right: 0;
+  line-height: 39px;
+  border-radius: 10px;
+  top: 10px;
+  padding-top: 0px;
+  margin: auto;
+  background: url(https://assets.codepen.io/217233/ktkEnemyHealth.png);
+  animation: health 2s infinite;
+}
+.game_inner__left .center .enemy_health_stats {
+  font-size: 7px;
+  padding-top: 6px;
+  text-align: left;
+}
+.game_inner__left .center .enemy_health_stats .name {
+  float: left;
+}
+.game_inner__left .center .enemy_health_stats .level {
+  float: right;
+}
+.game_inner__left .center .enemy_health_inner {
+  position: absolute;
+  left: 4px;
+  top: 3px;
+  height: 5px;
+  border-radius: 10px;
+  transition: all .1s;
+  max-width: 182px;
+  background: url(https://assets.codepen.io/217233/ktkEnemyHealthInner.png);
+}
+.game_inner__left .spaceBar {
+  width: 390px;
+  margin-top: 50px;
+  height: 50px;
+  background: white;
+  position: relative;
+  top: 0;
+  border-radius: 6px;
+  box-shadow: 0 10px #d6d6d6;
+  animation: press2 .1s forwards;
+}
+
+/* Animations */
+@keyframes health {
+  0% {
+    top: 10px;
+  }
+  50% {
+    top: 13px;
+  }
+  100% {
+    top: 10px;
+  }
+}
+@keyframes idle {
+  0% {
+    background: url('https://assets.codepen.io/217233/ssIdle.png');
+    background-position: 0% 0;
+  }
+  100% {
+    background: url('https://assets.codepen.io/217233/ssIdle.png');
+    background-position: 100% 0;
+  }
+}
+@keyframes attack {
+  0% {
+    background: url('https://assets.codepen.io/217233/ssAttack1.png');
+    background-position: 0% 0;
+  }
+  100% {
+    background: url('https://assets.codepen.io/217233/ssAttack1.png');
+    background-position: 100% 0;
+  }
+}
+@keyframes enemyIdle {
+  0% {
+    background: url('https://assets.codepen.io/217233/ssEnemyIdle_1.png');
+    background-position: 0% 0;
+  }
+  100% {
+    background: url('https://assets.codepen.io/217233/ssEnemyIdle_1.png');
+    background-position: 100% 0;
+  }
+}
+@keyframes bossIdle {
+  0% {
+    background: url('https://assets.codepen.io/217233/ktkTrostIdle.png');
+    background-position: 0% 0;
+  }
+  100% {
+    background: url('https://assets.codepen.io/217233/ktkTrostIdle.png');
+    background-position: 100% 0;
+  }
+}
+@keyframes bossHit {
+  0% {
+    background: url('https://assets.codepen.io/217233/ktkTrostHit.png');
+    background-position: 0% 0;
+  }
+  100% {
+    background: url('https://assets.codepen.io/217233/ktkTrostHit.png');
+    background-position: 100% 0;
+  }
+}
+@keyframes bossKilled {
+  0% {
+    background: url('https://assets.codepen.io/217233/ktkTrostKilled.png');
+    background-position: 0% 0;
+  }
+  100% {
+    background: url('https://assets.codepen.io/217233/ktkTrostKilled.png');
+    background-position: 100% 0;
+  }
+}
+@keyframes enemyHit {
+  0% {
+    background: url('https://assets.codepen.io/217233/ssEnemyHit_1.png');
+    background-position: 0% 0;
+  }
+  100% {
+    background: url('https://assets.codepen.io/217233/ssEnemyHit_1.png');
+    background-position: 100% 0;
+  }
+}
+@keyframes enemyKilled {
+  0% {
+    background: url('https://assets.codepen.io/217233/ssEnemyDeath_1.png');
+    background-position: 0% 0;
+    opacity: 1;
+  }
+  100% {
+    background: url('https://assets.codepen.io/217233/ssEnemyDeath_1.png');
+    background-position: 100% 0;
+    opacity: 0;
+  }
+}
+@keyframes hit {
+  0% {
+    top: 40px;
+    opacity: 0;
+  }
+  100% {
+    top: -30px;
+    opacity: 1;
+  }
+}
+/* Dynamic hit animations */
+@keyframes hit-1 {
+  0% {
+    left: 0px;
+    bottom: 0px;
+    opacity: 1;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    left: 310px;
+    bottom: 90px;
+    opacity: 0;
+  }
+}
+@keyframes hit-2 {
+  0% {
+    left: 0px;
+    bottom: 0px;
+    opacity: 1;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    left: 172px;
+    bottom: 27px;
+    opacity: 0;
+  }
+}
+@keyframes hit-3 {
+  0% {
+    left: 0px;
+    bottom: 0px;
+    opacity: 1;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    left: 207px;
+    bottom: 74px;
+    opacity: 0;
+  }
+}
+@keyframes hit-4 {
+  0% {
+    left: 0px;
+    bottom: 0px;
+    opacity: 1;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    left: 122px;
+    bottom: 81px;
+    opacity: 0;
+  }
+}
+@keyframes hit-5 {
+  0% {
+    left: 0px;
+    bottom: 0px;
+    opacity: 1;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    left: 167px;
+    bottom: 75px;
+    opacity: 0;
+  }
+}
+@keyframes hit-6 {
+  0% {
+    left: 0px;
+    bottom: 0px;
+    opacity: 1;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    left: 457px;
+    bottom: 88px;
+    opacity: 0;
+  }
+}
+@keyframes hit-7 {
+  0% {
+    left: 0px;
+    bottom: 0px;
+    opacity: 1;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    left: 186px;
+    bottom: 86px;
+    opacity: 0;
+  }
+}
+@keyframes hit-8 {
+  0% {
+    left: 0px;
+    bottom: 0px;
+    opacity: 1;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    left: 419px;
+    bottom: 64px;
+    opacity: 0;
+  }
+}
+@keyframes hit-9 {
+  0% {
+    left: 0px;
+    bottom: 0px;
+    opacity: 1;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    left: 310px;
+    bottom: 86px;
+    opacity: 0;
+  }
+}
+@keyframes hit-10 {
+  0% {
+    left: 0px;
+    bottom: 0px;
+    opacity: 1;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    left: 219px;
+    bottom: 48px;
+    opacity: 0;
+  }
+}
+@keyframes hit-11 {
+  0% {
+    left: 0px;
+    bottom: 0px;
+    opacity: 1;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    left: 172px;
+    bottom: 53px;
+    opacity: 0;
+  }
+}
+@keyframes hit-12 {
+  0% {
+    left: 0px;
+    bottom: 0px;
+    opacity: 1;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    left: 375px;
+    bottom: 59px;
+    opacity: 0;
+  }
+}
+@keyframes hit-13 {
+  0% {
+    left: 0px;
+    bottom: 0px;
+    opacity: 1;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    left: 279px;
+    bottom: 57px;
+    opacity: 0;
+  }
+}
+@keyframes hit-14 {
+  0% {
+    left: 0px;
+    bottom: 0px;
+    opacity: 1;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    left: 472px;
+    bottom: 82px;
+    opacity: 0;
+  }
+}
+@keyframes hit-15 {
+  0% {
+    left: 0px;
+    bottom: 0px;
+    opacity: 1;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    left: 417px;
+    bottom: 100px;
+    opacity: 0;
+  }
+}
+@keyframes hit-16 {
+  0% {
+    left: 0px;
+    bottom: 0px;
+    opacity: 1;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    left: 295px;
+    bottom: 96px;
+    opacity: 0;
+  }
+}
+@keyframes hit-17 {
+  0% {
+    left: 0px;
+    bottom: 0px;
+    opacity: 1;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    left: 432px;
+    bottom: 100px;
+    opacity: 0;
+  }
+}
+@keyframes hit-18 {
+  0% {
+    left: 0px;
+    bottom: 0px;
+    opacity: 1;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    left: 426px;
+    bottom: 100px;
+    opacity: 0;
+  }
+}
+@keyframes hit-19 {
+  0% {
+    left: 0px;
+    bottom: 0px;
+    opacity: 1;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    left: 326px;
+    bottom: 96px;
+    opacity: 0;
+  }
+}
+@keyframes hit-20 {
+  0% {
+    left: 0px;
+    bottom: 0px;
+    opacity: 1;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    left: 203px;
+    bottom: 85px;
+    opacity: 0;
+  }
+}
+.game_inner__left .spaceBar.pressed {
+  animation: press .05s forwards;
+}
+
+/* Right section (Shopping Phase) */
+.game_inner__right {
+  float: right;
+  position: fixed;
+  width: 720px;
+  background: #160917;
+  left: 0;
+  right: 0;
+  border-radius: 10px;
+  border: 2px solid white;
+  z-index: 999;
+  top: 50%;
+  box-shadow: 0 0 0 1160px #0a0209d1;
+  margin: auto;
+  transform: translateY(-50%);
+}
+.game_inner__right p {
+  text-align: left;
+  font-size: 10px;
+  padding: 26px;
+}
+.game_inner__right .xp {
+  padding: 0 26px;
+  font-size: 12px;
+}
+.game_inner__right .nextPhase {
+  background: #73256a;
+  width: calc(100% - 52px);
+  margin: 0 26px 26px 26px;
+  text-align: center;
+  font-size: 12px;
+  padding: 20px 0;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px #3d074e;
+}
+.game_inner__right .upgrades {
+  padding: 24px;
+}
+.game_inner__right .upgrades h2 {
+  text-transform: capitalize;
+  margin-bottom: 12px;
+  font-weight: normal;
+  font-size: 14px;
+}
+.game_inner__right .upgrades_upgrade .upgrade {
+  border: 2px solid white;
+  padding: 12px;
+  border-radius: 6px;
+  opacity: 0.6;
+  transition: all .3s;
+  pointer-events: none;
+  position: relative;
+  margin-bottom: 6px;
+  font-size: 11px;
+}
+.game_inner__right .upgrades_upgrade .upgrade:hover {
+  background: #ffffff0f;
+  padding: 12px 12px 12px 20px;
+}
+.game_inner__right .upgrades_upgrade .upgrade.max {
+  background: black;
+  pointer-events: none;
+}
+.game_inner__right .upgrades_upgrade .upgrade.max::after {
+  content: 'max';
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  text-align: center;
+  margin: auto;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+  text-transform: uppercase;
+}
+.game_inner__right .upgrades_upgrade .upgrade.max div {
+  opacity: 0.12;
+}
+.game_inner__right .upgrades_upgrade .upgrade.bought {
+  pointer-events: none !important;
+  background: green;
+  opacity: 0.2 !important;
+}
+.game_inner__right .upgrades_upgrade .upgrade .name {
+  font-size: 11px;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+}
+.game_inner__right .upgrades_upgrade .upgrade .description {
+  font-size: 8px;
+  opacity: 0.5;
+  margin-bottom: 4px;
+}
+.game_inner__right .upgrades_upgrade .upgrade .cost {
+  font-size: 8px;
+  color: red;
+  transition: all .3s;
+  margin-bottom: 3px;
+}
+.game_inner__right .upgrades_upgrade .upgrade .level {
+  font-size: 8px;
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+}
+.game_inner__right .upgrades_upgrade .upgrade .effect {
+  font-size: 8px;
+}
+.game_inner__right .upgrades_upgrade .upgrade.available {
+  opacity: 1;
+  pointer-events: all;
+  cursor: pointer;
+}
+.game_inner__right .upgrades_upgrade .upgrade.available .cost {
+  color: green;
+}
+
+/* Timer styles */
+.timer {
+  width: 128px;
+  margin: 0 auto;
+  text-align: left;
+  position: absolute;
+  top: calc(50% - 400px);
+  left: 4px;
+  right: 0;
+  font-size: 14px;
+  margin: auto;
+}
+.timer_inner {
+  position: relative;
+  top: -40px;
+  text-align: center;
+}
+.timer_inner div {
+  display: inline-block;
+  width: 28px;
+  position: relative;
+  margin: 0 3px 0;
+}
+.timer_inner div:after {
+  display: block;
+  content: ':';
+  position: absolute;
+  right: -11px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.timer_inner .ms {
+  font-size: 9px;
+  opacity: 0.7;
+  width: 22px;
+}
+.timer_inner .ms:after {
+  display: none;
+}

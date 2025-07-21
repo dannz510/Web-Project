@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="icon" href="https://jsbot.cantelope.org/uploads/1GY3GM.png">
+    <meta name="viewport" content="width=device-width,initial-scale=0.5">
+    <title>Sudoku Game</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <div class="main">
+      <div class="header">
+        SUDOKU
+      </div>
+      <label for="easy" style="display: inline-block;margin: 20px;">
+        EASY
+        <input type="radio" id="easy" name="mode" onclick="load('easy')" style="transform: scale(2.0)">
+      </label>
+      <label for="medium" style="display: inline-block;margin: 20px;">
+        MEDIUM
+        <input type="radio" id="medium" name="mode" onclick="load('medium')" checked style="transform: scale(2.0)">
+      </label>
+      <label for="hard" style="display: inline-block;margin: 20px;">
+        HARD
+        <input type="radio" id="hard" name="mode" onclick="load('hard')" style="transform: scale(2.0)">
+      </label>
+      <div class="sudokuBoard">
+        <canvas id=c></canvas>
+      </div>
+      <div id="choices">
+        <button class="choiceButton" onmousedown="toggleChoice(this)" id="cb1">1</button>
+        <button class="choiceButton" onmousedown="toggleChoice(this)" id="cb2">2</button>
+        <button class="choiceButton" onmousedown="toggleChoice(this)" id="cb3">3</button>
+        <button class="choiceButton" onmousedown="toggleChoice(this)" id="cb4">4</button>
+        <button class="choiceButton" onmousedown="toggleChoice(this)" id="cb5">5</button>
+        <button class="choiceButton" onmousedown="toggleChoice(this)" id="cb6">6</button>
+        <button class="choiceButton" onmousedown="toggleChoice(this)" id="cb7">7</button>
+        <button class="choiceButton" onmousedown="toggleChoice(this)" id="cb8">8</button>
+        <button class="choiceButton" onmousedown="toggleChoice(this)" id="cb9">9</button>
+      </div>
+      <button class="functionButton" onmousedown="toggleNoteMode()" id="noteButton">TOGGLE NOTE</button>
+      <button class="functionButton" onmousedown="clearErrors()" id="clearErrorButton">CLEAR ERRORS</button>
+      <button class="functionButton" onmousedown="showSolution()" id="showSolutionButton">SHOW SOLLUTION</button>
+      <!--<button class="functionButton" onmousedown="solve()" id="showSolutionButton">solve</button>-->
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>

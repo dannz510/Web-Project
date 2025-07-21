@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>King Trost Slayer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css"> <!-- Link to the converted CSS file -->
+</head>
+<body>
+    <div id="app" :class="{'pressed': pressed}">
+        <audio controls crossorigin="anonymous" style="display: none;">
+            <source src="https://assets.codepen.io/217233/ktkBgAudio.mp3" type="audio/mp3">
+        </audio>
+
+        <div class="game">
+            <div class="game_lose" :class="{'show': gameover}">
+                <div class="inner">
+                    <h1>YOU RAN OUT OF TIME!</h1>
+                    <p>King Trost was victorious. Refresh to try again.</p>
+                    <p>
+                        Be sure to
+                        <a href='https://www.github.io/dannz510' target="_blank">follow me on Codepen</a>
+                        for more pointless stuff.
+                    </p>
+                </div>
+            </div>
+
+            <div class="game_win" :class="{'show': gamewin}">
+                <div class="inner">
+                    <h1>YOU WIN!</h1>
+                    <p>King Trost was slain. Congratulations!</p>
+                    <p>
+                        Be sure to
+                        <a href='https://www.github.io/dannz510' target="_blank">follow me on Codepen</a>
+                        for more pointless stuff.
+                    </p>
+                </div>
+            </div>
+
+            <div class="game_intro" :class="{'gamestarted': gameStarted}">
+                <div class="game_intro__inner start" :class="{'gamestarted': introClicked}">
+                    <img src='https://assets.codepen.io/217233/ktkLogo.png' alt="Game Logo">
+                    <br>
+                    <p class="begin" @click='introClicked = !introClicked, audioController.play("crushyou")'>BEGIN GAME</p>
+                </div>
+                <div class="game_intro__inner end" :class="{'gamestarted': !introClicked}">
+                    <div class="dialogue">
+                        <span>King Trost</span>
+                        <p>HAHAHA, YOU HONESTLY THINK YOU CAN DEFEAT ME!? MY MEN WILL CRUSH YOU, BOY.</p>
+                        <p class="continue" @click='introClicked = !introClicked, startGame()'>Continue</p>
+                    </div>
+                    <img class="king" src='https://assets.codepen.io/217233/kingTrost.png' alt="King Trost">
+                </div>
+            </div>
+
+            <div class="game_inner">
+                <div class="game_inner__tooltip" :class="{'active': tooltip}">
+                    <div class="space"></div>
+                    <div class="smash">Smash the spacebar!</div>
+                </div>
+
+                <div class="game_inner__footer">
+                    <div class="madeby">
+                        Made by
+                        <a href='https://www.github.io/dannz510' target='_blank'>Dannz</a>
+                    </div>
+                    <div class="resources">
+                        <div class="ui_xp">
+                            <img src='https://assets.codepen.io/217233/ktkXpIxon.png' alt="XP Icon">
+                            {{ xp }}xp
+                        </div>
+                    </div>
+                </div>
+
+                <div class="game_inner__left">
+                    <div class="buttons">
+                        <img src='https://assets.codepen.io/217233/ktkSfxButton.png' @click='audioController.sfxOn = !audioController.sfxOn' :class="{'off': !audioController.sfxOn}" alt="SFX Toggle">
+                        <img src='https://assets.codepen.io/217233/ktkBgButton.png' @click='toggleBg()' :class="{'off': muteBg}" alt="Background Music Toggle">
+                    </div>
+                    <div class="logo">
+                        <img src='https://assets.codepen.io/217233/ktkLogo.png' alt="Logo">
+                    </div>
+
+                    <div class="timer">
+                        <img src='https://assets.codepen.io/217233/ktkTimerBg.png' alt="Timer Background">
+                        <div class="timer_inner">
+                            <div class="minutes">
+                                {{ minutes }}
+                            </div>
+                            <div class="seconds">
+                                {{ seconds }}
+                            </div>
+                            <div class="ms">
+                                {{ ms }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ui">
+                        <div class="ui_progress">
+                            <div class="ui_progress__stage">
+                                STAGE {{ stage }}
+                            </div>
+                            <div class="ui_progress__bar">
+                                <div class="inner" :style="{width: `${((500 / enemiesPerStage) * (enemiesDefeated + 1)) - ((500 / enemiesPerStage) / 2)}px`}"></div>
+                                <div class="outer"></div>
+                            </div>
+                            <div class="ui_progress__icons">
+                                <div class="icon" v-for="(enemies, index) in enemiesPerStage" :key="enemies">
+                                    <div class="icon_bg" :class="{'complete': index < enemiesDefeated, 'active': index == enemiesDefeated}"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="center">
+                        <div class="characters">
+                            <div class="player" :class="{'run': stageComplete}">
+                                <div class="stats">
+                                    <div class="ui_strength">
+                                        <img src='https://assets.codepen.io/217233/ktkStrengthIcon.png' alt="Strength Icon">
+                                        {{ strength }} STR
+                                    </div>
+                                    <br>
+                                    <div class="ui_intelligence">
+                                        <img src='https://assets.codepen.io/217233/ktkKnowledgeIcon.png' alt="Intelligence Icon">
+                                        {{ intelligence }} INT
+                                    </div>
+                                    <div class="ui_speed">
+                                        <img src='https://assets.codepen.io/217233/ktkSpeedIcon.png' alt="Speed Icon">
+                                        {{ speed }} SPD
+                                    </div>
+                                </div>
+                                <div class="player_sprite" :class="{'pressed': pressed}"></div>
+                            </div>
+                            <div class="enemy" :class="{'run': stageComplete}">
+                                <div class="enemy_sprite" :class="{'pressed': pressed, 'killed' : enemyKilled, 'boss' : boss}" :style="{filter: `hue-rotate(${80 * (stage - 1)}deg)`}"></div>
+                                <div class="enemy_hit" :class="{'pressed': pressed}">
+                                    {{ damage }}
+                                </div>
+                                <div class="enemy_xp" :class="{'killed': enemyKilled}">
+                                    <img src='https://assets.codepen.io/217233/ktkXpIxon.png' alt="XP Icon">
+                                    {{ xpGained }}xp
+                                </div>
+                                <div class="enemy_health">
+                                    <div class="enemy_health_stats">
+                                        <div class="name">
+                                            {{ enemy.name }}
+                                        </div>
+                                        <div class="level">
+                                            HP: {{ enemy.health }}
+                                        </div>
+                                    </div>
+                                    <div class="enemy_health_inner" :style="{width: `${100 * (enemy.health / enemy.initHealth)}%`}"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="game_inner__right" v-if="shoppingPhase">
+                    <div class="timer">
+                        <img src='https://assets.codepen.io/217233/ktkTimerBg.png' alt="Timer Background">
+                        <div class="timer_inner">
+                            <div class="minutes">
+                                {{ minutes }}
+                            </div>
+                            <div class="seconds">
+                                {{ seconds }}
+                            </div>
+                            <div class="ms">
+                                {{ ms }}
+                            </div>
+                        </div>
+                    </div>
+                    <p>Spend your gold and experience on upgrades</p>
+                    <div class="xp">
+                        <img src='https://assets.codepen.io/217233/ktkXpIxon.png' alt="XP Icon">
+                        {{ xp }}xp
+                    </div>
+                    <div class="upgrades">
+                        <div class="upgrades_upgrade" v-for="(upgrade, index) in upgrades" :key="upgrades.name">
+                            <h2>{{ index != 0 ? upgrade.type != upgrades[index - 1].type ? upgrade.type : '' : 'Skills' }}</h2>
+                            <div class="upgrade" :class="{'max' : upgrade.level > upgrade.maxLevel, 'available': upgrade.type == 'stat' ? xp >= upgrade.cost : gold >= upgrade.cost, 'bought': upgrade.bought}" @click='buy(index, upgrade.type, upgrade.stat);audioController.play("upgrade")' @mouseenter='audioController.play("hover")'>
+                                <div class="name">{{ upgrade.names }}</div>
+                                <div class="description">{{ upgrade.descriptions }}</div>
+                                <div class="cost">
+                                    Cost: {{ upgrade.cost }} {{ upgrade.type == "stat" ? 'xp' : 'gold' }}
+                                </div>
+                                <div class="effect">
+                                    +{{ upgrade.type == "stat" ? upgrade.increment : upgrade.damage }} {{ upgrade.metric }}
+                                </div>
+                                <div class="level" v-if="upgrade.type == 'stat'">
+                                    Level: {{ upgrade.level }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="nextPhase" @click='exitShoppingPhase'>Next round</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vue.js and script.js imports -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.9/vue.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

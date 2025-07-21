@@ -1,0 +1,28 @@
+{
+  "name": "choose-your-dog",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "pug": "pug src/index.pug --pretty --out public/",
+    "scss": "sass src/style.scss public/main.css",
+    "copy-js": "cp src/script.js public/main.js",
+    "build": "npm run pug && npm run scss && npm run copy-js",
+    "watch:pug": "pug src/index.pug --pretty --out public/ --watch",
+    "watch:scss": "sass --watch src/style.scss:public/main.css",
+    "watch:js": "nodemon --watch src/script.js --exec \"npm run copy-js\"",
+    "dev": "npm run build && concurrently \"npm run watch:pug\" \"npm run watch:scss\" \"npm run watch:js\" \"http-server public -c-1\"",
+    "start": "http-server public -c-1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "http-server": "^14.1.1",
+    "pug-cli": "^1.0.0-alpha.6",
+    "sass": "^1.77.8",
+    "watch": "^1.0.2",
+    "nodemon": "^3.1.4"
+  }
+}
