@@ -180,9 +180,9 @@ You can also view live demos of most projects directly in your browser using `ra
 * **Solar System:** [🌌🌟](https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Solar%20System/index.html)
 * **Stack Game:** [🧱🧩](https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Stack%20Game/index.html)
 * **Train puzzle:** [🚆🧩](https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Train%20puzzle/public/index.html)
-   * **Windows 10 simulator:**
-+ VER 1: [🪟](https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Windows%2010%20simulator/DZOS/indexver1.html)
 * **Windows 10 simulator:**
+   + VER 1: [🪟](https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Windows%2010%20simulator/DZOS/indexver1.html)
+* **Windows 11 simulator:**
    + VER 4: [🪟](https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Windows%2010%20simulator/DZOS/indexver4.html)
 
 
