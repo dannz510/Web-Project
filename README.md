@@ -172,15 +172,17 @@ You can also view live demos of most projects directly in your browser using `ra
 * **Sudoku Game:** [https://raw.githack.com/dannz510/Web-Project/refs/heads/main/Sudoku%20game/index.html](https://raw.githack.com/dannz510/Web-Project/refs/heads/main/Sudoku%20game/index.html)
 * **Synth from Hell - Phone-tablet-pc ver:** [https://raw.githack.com/dannz510/Web-Project/refs/heads/main/Synth%20from%20hell%20-%20Phone-tablet-pc%20ver/index.html](https://raw.githack.com/dannz510/Web-Project/refs/heads/main/Synth%20from%20hell%20-%20Phone-tablet-pc%20ver/index.html)
 * **Water Surface:** [https://raw.githack.com/dannz510/Web-Project/refs/heads/main/Water%20Surface/index.html](https://raw.githack.com/dannz510/Web-Project/refs/heads/main/Water%20Surface/index.html)
-* **Bull Eye:** [Add raw.githack.com link here]
-* **Burger Drum:** [Add raw.githack.com link here]
-* **Counting Sheep:** [Add raw.githack.com link here]
-* **Doodle Jump:** [Add raw.githack.com link here]
-* **Puzzle Game:** [Add raw.githack.com link here]
-* **Solar System:** [Add raw.githack.com link here]
-* **Stack Game:** [Add raw.githack.com link here]
-* **Train puzzle:** [Add raw.githack.com link here]
-* **Windows 10 simulator:** [Add raw.githack.com link here]
+* **Bull Eye:** [https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Bull%20Eye/index.html](https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Bull%20Eye/index.html)
+* **Burger Drum:** [https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Burger%20Drum/index.html](https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Burger%20Drum/index.html)
+* **Counting Sheep:** [https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Counting%20Sheep/index.html](https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Counting%20Sheep/index.html)
+* **Doodle Jump:** [https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Doodle%20Jump/index.html](https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Doodle%20Jump/index.html)
+* **Puzzle Game:** [https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Puzzle%20Game/index.html](https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Puzzle%20Game/index.html)
+* **Solar System:** [https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Solar%20System/index.html](https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Solar%20System/index.html)
+* **Stack Game:** [https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Stack%20Game/index.html](https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Stack%20Game/index.html)
+* **Train puzzle:** [https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Train%20puzzle/public/index.html](https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Train%20puzzle/public/index.html)
+* **Windows 10 simulator:**
+* VER 1: [https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Windows%2010%20simulator/DZOS/indexver1.html](https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Windows%2010%20simulator/DZOS/indexver1.html)
+* VER 4: [https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Windows%2010%20simulator/DZOS/indexver4.html](https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Windows%2010%20simulator/DZOS/indexver4.html)
 
 *(Note: A direct link for "Space Escape" was not provided in your request. If you have one, you can add it here.)*
 
