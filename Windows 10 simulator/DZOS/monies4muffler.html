@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>MONIES 4 MUFFLER</title>
+    <link rel="icon" href="home.png">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,700" rel="stylesheet" type="text/css">
+    
+    <style>
+      body{
+        background-color:black;
+        margin:0;
+      }
+      
+      #celebrate{
+        display:block;
+        position:fixed;
+        width:100%;
+        height:100%;
+        opacity:0.7;
+      }
+      
+      button{
+        display: block;
+        position: fixed;
+        width: 10vw;
+        height: 3vw;
+        font-size: 2vw;
+        font-family: Roboto,sans-serif;
+        background-color: #0a0;
+        border: none;
+        color: white;
+        top: 50%;
+        left: 50%;
+        margin-top: 1vw;
+        margin-left: -5vw;
+        outline: none;
+        cursor: pointer;
+      }
+      
+      button:hover{
+        background-color:#3a3;
+      }
+      
+      #helptext{
+        display: block;
+        position: fixed;
+        color: white;
+        font-family: Roboto,sans-serif;
+        width: 100%;
+        text-align: center;
+        bottom: 50%;
+        margin-bottom: 2vw;
+        font-size:1.5vw;
+      }
+      
+      #kay{
+        display:none;
+        position: fixed;
+        color: white;
+        font-family: Roboto,sans-serif;
+        font-weight: 700;
+        width: 100%;
+        text-align: center;
+        line-height: 100vh;
+        font-size: 5vw;
+        z-index: 1;
+        margin-top: 0;
+        opacity:0;
+        animation:zoom 3s forwards 1;
+      }
+      
+      @keyframes zoom{
+        15%{opacity:1;}
+        50%{opacity:1;}
+        100%{opacity:0; font-size:15vw;}
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="celebrate"></canvas>
+    <p id="helptext">
+      Help donate to /u/WoollyMuffler so he can get his $1M dollars!
+      <br>
+      Sadly, I can't make transaction-enabled web pages, so I urge you to send you prayers instead:
+    </p>
+    <p id="kay">+1 PRAYER</p>
+    <button onclick=pray()>#PRAY</button>
+    
+    
+    <script>
+      var counter=0;
+      var xPos2=[],yPos2=[],stps=[],fireCols=[],checks=[0,0,0,0],points=15,sinusoid=0.1,dissipate=0.3;
+      var pointFld=[],sine=[],stepNo=[],fade=0.3,size=25,counter=0;
+    
+      var canvas=document.getElementById("celebrate");
+      canvas.width=window.innerWidth;
+      canvas.height=window.innerHeight;
+      setInterval(paint2,30);
+      
+      if (window.location.href.includes("#")){
+        var foundhash=false;
+        var url=decodeURI(window.location.href);
+        var stringOut="";
+        for (var i=0;i<url.length;i++){
+          if (url.charAt(i)=='#'){foundhash=true;}
+          else if (foundhash){stringOut+=url.charAt(i);}
+        }
+        document.getElementById("helptext").innerHTML=stringOut;
+      }
+      
+      function pray(){
+        document.getElementsByTagName("button")[0].style.display="none";
+        document.getElementById("helptext").style.display="none";
+        document.getElementById("kay").style.display="block";
+        setTimeout(message,4000);
+      }
+      
+      function message(){
+        var element=document.getElementById("helptext");
+        element.innerHTML="You have prayed. Your purpose in life is now fulfilled. Go back.";
+        element.style.display="block";
+        element.style.fontSize="1vw";
+        element.style.marginBottom="-0.5vw";
+      }
+      
+      function paint2(){
+        var ctx=document.getElementById("celebrate").getContext("2d");
+        ctx.fillStyle="rgba(0,0,0,"+fade+")";
+        ctx.fillRect(0,0,window.innerWidth,window.innerHeight);
+        for (var i=0;i<xPos2.length;i++){
+          var rot=i%(360/points)*Math.PI/18;
+          if (stps[i]>0){
+            ctx.fillStyle="rgb("+fireCols[i*3]+","+fireCols[i*3+1]+","+fireCols[i*3+2]+")";
+            for (var n=0;n<pointFld[i];n++){
+              ctx.beginPath();
+              ctx.arc(xPos2[i]+Math.cos(n*2*Math.PI/pointFld[i]+rot+sine[i]*Math.sin(Math.pow((stepNo[i]-stps[i])+1.45,3)/100)*(-1/stepNo[i]*(stepNo[i]-stps[i])+1))*(stepNo[i]-stps[i])*5,yPos2[i]+Math.sin(n*2*Math.PI/pointFld[i]+rot+sine[i]*Math.sin(Math.pow((stepNo[i]-stps[i])+1.45,3)/100)*(-1/stepNo[i]*(stepNo[i]-stps[i])+1))*(stepNo[i]-stps[i])*5,stps[i],0,2*Math.PI);
+              ctx.fill();
+            }
+            stps[i]--;
+          }
+        }
+        counter++;
+        if (counter%10==0){
+          setPos();
+        }
+      }
+      
+      function setPos(){
+        xPos2.push(Math.random()*window.innerWidth);
+        yPos2.push(Math.random()*window.innerHeight);
+        fireCols.push(Math.floor(Math.random()*155+100),Math.floor(Math.random()*155+100),Math.floor(Math.random()*155+100));
+        
+        var tmp=Math.random()*size*0.5+0.5*size;
+        stepNo.push(tmp);
+        stps.push(tmp);
+        pointFld.push(Math.floor(Math.random()*(points+1)+1));
+        sine.push(sinusoid);
+      }
+    </script>
+  </body>
+</html>

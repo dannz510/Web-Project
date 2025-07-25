@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,700" rel="stylesheet" type="text/css">
+    <title>Bézier - Dannz</title>
+    <link rel="icon" href="home.png">
+    <script src=jQuery.js></script>
+    <style>
+      body{
+        background-color:#eee;
+        margin:0;
+        overflow:hidden;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;    
+      }
+      
+      #canvas,body,html{
+        touch-action: none;
+        -webkit-user-drag: none;
+        -moz-user-drag: none;
+        -ie-user-drag: none;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        -moz-tap-highlight-color: rgba(0, 0, 0, 0);
+      }
+      
+      #infobtn{
+        display: block;
+        position: fixed;
+        width: 40px;
+        height: 40px;
+        border: 3px solid white;
+        border-radius: 30px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        top: 10px;
+        right: 10px;
+        background-color: #bbb;
+        font-family: monospace;
+        color: white;
+        font-size: 50px;
+        font-weight: bold;
+        text-align: center;
+        overflow: hidden;
+        cursor: pointer;
+        pointer-events: auto;
+        z-index: 100;
+      }
+      
+      #infobtn:hover{
+        background-color:#999;
+        border-color:#eee;
+        color:#eee;
+      }
+      
+      #menubar{
+        display:block;
+        position:fixed;
+        width:70px;
+        min-height:70px;
+        top:0;
+        left:0;
+        background-color:#666;
+        transition:margin-top 500ms;
+      }
+      
+      .btn{
+        display:block;
+        position:relative;
+        width:50px;
+        height:50px;
+        margin-top:10px;
+        margin-left:10px;
+        background-color:#ccc;
+        background-image:url(http://picturelements.github.io/images/btnSprite.png);
+        border-radius:5px;
+        transition:width 200ms;
+        overflow:hidden;
+        cursor:pointer;
+        z-index:10;
+      }
+      
+      .btn #pointsin{
+        display:block;
+        position:absolute;
+        width:50px;
+        height:50px;
+        border:none;
+        background-color:transparent;
+        font-family:Roboto,Arial,sans-serif;
+        font-weight:700;
+        font-size:25px;
+        color:#3f3f3f;
+        line-height:50px;
+        text-align:center;
+        pointer-events:none;
+      }
+      
+      #inputbtn{
+        display:block;
+        position:absolute;
+        top:0;
+        left:0;
+        width:50px;
+        height:50px;
+        background-color:#bbb;
+        font-family:Roboto,Arial,sans-serif;
+        font-weight:700;
+        font-size:25px;
+        color:#3f3f3f;
+        line-height:50px;
+        border-left:2px solid #888;
+        text-align:center;
+        z-index:20;
+      }
+      
+      #inputbtn:hover,.btn:hover{
+        background-color:#aaa;
+      }
+      
+      #nub{
+        display:block;
+        position:relative;
+        width:70px;
+        height:30px;
+        margin-top:10px;
+        background-color:#444;
+        color:white;
+        font-size:40px;
+        line-height:30px;
+        text-align:center;
+        cursor:pointer;
+      }
+      
+      #desc{
+        display:block;
+        position:fixed;
+        width:100%;
+        bottom:0;
+        font-family:Roboto,Arial,sans-serif;
+        text-align:center;
+        font-size:1.2vw;
+        pointer-events:none;
+      }
+      
+      #overlay{
+        display: none;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.8);
+        z-index: 1000;
+      }
+      
+      #sharecontainer,#infocontainer{
+        display: none;
+        position: fixed;
+        width: 55%;
+        left: 22.5%;
+        height: 10vw;
+        top: 50%;
+        margin-top: -5vw;
+        background-color: white;
+        border-radius: 0.3vw;
+        font-family: Roboto,Arial,sans-serif;
+        font-weight: 700;
+        font-size: 2vw;
+        text-align: center;
+        line-height: 5.5vw;
+      }
+      
+      #infocontainer{
+        width:70%;
+        left:15%;
+        height:80%;
+        top:10%;
+        margin-top:0;
+        -webkit-user-select: auto;
+        -moz-user-select: auto;
+        -ie-user-select: auto;
+      }
+      
+      #inner{
+        display:block;
+        position:absolute;
+        font-family:inherit;
+        width:calc(100% - 6vw);
+        height:calc(100% - 6vw);
+        top:3vw;
+        left:3vw;
+        background-color:#eee;
+        overflow-x:hidden;
+        overflow-y:scroll;
+      }
+      
+      #inner h,#inner h2{
+        font-family:inherit;
+        font-size:2vw;
+        font-weight:700;
+      }
+      
+      #inner h2{
+        border-top: 1px solid #ddd;
+        width: 90%;
+        margin-left: 5%;
+        margin-top:3vw;
+      }
+      
+      #inner p{
+        display: block;
+        position: relative;
+        width: 97%;
+        left: 1.5%;
+        font-size: 1.2vw;
+        font-weight: 300;
+        line-height: 1.3vw;
+        text-align: left;
+      }
+      
+      #bezierdisplay{
+        display: block;
+        position: relative;
+        width: 95%;
+        left: 2.5%;
+        height: 7vw;
+        background-color: #ddd;
+        margin-bottom: 1vw;
+      }
+      
+      #bezierdisplay p{
+        display:block;
+        position:absolute;
+        font-family:monospace;
+        font-size:1.5vw;
+        color:#777;
+        bottom:0.5vw;
+        left:0.5vw;
+        text-align:left;
+        margin-bottom:0;
+      }
+      
+      #sliderbar{
+        display:block;
+        position:absolute;
+        width:90%;
+        height:0.5vw;
+        left:5%;
+        top:2.5vw;
+        margin-top:-0.25vw;
+        background-color:#555;
+      }
+      
+      #slider{
+        display: block;
+        position: absolute;
+        width: 2vw;
+        height: 2vw;
+        border-radius: 1vw;
+        background-color: #606;
+        left: 5%;
+        top: 2.5vw;
+        margin-top: -1vw;
+        margin-left: -1vw;
+      }
+      
+      #bezimages,#beziergif{
+        display: block;
+        position: relative;
+        width: 100%;
+        height: 20vw;
+        background-image: url(images/chromeBez.png);
+        background-size: contain;
+        background-repeat: no-repeat;
+      }
+      
+      #beziergif{
+        float:right;
+        width:25%;
+        margin-top:-20vw;
+        background-image:url(images/bezierMove.gif);
+      }
+      
+      #overlay #urlout{
+        display: block;
+        position: absolute;
+        width: 90%;
+        height: 2vw;
+        font-family: Roboto,Arial,sans-serif;
+        font-size: 1.2vw;
+        font-weight: 700;
+        left: 5%;
+        top: 55%;
+      }
+      
+      #closebtn{
+        display: block;
+        position: absolute;
+        font-size: 1.3vw;
+        color: #555;
+        font-weight: 300;
+        right: 0.7vw;
+        top: 0.7vw;
+        line-height: 1.5vw;
+        cursor: pointer;
+      }
+      
+      @keyframes oscillate{
+        to{left:95%;}
+      }
+    </style>
+    <script>
+      /*Lots and lots of global variables*/
+      var nos="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      var ptsX=[],ptsY=[];
+      var defaultNo=4,hoverId=-1;  //-1=no hover
+      var pressed=0,step=0;
+      var diff=0.002,perc=diff,points=1/diff;
+      var resultX,resultY,prevX=0,prevY=0,prevWidth,prevHeight,tapX=-100,tapY=-100;
+      var alreadyLoaded=0;
+      var thread;
+      var ctx;
+      
+      //Button-related variables
+      var paused=0;
+      var speed=1;
+      var lines=0;
+      var collapsed=0,collapsed2=1;
+      
+      function init(){
+        ctx=document.getElementById("canvas").getContext("2d")
+        basicSetup();
+        var offset=0.1,tot=1-offset*2;
+        var top=(1/3*tot/(defaultNo-1))*window.innerWidth;
+        if (top>window.innerHeight/3){top=window.innerHeight/3;}
+        if (window.location.href.endsWith("github.io/bezier")||alreadyLoaded==1){
+          for (i=0;i<defaultNo;i++){
+            ptsX.push((offset+(tot/(defaultNo-1))*i)*window.innerWidth);
+            ptsY.push(window.innerHeight/2-top+i%2*top*2);
+          }
+        }else{
+          defaultNo=0;
+          var inUrl=window.location.href;
+          var foundEqual=0,at=0,register=1;
+          var tmpString="",tmpSettings;
+          for (a=0;a<inUrl.length;a++){
+            if (inUrl.charAt(a)=='='){
+              foundEqual++;
+              register=1;
+              if (foundEqual==3){prevWidth=parseInt(tmpString); tmpString=""}
+              else if (foundEqual==4){prevHeight=parseInt(tmpString); tmpString=""}
+            }else if(inUrl.charAt(a)=='&'){
+              register=0;
+            }else if(foundEqual==1&&register==1){
+              ptsX.push(toInt(inUrl.charAt(a))*62+toInt(inUrl.charAt(a+1)));
+              ptsY.push(toInt(inUrl.charAt(a+2))*62+toInt(inUrl.charAt(a+3)));
+              a+=3;
+              defaultNo++;
+            }else if(foundEqual>=2&&register==1){
+              tmpString+=inUrl.charAt(a);
+            }
+          }
+          tmpSettings=tmpString;  //mostly for clarity...
+          paused=parseInt(tmpSettings.charAt(0));
+          lines=parseInt(tmpSettings.charAt(1));
+          speed=parseInt(tmpSettings.charAt(2))+2;  //2 - modulo makes it -1
+          paused=Math.abs(paused-1);
+          pause();
+          setSpeed();
+          console.log("width: "+prevWidth+", height:"+prevHeight);
+          if (prevWidth/prevHeight<window.innerWidth/window.innerHeight){
+            var scale=window.innerHeight/prevHeight;
+            var padding=(window.innerWidth-prevWidth*scale)/2;
+            for (a=0;a<ptsX.length;a++){
+              ptsX[a]=Math.floor(padding+ptsX[a]*scale);
+              ptsY[a]=Math.floor(ptsY[a]*scale);
+            }
+          }else{
+            var scale=window.innerWidth/prevWidth;
+            var padding=(window.innerHeight-prevHeight*scale)/2;
+            for (a=0;a<ptsX.length;a++){
+              ptsX[a]=Math.floor(ptsX[a]*scale);
+              ptsY[a]=Math.floor(padding+ptsY[a]*scale);
+            }
+          }
+        }
+        paint();
+        thread=setInterval(setStep,25);
+        document.getElementById("pointsin").value=defaultNo;
+        alreadyLoaded=1;
+      }
+      
+      $("html").on("touchmove", function(e){
+        if (hoverId>-1){
+          var touch=e.originalEvent.touches[0];
+          ptsX[hoverId]=touch.pageX;
+          ptsY[hoverId]=touch.pageY;
+        }
+        paint();
+      });
+      
+      /*$("html").on("tap", function(e){
+        var touch=e.originalEvent.touches[0];
+        tapX=touch.pageX;
+        tapY=touch.pageY;
+        press(1,1);
+        paint();
+      });*/
+      
+      $("html").on("taphold", function(e){
+        var touch=e.originalEvent.touches[0];
+        tapX=touch.pageX;
+        tapY=touch.pageY;
+        press(1,1);
+      });
+      
+      $("html").on("touchstart", function(e){
+        var touch=e.originalEvent.touches[0];
+        hoverId=-1;
+        for (b=0;b<ptsX.length;b++){
+          if (Math.hypot(touch.pageX-ptsX[b],touch.pageY-ptsY[b])<20){
+            hoverId=b;
+            break;
+          }
+        }
+        paint();
+      });
+      
+      function toInt(inChar){
+        var converted=inChar.charCodeAt(0);
+        if (converted>=97){
+          return converted-87;
+        }else if (converted>=65){
+          return converted-29;
+        }else{
+          return converted-48;
+        }
+      }
+      
+      function stepper(inId){
+        perc+=inId*diff;
+        step=1;
+        paint();
+      }
+      
+      function basicSetup(){
+        var canvas=document.getElementById("canvas");
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        canvas.style.width=window.innerWidth;
+        canvas.style.height=window.innerHeight;
+        paint();
+      }
+      
+      window.onresize = function(event) {
+        basicSetup();
+      };
+      
+      function press(inId,type){
+        pressed=inId;
+        if (inId==1){
+          var tmX,tmY;
+          if (type==0){
+            tmX=event.clientX;
+            tmY=event.clientY;
+          }else{
+            tmX=tapX;
+            tmY=tapY;
+            prevX=tapX;
+            prevY=tapY;
+            /*if (Math.hypot(prevX-tmX,prevY-tmpY)<50){
+              prevX=tmX;
+              prevY=tmY;
+            }*/
+          }
+          if (prevX==tmX&&prevY==tmY){
+            var onpoint=-1;
+            for (a=0;a<ptsX.length;a++){
+              if (Math.hypot(tmX-ptsX[a],tmY-ptsY[a])<8){
+                onpoint=a;
+                break;
+              }
+            }
+            if (onpoint==-1&&defaultNo<100){
+              var minLength=0,midLength=0,maxLength=0,offset=10;
+              var placeAt=-1;
+              for (a=0;a<ptsX.length-1;a++){
+                minLength=Math.hypot(ptsY[a+1]-ptsY[a],ptsX[a+1]-ptsX[a]);
+                maxLength=Math.sqrt(offset*offset+minLength*minLength)+offset;
+                midLength=Math.hypot(tmY-ptsY[a],tmX-ptsX[a])+Math.hypot(ptsY[a+1]-tmY,ptsX[a+1]-tmX);
+                if (midLength>=minLength&&midLength<=maxLength){
+                  placeAt=a+1;
+                  break;
+                }
+              }
+              if (placeAt==-1){
+                if (Math.hypot(ptsY[0]-tmY,ptsX[0]-tmX)<Math.hypot(ptsY[ptsX.length-1]-tmY,ptsX[ptsX.length-1]-tmX)){
+                  ptsX.splice(0,0,prevX);
+                  ptsY.splice(0,0,prevY);
+                }else{
+                  ptsX.push(tmX);
+                  ptsY.push(tmY);
+                }
+              }else{
+                ptsX.splice(placeAt,0,prevX);
+                ptsY.splice(placeAt,0,prevY);
+              }
+              defaultNo++;
+              tmX=-100;
+            }else if(defaultNo>2){
+              ptsX.splice(onpoint,1);
+              ptsY.splice(onpoint,1);
+              defaultNo--;
+              tmX=-100;
+            }
+            document.getElementById("pointsin").value=defaultNo;
+          }
+          prevX=tmX;
+          prevY=tmY;
+          paint();
+        }
+      }
+      
+      function setHover(e){
+        if (pressed==0){
+          hoverId=-1;
+          for (i=0;i<ptsX.length;i++){
+            if (Math.hypot(e.clientX-ptsX[i],e.clientY-ptsY[i])<8){
+              hoverId=i;
+              break;
+            }
+          }
+          if (hoverId>-1){
+            document.getElementById("canvas").style.cursor="pointer";
+          }else{
+            document.getElementById("canvas").style.cursor="default";
+          }
+        }else if(hoverId>-1){
+          ptsX[hoverId]=e.clientX;
+          ptsY[hoverId]=e.clientY;
+          paint();
+        }
+      }
+      
+      function setStep(){
+        step=1;
+        if (paused==0){paint();}
+      }
+      
+      function paint(){
+        var w=window.width,h=window.height;
+        ctx.clearRect(0,0,10000,10000);
+        if (lines<2||lines==3){
+          ctx.beginPath();
+          ctx.lineWidth=2;
+          ctx.strokeStyle="#777";
+          if (lines==3){
+            ctx.strokeStyle="#bbb";
+            ctx.lineWidth=1;
+          }
+          ctx.moveTo(ptsX[0],ptsY[0]);
+          for (i=1;i<ptsX.length;i++){
+            ctx.lineTo(ptsX[i],ptsY[i]);
+          }
+          ctx.stroke();
+        }
+        calcBezier();
+        step=0;
+        
+        ctx.lineWidth=3;
+        ctx.strokeStyle="red";
+        ctx.beginPath();
+        ctx.moveTo(ptsX[0],ptsY[0]);
+        for (a=0;a<points;a++){
+          if (a==Math.floor(perc*points)){
+            ctx.lineTo(resultX,resultY);
+            ctx.stroke();
+            ctx.strokeStyle="rgba(255,0,0,0.25)";
+            ctx.beginPath();
+          }
+          var tmpX=[],tmpY=[];
+          for (b=0;b<ptsX.length;b++){
+            tmpX.push(ptsX[b]);
+            tmpY.push(ptsY[b]);
+          }
+          for (m=tmpX.length-1;m>1;m--){
+            for (o=0;o<m;o++){
+              var tX=tmpX[o]+(tmpX[o+1]-tmpX[o])*(a/points);
+              var tY=tmpY[o]+(tmpY[o+1]-tmpY[o])*(a/points);
+              tmpX[o]=tX;
+              tmpY[o]=tY;
+            }
+          }
+          ctx.lineTo(tmpX[0]+(tmpX[1]-tmpX[0])*(a/points),tmpY[0]+(tmpY[1]-tmpY[0])*(a/points));
+        }
+        ctx.lineTo(ptsX[ptsX.length-1],ptsY[ptsX.length-1]);
+        ctx.stroke();
+        if (lines<3){
+          for (i=0;i<ptsX.length;i++){
+            ctx.fillStyle="#606";
+            ctx.beginPath();
+            ctx.arc(ptsX[i],ptsY[i],5,0,2*Math.PI);
+            ctx.fill();
+          }
+        }
+        ctx.fillStyle="red";
+        ctx.beginPath();
+        ctx.arc(resultX,resultY,5,0,2*Math.PI);
+        ctx.fill();
+      }
+      
+      function calcBezier(){
+        var tmpX=[],tmpY=[];
+        for (m=0;m<ptsX.length;m++){
+          tmpX.push(ptsX[m]);
+          tmpY.push(ptsY[m]);
+        }
+        if (step==1&&paused==0){perc+=diff;}
+        ctx.fillStyle="#222";
+        ctx.strokeStyle="#bbb";
+        ctx.lineWidth=1;
+        for (m=tmpX.length-1;m>1;m--){
+          for (o=0;o<m;o++){
+            var tX=tmpX[o]+(tmpX[o+1]-tmpX[o])*perc;
+            var tY=tmpY[o]+(tmpY[o+1]-tmpY[o])*perc;
+            //ctx.beginPath();
+            //ctx.arc(tX,tY,3,0,2*Math.PI);
+            //ctx.fill();
+            tmpX[o]=tX;
+            tmpY[o]=tY;
+            if (lines<1||lines==3){
+              if (o==0){
+                ctx.beginPath();
+                ctx.moveTo(tX,tY);
+              }else{
+                ctx.lineTo(tX,tY);
+              }
+            }
+          }
+          if (lines<1||lines==3){ctx.stroke();}
+        }
+        resultX=tmpX[0]+(tmpX[1]-tmpX[0])*perc;
+        resultY=tmpY[0]+(tmpY[1]-tmpY[0])*perc;
+        /*for (n=0;n<ptsX.length-1;n++){
+          ctx.beginPath();
+          ctx.fillStyle="#222";
+          //ctx.arc(ptsX[n]+(ptsX[n+1]-ptsX[n])*perc,ptsY[n]+(ptsY[n+1]-ptsY[n])*perc,3,0,2*Math.PI);
+          ctx.fill();
+        }*/
+        if (perc>1||perc<0){
+          diff*=-1;
+          if (perc>1){perc=1;}
+          else{perc=0;}
+        }
+      }
+      
+      function pause(){
+        paused=Math.abs(paused-1);
+        var btns=document.getElementsByClassName("btn");
+        btns[0].style.backgroundPositionX=""+(-50*paused)+"px";
+        if (paused==1){
+          btns[1].style.height="50px";
+          btns[2].style.height="50px";
+          btns[1].style.marginTop="10px";
+          btns[2].style.marginTop="10px";
+        }else{
+          btns[1].style.height="0";
+          btns[2].style.height="0";
+          btns[1].style.marginTop="0";
+          btns[2].style.marginTop="0";
+        }
+      }
+      
+      function toggleLines(){
+        lines++;
+        if (lines==5){lines=0;}
+        paint();
+      }
+      
+      function setSpeed(){
+        speed++;
+        var rev=0;
+        if (diff<0){rev=1;}
+        if (speed%3==0){
+          diff=0.0005;
+        }else if (speed%3==1){
+          diff=0.002;
+        }else{
+          diff=0.01;
+        }
+        if (rev==1){diff*=-1;}
+        document.getElementsByClassName("btn")[5].style.backgroundPositionX=""+(-50*(speed%3))+"px";
+      }
+      
+      function slide(offs){
+        collapsed=Math.abs(collapsed-1);
+        if (paused==1){
+          document.getElementById("menubar").style.marginTop=""+(-430*collapsed+offs)+"px";
+        }else{
+          document.getElementById("menubar").style.marginTop=""+(-310*collapsed+offs)+"px";
+        }
+        document.getElementsByClassName("btn")[6].style.width="50px";
+      }
+      
+      function setPoints(x){
+        if (collapsed2==1){
+          if (collapsed==0){slide(70);}
+          x.style.width="154px";
+          var inp=document.getElementById("pointsin");
+          inp.style.pointerEvents="auto";
+          inp.style.backgroundColor="white";
+          inp.focus();
+        }else{
+          x.style.width="50px";
+          collapsed2=1;
+        }
+      }
+      
+      function confirm(){
+        collapsed2=0;
+        ptsX=[];
+        ptsY=[];
+        val=document.getElementById("pointsin").value;
+        if (val<2){
+          defaultNo=2;
+          val=2;
+        }else if (val>100){
+          defaultNo=100;
+          val=100;
+        }else{
+          defaultNo=val; 
+        }
+        clearInterval(thread);
+        var inp=document.getElementById("pointsin");
+        inp.style.pointerEvents="none";
+        inp.style.backgroundColor="transparent";
+        init();
+        slide(0);
+      }
+      
+      function dostuff(e){
+        var key=e.keyCode;
+        if (key==13){
+          confirm();
+          setPoints(document.getElementsByClassName("btn")[6]);
+          collapsed=1;
+          slide(0);
+        }else if(key==27){
+          collapse();
+          setPoints(document.getElementsByClassName("btn")[6]);
+          collapsed=1;
+          slide(0);
+        }
+      }
+      
+      function collapse(){
+        document.getElementsByClassName("btn")[6].style.width="50px";
+        var inp=document.getElementById("pointsin");
+        inp.value=defaultNo;
+        inp.style.pointerEvents="none";
+        inp.style.backgroundColor="transparent";
+        collapsed2=0;
+        slide(0);
+      }
+      
+      function createUrl(){
+        var encoded="";
+        for (a=0;a<ptsX.length;a++){
+          encoded+=""+intToChar(ptsX[a]/62)+""+intToChar(ptsX[a]%62)+""+intToChar(ptsY[a]/62)+""+intToChar(ptsY[a]%62)+"";
+        }
+        document.getElementById("urlout").value="http://picturelements.github.io/bezier?id="+encoded+"&w="+window.innerWidth+"&h="+window.innerHeight+"&s="+paused+""+lines+""+(speed%3);
+        document.getElementById("overlay").style.display="block";
+        document.getElementById("sharecontainer").style.display="block";
+        document.getElementById("urlout").select();
+      }
+      
+      function displayInfo(){
+        document.getElementById("overlay").style.display="block";
+        document.getElementById("infocontainer").style.display="block";
+      }
+      
+      function closePopups(inId){
+        document.getElementById("overlay").style.display="none";
+        if (inId==0){
+          document.getElementById("sharecontainer").style.display="none";
+        }else{
+          document.getElementById("infocontainer").style.display="none";
+        }
+      }
+      
+      function intToChar(no){
+        return nos.charAt(no);
+      }
+    </script>
+    <style>
+      #canvascontainer{
+        display:block;
+        position:relative;
+        width:95%;
+        left:2.5%;
+        height:25vw;
+        background-color:#ccc;
+        margin-bottom:3vw;
+      }
+      
+      #testcanvas{
+        display:block;
+        position:absolute;
+        width:100%;
+        height:100%;
+      }
+      
+      #testbtn{
+        display: inline-block;
+        position: absolute;
+        bottom: 1vw;
+        line-height: 1.5vw;
+        right: 1vw;
+        font-family: monospace;
+        font-size: 1.5vw;
+        color: white;
+        background-color: #606;
+        padding: 1vw;
+        border-radius: 0.25vw;
+        cursor: pointer;
+      }
+      
+      #testbtn:hover{
+        background-color:#505; 
+      }
+    </style>
+    <script>
+      //Test Bézier script
+      
+    </script>
+  </head>
+  <body id="body" onload=init()>
+    <div id="infobtn" onclick=displayInfo()>i</div>
+    <div id="desc">Cick and drag points to modify the curve. Double click to add/remove points; click on thick gray line to add point between two points.</div>
+    <canvas id="canvas" style="position:absolute" onmousedown=press(1,0) onmousemove=setHover(event) onmouseup=press(0,0)></canvas>
+    <div id="menubar">
+      <div class="btn" onclick=pause()></div>
+      <div class="btn" style="background-position:2px -50px; height:0; transition:200ms; margin-top:0;" onclick=stepper(2)></div>
+      <div class="btn" style="background-position:0 -100px; height:0; transition:200ms; margin-top:0;" onclick=stepper(-2)></div>
+      <div class="btn" title="get shareable URL" style="background-position:2px -250px" onclick=createUrl()></div>
+      <div class="btn" style="background-position:0 -150px" onclick=toggleLines() title="hide/display points and lines"></div>
+      <div class="btn" title="change animation speed" style="background-position:-50px -200px" onclick=setSpeed()></div>
+      <div class="btn" title="edit points" style="background-image:none; transition:width 500ms" onclick=setPoints(this)>
+        <input id="pointsin" onkeydown=dostuff(event)></input>
+        <div id="inputbtn" title="set points" style="margin-left:50px" onclick=confirm()>OK</div>
+        <div id="inputbtn" title="cancel" style="margin-left:102px" onclick=collapse()>C</div>
+      </div>
+      <div id="nub" onclick=slide(0)>=</div>
+    </div>
+    <div id="overlay">
+      <div id="sharecontainer">
+        Share your Bézier curve!
+        <div id="closebtn" onclick=closePopups(0)>[close]</div>
+        <input id="urlout" spellcheck=false></input>
+      </div>
+      <div id="infocontainer">
+        <div id="closebtn" onclick=closePopups(1)>[close]</div>
+        <div id="inner">
+          <h>What are Bézier curves?</h>
+          <p>Bézier curves are used in many applications. They were first used to plot curves by Pierre Bézier in 1962, using them to model automotive bodies. In design, these curves are often used to greate so-called vector graphics; images that can be scaled without loss in quality, as opposed by raster graphics where pixels become visible if the image is scaled up.</p>
+          <p>A second application can be found in your browser. Sure, many browsers are capable of creating and displaying SVG (Scalable Vector Graphics) images, but the curves are more basic and subtle than that. Almost every animation/transition utilizes a Bézier curve for timing. You may want your animation to start slow, then accelerate, then slow down. You bet there's a Bézier curve for that! Below are some examples of Bézier curve animations and their CSS code:</p>
+          <div id="bezierdisplay">
+            <div id="sliderbar"></div>
+            <div id="slider" style="animation: oscillate 4s cubic-bezier(1,1,0,0) infinite"></div>
+            <p>cubic-bezier(1, 1, 0, 0)</p>
+          </div>
+          <div id="bezierdisplay">
+            <div id="sliderbar"></div>
+            <div id="slider" style="animation: oscillate 4s cubic-bezier(0.54, 0.01, 0.46, 0.99) infinite"></div>
+            <p>cubic-bezier(0.54, 0.01, 0.46, 0.99)</p>
+          </div>
+          <div id="bezierdisplay">
+            <div id="sliderbar"></div>
+            <div id="slider" style="animation: oscillate 4s cubic-bezier(0.43, 1.63, 0.71, -0.59) infinite"></div>
+            <p>cubic-bezier(0.43, 1.63, 0.71, -0.59)</p>
+          </div>
+          <p>Here are the functions (Bézier curves) describing these three animations:</p>
+          <div id="bezimages"></div>
+          <div id="beziergif"></div>
+          <p>These are just a few of many possible Bézier animation curves. In the figure to the right, we see how it all works. On the x-axis, time, the value of x is defined as such: The leftmost side marks the start of the animation, and the rightmost the end, with x changing value smoothly during this time. The value of y (the value of the curve at a certain value of x) specifies how far the animation has run. In fact, the gray lines in the three animations above are y axes and the dots mark exactly how far the animations have run. In curve 1, we see that the value of y is always the same as x, and the dot moves at a constant rate, but in curve 2 it moves a little at the start, then speeds up and slows down as the value of y changes less and less per every new, higher, value x.</p>
+          <h2>How are these curves constructed?</h2>
+          <p>They might seem difficult to plot, but Bézier curves work on fairly simple principles. It's all about dividing lines and placing points. Try this interactive little thing to understand how it all works:</p>
+          <div id="canvascontainer">
+            <canvas id="testcanvas"></canvas>
+            <div id="testbtn">Add lines</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</menu>
+</html>

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Smoke - Dannz</title>
+    <link rel="icon" href="home.png">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,700" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="slider.css">
+    <style>
+      body{
+        background-color:white;
+        margin:0;
+      }
+      
+      canvas{
+        display:block;
+        position:fixed;
+        width:100%;
+        height:100%;
+      }
+
+      #overDrag,#overDragging{
+        display:block;
+        position:fixed;
+        width:100%;
+        height:100%;
+      }
+
+      #overDrag{
+        cursor:-webkit-grab;
+        cursor:-moz-grab;
+        cursor:-ie-grab;
+      }
+      
+      #overDragging{
+        cursor:-webkit-grabbing;
+        cursor:-moz-grabbing;
+        cursor:-ie-grabbing;
+      }
+      
+      input{
+        display:block;
+        position:fixed;
+        width:20vw;
+      }
+      
+      #rotatestep{
+        display: block;
+        position: fixed;
+        width: 3vw;
+        height: 3vw;
+        top: 3vw;
+        right: 3vw;
+        background-color:#ddd;
+      }
+      
+      #stepsW,#stepsH{
+        position:absolute;
+        background-color:#ccc;
+        width:3vw;
+        height:1.2vw;
+        cursor:pointer;
+      }
+      
+      #stepsH{
+        width:1.2vw;
+        height:3vw
+      }
+      
+      .stepsq{
+        position:absolute;
+        background-color:#ccc;
+        width:1.2vw;
+        height:1.2vw;
+        cursor:pointer;
+      }
+    </style>
+    <script>
+      var coords=[-1,1,-1,1,1,-1,1,1,1,-1,1,1,-1,-1,-1,1,-1,-1,1,-1,1,-1,-1,1],angles=[-45,45,135,225,-45,45,135,225],tmpCoords=[];
+      //          |      |      |     |      |        |       |      |       |
+      var xC=window.innerWidth/2,yC=window.innerHeight/2;
+      var side=window.innerWidth/6;
+      var increment=0.0025,thread,perspective=0.2;
+      var dX,prevX;   //cursor stuff
+      var ctx;
+      var dragging=false,simulation=true;
+      var particles=5000,particleCoords=[],totRot=0,steps=0;
+      var bounds=1,speed=500;
+      
+      function init(){
+        var canvas=document.getElementById("3dcanvas")
+        ctx=canvas.getContext("2d");
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        for (var i=0;i<8;i++){
+          /*var tmpAng=Math.atan(coords[i*3+2]/coords[i*3]);
+          if (coords[i*3+1]<0){tmpAng+=Math.PI;}
+          angles.push(tmpAng);
+          console.log(i+": "+(tmpAng/Math.PI)*180);*/
+          angles[i]*=(Math.PI/180);
+          tmpCoords.push(0,0);
+        }
+        for (var a=0;a<particles;a++){
+          particleCoords.push(0,0,0);
+        }
+        thread=setInterval(rotate,25);
+      }
+      
+      function rotate(){
+        if (!dragging){
+          for (var i=0;i<8;i++){
+            angles[i]+=increment;
+            var tmpZ=1+(Math.sin(angles[i]))*perspective;
+            tmpCoords[i*2]=Math.cos(angles[i])*Math.sqrt(2*side*side)*tmpZ;
+            tmpCoords[i*2+1]=side*coords[i*3+1]*tmpZ;
+          }
+          totRot+=increment;
+          if (steps>0){
+            steps--;
+            if (steps==0){increment=0;}
+          }
+        }
+        simulate();
+      }
+      
+      function rotateStep(step){
+        for (var i=0;i<8;i++){
+          angles[i]+=step;
+          var tmpZ=1+(Math.sin(angles[i]))*perspective;
+          tmpCoords[i*2]=Math.cos(angles[i])*Math.sqrt(2*side*side)*tmpZ;
+          tmpCoords[i*2+1]=side*coords[i*3+1]*tmpZ;
+        }
+        totRot+=step;
+        paint();
+      }
+      
+      function simulate(){
+        if (simulation){
+          for (var i=0;i<particles;i++){
+            particleCoords[i*3]+=((Math.random()*10-5)/speed);
+            if (Math.abs(particleCoords[i*3])>bounds){particleCoords[i*3]=Math.sign(particleCoords[i*3])*bounds;}
+            particleCoords[i*3+1]+=((Math.random()*10-5)/speed);
+            if (Math.abs(particleCoords[i*3+1])>bounds){particleCoords[i*3+1]=Math.sign(particleCoords[i*3+1])*bounds;}
+            particleCoords[i*3+2]+=((Math.random()*10-5)/speed);
+            if (Math.abs(particleCoords[i*3+2])>bounds){particleCoords[i*3+2]=Math.sign(particleCoords[i*3+2])*bounds;}
+          }
+        }
+        if (simulation||increment!=0){paint();}
+      }
+      
+      function setCursor(inID){
+        var cnv=document.getElementById("3dcanvas").style;
+        if (inID==1){
+          prevX=event.clientX;
+          dX=0;
+          document.getElementById("overDrag").id="overDragging";
+          dragging=true;
+        }else{
+          increment=Math.floor(dX/2)*Math.PI/180;   //2x slower...
+          document.getElementById("overDragging").id="overDrag";
+          dragging=false;
+        }
+      }
+      
+      function drag(){
+        if (dragging){
+          dX=prevX-event.clientX;
+          prevX=event.clientX;
+          rotateStep(dX*Math.PI/180);
+        }
+      }
+      
+      function playpause(){
+        if (event.keyCode==32){
+          simulation=!simulation;
+        }
+      }
+      
+      function setPerspective(){
+        perspective=document.getElementById("perspective").value/200;
+        paint();
+      }
+      
+      function setSteps(inAng){
+        var modAng=(totRot%(Math.PI*2)+Math.PI*2)%(Math.PI*2);
+        var dir=0;
+        var path=inAng-modAng;
+        /*if (Math.abs(path)>Math.PI){
+          path=2*Math.PI-Math.abs(path);
+          if (modAng>Math.PI){path*=-1;}
+        }*/
+        increment=path/20;
+        steps=20;
+      }
+      
+      function paint(){
+        var btns=document.getElementsByClassName("rotbtn");
+        var btns2=document.getElementsByClassName("stepsq");
+        var modAng=(totRot%(Math.PI*2)+Math.PI*2)%(Math.PI*2);
+        for (var i=0;i<4;i++){
+          btns[i].style.backgroundColor="#ccc";
+          btns2[i].style.backgroundColor="#ccc";
+        }
+        if (modAng>7/4*Math.PI||modAng<1/4*Math.PI){
+          btns[1].style.backgroundColor="#66f";
+        }else{
+          for (var i=3;i>=1;i--){
+            if (modAng>(-Math.PI/4+(i*Math.PI/2))){
+              btns[(i+1)%4].style.backgroundColor="#66f";
+              break;
+            }else if(Math.abs(modAng-(-Math.PI/4+(i*Math.PI/2)))<0.01){   //0.01=some tolerance
+              btns2[(i+1)%4].style.backgroundColor="#66f";
+              break;
+            }
+          }
+        }
+        ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+        ctx.lineWidth=3;
+        var tmpZ;
+        for (var i=0;i<8;i++){
+          tmpZ=1+(Math.sin(angles[i]))*perspective;
+          ctx.beginPath();
+          ctx.moveTo(tmpCoords[i*2]+xC,tmpCoords[i*2+1]+yC);
+          ctx.lineTo(tmpCoords[Math.floor(i/4)*8+((i+1)%4)*2]+xC,tmpCoords[Math.floor(i/4)*8+((i+1)%4)*2+1]+yC);
+          //ctx.lineTo();
+          ctx.stroke();
+          if (i<4){
+            ctx.beginPath();
+            ctx.moveTo(tmpCoords[i*2]+xC,tmpCoords[i*2+1]+yC);
+            ctx.lineTo(tmpCoords[i*2+8]+xC,tmpCoords[i*2+9]+yC);
+            ctx.stroke();
+          }
+          ctx.beginPath();
+          ctx.arc(tmpCoords[i*2]+xC,tmpCoords[i*2+1]+yC,6*tmpZ,0,2*Math.PI);
+          ctx.fill();
+          //ctx.lineWidth=1;
+        }
+        var ang,r,tX,tY;
+        for (var n=0;n<particles;n++){
+          ang=Math.atan(particleCoords[n*3+2]/particleCoords[n*3]);
+          if (particleCoords[n*3]<0){ang+=Math.PI;}
+          ang+=totRot;
+          r=Math.sqrt(particleCoords[n*3+2]*particleCoords[n*3+2]+particleCoords[n*3]*particleCoords[n*3]);
+          tmpZ=1+Math.sin(ang)*r*perspective;
+          tX=side*Math.cos(ang)*r*tmpZ;
+          tY=side*particleCoords[n*2+1]*tmpZ;
+          ctx.fillRect(tX+xC,tY+yC,3*tmpZ,3*tmpZ);
+          /*if (n>0){
+            ctx.lineTo(tX+xC,tY+yC);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(tX+xC,tY+yC);
+          }else{
+            ctx.beginPath();
+            ctx.moveTo(tX+xC,tY+yC);
+          }*/
+        }
+      }
+    </script>
+  </head>
+  <body onload=init() onkeydown=playpause()>
+    <canvas id="3dcanvas"></canvas>
+    <div id="overDrag" onmousedown=setCursor(1) onmousemove=drag() onmouseup=setCursor(0)></div>
+    <input id="perspective" type="range" min="0" max="100" oninput=setPerspective()></input>
+    <div id="rotatestep">
+      <div id="stepsH" class="rotbtn" style="left:3.2vw" onclick=setSteps(3*Math.PI/2)></div>
+      <div id="stepsW" class="rotbtn" style="top:3.2vw; background-color: #66f;" onclick=setSteps(0)></div>
+      <div id="stepsH" class="rotbtn" style="left:-1.4vw" onclick=setSteps(Math.PI/2)></div>
+      <div id="stepsW" class="rotbtn" style="top:-1.4vw" onclick=setSteps(Math.PI)></div>
+      <div class="stepsq" style="top:3.2vw; left:3.2vw" onclick=setSteps(7*Math.PI/4)></div>
+      <div class="stepsq" style="top:3.2vw; left:-1.4vw" onclick=setSteps(Math.PI/4)></div>
+      <div class="stepsq" style="top:-1.4vw; left:3.2vw" onclick=setSteps(3*Math.PI/4)></div>
+      <div class="stepsq" style="top:-1.4vw; left:-1.4vw" onclick=setSteps(5*Math.PI/4)></div>
+    </div>
+  </body>
+</html>

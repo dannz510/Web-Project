@@ -1,0 +1,30 @@
+{
+  "name": "burger-drum",
+  "version": "1.0.0",
+  "description": "Your web project description",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --config webpack.config.js",
+    "start": "webpack serve --config webpack.config.js",
+    "watch": "webpack --config webpack.config.js --watch"
+  },
+  "keywords": [],
+  "author": "Anh Duc",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.x.x",
+    "@babel/core": "^7.x.x",
+    "@babel/preset-env": "^7.x.x",
+    "@babel/preset-react": "^7.x.x",
+    "babel-loader": "^9.x.x",
+    "webpack": "^5.x.x",
+    "webpack-cli": "^5.x.x",
+    "webpack-dev-server": "^4.x.x"
+  },
+  "dependencies": {
+    "gsap": "^3.6.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "three": "^0.129.0"
+  }
+}

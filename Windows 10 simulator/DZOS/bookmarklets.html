@@ -1,0 +1,599 @@
+<html>
+  <head>
+    <title>Bookmarklets by PicturElements</title>
+    <link rel="icon" href="pelement.png">
+    <link href="https://fonts.googleapis.com/css?family=Quicksand:400,700" rel="stylesheet">
+    <style>
+      body{
+        position:absolute;
+        margin:0;
+        font-family:Quicksand,monospace;
+        width: 100%;
+        min-height:100vh;
+      }
+
+      #header{
+        position: fixed;
+        top:0;
+        display: flex;
+        flex-direction:column;
+        border-bottom: 1px solid #ddd;
+        box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        background: whitesmoke;
+        width: 100%;
+        z-index: 10000;
+        height:6.5em;
+        overflow:hidden;
+        transition:height 300ms;
+      }
+
+      #header.minimized{
+        height:3em;
+      }
+
+      #header.minimized #logowrapper:first-of-type{
+        margin-top:-6.5em;
+      }
+
+      #header > div{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        flex-shrink:0;
+        transition:margin-top 300ms;
+      }
+
+      #logowrapper{
+        height:6.5em;
+      }
+
+      #quicklinks{
+        height:3em;
+      }
+
+      #quicklinks a {
+        padding: 0.25em 0.4em;
+        border-radius: 0.3em;
+        text-decoration: none;
+        color: #6b6bc5;
+      }
+
+      a.selected {
+        background: #6b6bc5;
+        color: white !important;
+      }
+
+      #logo {
+        width: 4.5em;
+        height: 4.5em;
+        background-image: url(home.png);
+        background-size: 100%;
+        margin-right:1em;
+      }
+
+      #main {
+        margin-bottom: 4em;
+      }
+
+      #topcontent {
+        display: flex;
+        position: relative;
+        align-items:flex-start;
+        margin-top: 9em;
+        width: 90%;
+        left: 5%;
+      }
+
+      h1{
+        font-size:225%;
+        color:#272338;
+        margin:0;
+      }
+
+      h2 {
+        color: #6b6bc5;
+        margin-bottom: 0;
+        font-size:110%;
+        padding: 0.3em 0.5em;
+        background: #bcbcff;
+        cursor:pointer;
+        margin-top:1.5em;
+      }
+
+      h3{
+        font-size:80%;
+        margin:0;
+        margin:0.7em 0 0.3em 0;
+        color:#aaa;
+      }
+
+      h4{
+        font-size:130%;
+        margin-top:0;
+        margin-bottom:0.5em;
+      }
+
+      h3:first-of-type {
+        margin-top: 0;
+      }
+
+      h2:after{
+        content:"";
+        display:block;
+        position:absolute;
+        right:0.6em;
+        top:0.5em;
+        border:0.3em solid transparent;
+        border-bottom-color:#6b6bc5;
+      }
+
+      h2[expanded="false"]:after{
+        border-bottom-color:transparent;
+        border-top-color:#6b6bc5;
+        top:0.8em;
+      }
+
+      #contents {
+        background: whitesmoke;
+        white-space: nowrap;
+        padding: 10px;
+        border: 1px solid #ddd;
+      }
+
+      #desc {
+        margin-left: 2em;
+        flex-grow: 1;
+      }
+
+      #desc a{
+        font-weight:bold;
+        text-decoration:none;
+      }
+
+      #contents span {
+        display: inline-block;
+        font-weight: bold;
+        margin-bottom: 0.25em;
+      }
+
+      .contentitem {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        line-height: 1.6em;
+      }
+
+      #contents a {
+        color: #6b6bc5;
+        text-decoration: none;
+        height: 100%;
+      }
+
+      button {
+        background: #bcbcff;
+        color: #42429a;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        margin-left: 1.5em;
+        height: 1.5em;
+        padding: 0 0.5em;
+        line-height: 1em;
+        border-radius: 0.2em;
+        font-family: inherit;
+        font-size: inherit;
+      }
+
+      h3 button {
+        margin-left: 0.5em;
+      }
+
+      .dragbtn {
+        font-size:0;
+      }
+
+      .copygroup {
+        display: inline-block;
+        height: 1.5em;
+      }
+
+      .contentitem .copygroup {
+        font-size: 90%;
+        display: flex;
+        align-items: center;
+      }
+
+      .dragbtn:before {
+        display: inline-block;
+        content: "drag";
+        color: #115a17;
+        font-weight: normal;
+        padding: 0 0.5em;
+        background: #77ec81;
+        height: 1.5em;
+        line-height: 1.5em;
+        border-radius: 0.2em;
+        margin-left: 0.5em;
+        font-size: 0.8rem;
+        text-decoration:none;
+      }
+
+      .contentitem .dragbtn:before {
+        font-size: 0.9rem;
+        margin-left:0.3em;
+      }
+
+      .bookmarklet {
+        display: block;
+        position: relative;
+        width: 90%;
+        left: 5%;
+        box-sizing: border-box;
+      }
+
+      .bookbox {
+        padding: 1em;
+        border: 1px solid #eee;
+        border-top: none;
+        overflow: hidden;
+        background:#fafafa;
+      }
+
+      .bookbox > *{
+        display:block;
+        position:relative;
+      }
+
+      .third {
+        width: 33.33%;
+        float: left;
+        margin-top:0.5em;
+        padding-top: 1em;
+        border-top: 1px solid #e5e5e5;
+        text-align:center;
+      }
+
+      h2[expanded="false"] + .bookbox{
+        height:0;
+        padding:0;
+        margin:0;
+        margin-bottom:-1em;
+        border:none;
+      }
+
+      .bookmarklet:last-of-type .bookbox{
+        margin-bottom:0;
+      }
+
+      textarea{
+        resize:vertical;
+        width:100%;
+        min-height:7em;
+        border:none;
+        outline:none;
+        box-sizing:border-box;
+        border:1px solid #ddd;
+        padding:0.5em;
+        background:#eee;
+        color:#117;
+        margin-top: 0.5em;
+      }
+
+      #footer {
+        position: absolute;
+        width: 100%;
+        text-align: center;
+        height: 4em;
+        line-height: 4em;
+        bottom: 0;
+      }
+
+      #msgwrapper{
+        display:flex;
+        position:fixed;
+        justify-content:center;
+        align-items:flex-start;
+        top:0;
+        width:100%;
+        height:100%;
+        pointer-events:none;
+        z-index:10001;
+      }
+
+      #msg{
+        position:relative;
+        background:white;
+        padding:0.5em 1em;
+        border-radius:0.25em;
+        border:1px solid #ddd;
+        box-shadow:0.3em 0.3em 1em rgba(0,0,0,0.15);
+        margin-top:-3em;
+      }
+
+      #msg.pop{
+        animation:popup 2s alternate 2;
+      }
+
+      @keyframes popup{
+        15%{margin-top:3em;}
+        25%{margin-top:2em;}
+        100%{margin-top:2em;}
+      }
+
+      ::-webkit-scrollbar {
+        background:#eee;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #ccc;
+      }
+
+      ::-webkit-scrollbar-corner {
+        background:#ddd;
+      }
+    </style>
+  <head>
+  <body>
+    <div id="main">
+      <div id="header">
+        <div id="logowrapper">
+          <div id="logo"></div>
+          <h1>PE's bookmarklets</h1>
+        </div>
+        <div id="quicklinks"></div>
+      </div>
+      <div id="topcontent">
+        <div id="contents">
+          <span>Contents</span>
+        </div>
+        <div id="desc">
+          <h4>Welcome to PE's bookmarklet page!</h4>
+          <p>
+            This is the place where I store the little bookmarklets I've written. All bookmarklets are free to use, share, and modify, as per <a href="http://www.wtfpl.net/">the WTFPL license</a>. Each bookmarklet is designed for a specific purpose and a specific site. Bookmarklets are not guaranteed to work on other sites than the ones specified in the domain section for each. You can copy the code by selection or pressing the copy button and create a bookmarklet manually, or optimally drag the drag button to the taskbar field and the browser will create a bookmarklet automatically.
+          </p>
+        </div>
+      </div>
+      <div id="bookwrapper"></div>
+    </div>
+    <div id="footer">©2017 PicturElements</div>
+    <div id="msgwrapper">
+      <div id="msg"></div>
+    </div>
+    <script>
+      var bw=document.getElementById("bookwrapper");
+
+      function createBookBox(obj){
+        var bm=document.createElement("div");
+        bm.className="bookmarklet";
+        bm.id=obj.name;
+        var header=bm.addTextElement("h2",obj.name);
+        header.onclick=toggleVisible;
+        header.setAttribute("expanded",true);
+
+        var box=document.createElement("div");
+        box.className="bookbox";
+        box.addTextElement("span",obj.description,"Description");
+
+        var clbl=box.addTextElement("h3","Code");
+        addCopyGroup(clbl,obj,true);
+        var ta=document.createElement("textarea");
+        ta.value=obj.code;
+        ta.setAttribute("readonly","");
+        box.appendChild(ta);
+
+        if (obj.notes) box.addTextElement("span",obj.notes,"Notes");
+        box.addTextElement("span",obj.changelog,"Changelog");
+        var third=document.createElement("div");
+        third.className="third";
+        var third2=third.cloneNode(),
+            third3=third.cloneNode();
+        third.addTextElement("span",obj.version,"Version");
+        var time=third2.addTextElement("span",toTimeString(obj.published),"Latest revision");
+        time.classList="timestamp";
+        time.timestamp=obj.published;
+        third3.addTextElement("span",obj.domain,"Domain");
+
+        box.appendChild(third);
+        box.appendChild(third2);
+        box.appendChild(third3);
+
+        addContentItem(obj);
+
+        bm.appendChild(box);
+        bw.appendChild(bm);
+      }
+
+      function addContentItem(obj,elem,inner){
+        var wrapper=document.createElement("div");
+        wrapper.className="contentitem";
+        var link=document.createElement("a");
+        link.innerHTML=obj.name;
+        link.href="#"+obj.name;
+        document.getElementById("quicklinks").appendChild(link.cloneNode(true));
+        wrapper.appendChild(link);
+        addCopyGroup(wrapper,obj);
+        (elem || document.getElementById("contents")).appendChild(wrapper);
+      }
+
+      function addCopyGroup(elem,obj,preventJump){
+        var group=document.createElement("div");
+        group.className="copygroup";
+        var btn=document.createElement("button");
+        btn.innerHTML="copy";
+        btn.addEventListener("click",function(){
+          relayCopy(obj.name,preventJump);
+        });
+        group.appendChild(btn);
+        var a=document.createElement("a");
+        a.className="dragbtn";
+        a.href=minify(obj.code);
+        a.innerHTML=obj.name+" v"+obj.version;
+        a.addEventListener("click",function(evt){
+          msg("Drag this to the bookmark bar!");
+          evt.preventDefault();
+        });
+        group.appendChild(a);
+        elem.appendChild(group);
+      }
+
+      function relayCopy(name,preventJump){
+        var h2=document.getElementById(name).children[0];
+        if (h2.getAttribute("expanded")=="false") h2.click();
+        if (!preventJump) window.location.href=window.location.href.split("#")[0]+"#"+name;
+        copy(name,preventJump?0:300);
+      }
+
+      function copy(name,timeout){
+        var ta=document.getElementById(name).getElementsByTagName("textarea")[0];
+        ta.select();
+        setTimeout(function(){
+          msg(document.execCommand("copy")?("Copied "+name+"!"):"Copy failed.");
+        },timeout);
+      }
+
+      function msg(m){
+        var msg=document.getElementById("msg");
+        msg.innerHTML=m;
+        msg.classList.add("pop");
+        setTimeout(function(){
+          msg.classList.remove("pop");
+        },5000);
+      }
+
+      Element.prototype.addTextElement=function(tag,content,title){
+        if (title) this.addTextElement("h3",title);
+        var elem=document.createElement(tag);
+        elem.innerHTML=content;
+        this.appendChild(elem);
+        return elem;
+      };
+
+      function toggleVisible(){
+        this.setAttribute("expanded",this.getAttribute("expanded")=="false");
+      }
+
+      function minify(str){
+        return str.replace(/\n/g,"").replace(/ +/g," ");
+      }
+
+      function updateTimestamps(){
+        var times=document.getElementsByClassName("timestamp");
+        for (var i=0;i<times.length;i++){
+          times[i].innerHTML=toTimeString(times[i].timestamp);
+        }
+      }
+
+      setInterval(updateTimestamps,10000);
+
+      function toTimeString(epoch) {
+        var time = Math.floor((new Date().getUTCTime() / 1000) - epoch) / 60;
+        var units = [525960, "year", 43830, "month", 1440, "day", 60, "hour", 1, "minute"],
+            out = [];
+        for (var i = 0; i < units.length; i += 2) {
+          var newTime = Math.floor(time / units[i]);
+          if (newTime)
+            out.push(newTime + " " + units[i + 1] + (newTime == 1 ? '' : 's'));
+          time = time % units[i]
+        }
+        out = out.splice(0, 3);
+        return out.join(", ") + " ago";
+      }
+
+      Date.prototype.getUTCTime=function(){
+        return this.getTime()+this.getTimezoneOffset()*60000;
+      };
+
+      document.onscroll=function(){
+        var ht=document.getElementsByTagName("h2")[0].getBoundingClientRect().top,
+            header=document.getElementById("header"),
+            lg=document.getElementById("logowrapper").getBoundingClientRect().height,
+            ql=document.getElementById("quicklinks").getBoundingClientRect().height;
+        if (ht-lg>0) header.classList.remove("minimized");
+        else header.classList.add("minimized");
+
+        var sel=header.getElementsByClassName("selected")[0];
+        if (sel) sel.classList.remove("selected");
+
+        var urlArr=window.location.href.split("#"),
+            h2s=document.getElementsByTagName("h2"),
+            offs=document.body.scrollHeight-document.body.scrollTop-window.innerHeight;
+        for (var i=h2s.length-1;i>=0;i--){
+          if (h2s[i].getBoundingClientRect().top-ql<=0||!i||offs<20){
+            header.getElementsByTagName("a")[i].classList.add("selected");
+            break;
+          }
+        }
+      };
+
+      /*var xhr=new XMLHttpRequest();
+      xhr.onreadystatechange=function(){
+        if (this.readyState==4&&this.status==200){
+          var data=JSON.parse(xhr.responseText),
+              xhr2=new XMLHttpRequest();
+          xhr2.onreadystatechange=function(){
+              if (this.readyState==4&&this.status==200){
+                  var code=extractCode(xhr.responseText);
+                  for (var i in data){
+                      createBookBox(data[i],code[data.name]);
+                  }
+              }
+          };
+          xhr2.open("GET","https://picturelements.github.io/textfiles/bookmarklets.txt",true);
+          xhr2.send();
+        }
+      };
+      xhr.open("GET","https://picturelements.github.io/textfiles/bookmarklets.json",true);
+      xhr.send();
+
+      function extractCode(txt){
+        var obj={},
+          arr=txt.split("----START BOOKMARKLET----\n"),
+          regex=/.+/i;
+        for (var i=1;i<arr.length;i++){
+          obj[regex.exec(arr[i])[0]]=arr[i].replace(regex,"").trim();
+          }
+        return obj;
+      }*/
+      
+      var xhr=new XMLHttpRequest();
+      xhr.onreadystatechange=function(){
+        if (this.readyState==4&&this.status==200){
+          readData(this.responseText);
+        }
+      };
+      xhr.open("GET","https://picturelements.github.io/textfiles/bookmarklets.txt",true);
+      xhr.send();
+      
+      function readData(txt){
+        var arr=txt.split("----START BOOKMARKLET----\n"),
+            metaRegex=/(\[META\])[\s\S]+\1/gi,
+            propRegex=/\$.+:[^\$]+/gi,
+            keyRegex=/\$.+:/i;
+        for (var i=1;i<arr.length;i++){
+          var obj={},
+              meta=metaRegex.exec(arr[i])[0].replace(/\[META\]/g,""),
+              ex=propRegex.exec(meta);
+              obj.code=arr[i].replace(metaRegex,"").trim();
+          while (ex){
+            var key=ex[0].match(keyRegex)[0].replace(/\$|:/g,""),
+                value=smartConvert(ex[0].replace(keyRegex,"").trim());
+            obj[key]=value;
+            ex=propRegex.exec(meta);
+          }
+          createBookBox(obj);
+        }
+      }
+      
+      function smartConvert(str){
+        if (/^'[\s\S]+'$/gi.test(str))
+          return str.substr(1,str.length-2);
+        if (str=="true"||str=="false")
+          return str=="true";
+        if (!isNaN(str))
+          return Number(str);
+        return str;
+      }
+    </script>
+  </body>
+</html>

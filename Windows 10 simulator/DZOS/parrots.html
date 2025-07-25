@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>PARROTS</title>
+    <link rel="icon" href="home.png">
+    <style>
+      body{
+        background-color:white;
+        /*background-image:url(images/parrotsPiece.gif);
+        background-size:290px 55px;*/
+        /*animation:psych 1s linear infinite;*/
+        margin:0;
+        overflow:hidden;
+      }
+      
+      .parrot{
+        display:block;
+        position:relative;
+        float:left;
+        width:32px;
+        height:25px;
+        background-size:cover;
+      }
+      
+      #container{
+        display:block;
+        position:fixed;
+      }
+      
+      @keyframes psych{
+        0%{background-color:red;}
+        50%{background-color:green;}
+        100%{background-color:blue;}
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container"></div>
+    <script>
+      var outStr="";
+      var container=document.getElementById("container");
+      container.style.width=""+(Math.ceil(window.innerWidth/32)*32)+"px";
+      container.style.height=""+(Math.ceil(window.innerHeight/25)*25)+"px";
+      var amount=Math.ceil(window.innerWidth/32)*Math.ceil(window.innerHeight/25);
+      
+      for (var i=0;i<amount;i++){
+        outStr+="<div class=\"parrot\" style=\"background-image:url(images/parrots/parrot"+Math.floor(Math.random()*43)+".gif)\"></div>";
+      }
+      console.log(amount);
+     container.innerHTML=outStr;
+    </script>
+  </body>
+</html>

@@ -1,0 +1,72 @@
+<html>
+  <head>
+    <style>
+      #input,#btn{
+        display:block;
+        position:fixed;
+        width:70%;
+        height:5vw;
+        top:50%;
+        left:50%;
+        margin-left:-35%;
+        margin-top:-6vw;
+        text-align: center;
+        font-size: 3vw;
+        font-family: Trebuchet MS,Arial,sans-serif;
+        font-weight: bold;
+        color: #333;
+      }
+      #btn{
+        display:block;
+        position:fixed;
+        width:20%;
+        left:50%;
+        top:50%;
+        height:4vw;
+        margin-left:-10%;
+        margin-top:20px;
+        font-size:2vw;
+        cursor:pointer;
+        background-color: #aaa;
+        border: none;
+        color: #efefef;
+      }
+    </style>
+    <script>
+      var phrase=["lawyer","up","delete","the","gym","hit","facebook"];
+      var testimonials=["\"It's so useless it's stupid\" - Mom","\"This site changed my life! I'm now hated by everyone in my delete chat.\" - Jimmy",
+      "\"Instructions unclear. Gym caught in toaster.\" - Kevin","\"This is what the internet was made for!\" - Tim Berners-Lee","\"Absolutely brilliant in every way.\" - Stephen Hawking",
+      "\"The greatest source of information ever!\" [citation needed] - J. Wales","\"sdfgsdbfsnmervt qbmtcnwbexd wrnmqwcxrqw\" - Khajiit"];
+      var result;
+      function setup(){
+        document.getElementById("mainTest").innerHTML=testimonials[Math.floor(Math.random()*testimonials.length)];
+        random();
+      }
+      function random(){
+        var legalChars="0123456";
+        result="";
+        for (i=0;i<7;i++){
+          var pos=legalChars.charAt(Math.floor(Math.random()*legalChars.length));
+          result+=phrase[parseInt(pos)];
+          if (i<6){result+=" ";}  //add a space between the words
+          var newString="";
+          for (n=0;n<legalChars.length;n++){
+            if (legalChars.charAt(n)!=pos){
+              newString+=legalChars.charAt(n);
+            }
+          }
+          legalChars=newString;
+        }
+        document.getElementById("input").value=result;
+      }
+    </script>
+  </head>
+  <body style="background-color:#222; width:100%; overflow-x:hidden" onload=setup()>
+    <input id="input"></input>
+    <button id="btn" onclick=random()>New copypasta!</button>
+    <testimonials style="position:fixed; display:block; width:100%; height:100px; bottom:0; left:0; text-align:center; font-family:Trebuchet MS,Arial,sans-serif; color:#888; font-size:1.6vw">
+      Testimonials
+      <div id="mainTest" style="display:block; position:absolute; top:3vw; color:#aaa; width: 100%; height: 50%;"></div>
+    </testimonials>
+  </body>
+</html>

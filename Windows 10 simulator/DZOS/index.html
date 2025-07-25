@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Home - Dannz</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="home.png">
+    <link rel="stylesheet" type="text/css" href="indexStyle.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,900" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=VT323" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="console.css" rel="stylesheet" type="text/css">
+    <style id="specCols"></style>
+</head>
+<body oncontextmenu="return contextShow">
+    <audio id="taskbahSound" loop preload="auto">
+        <source src="images/win_icons/LockIt.mp3">
+    </audio>
+
+    <button id="gofull" style="display:none; position:fixed; z-index:100;">GO FULLSCREEN</button>
+
+    <div id="desktopwrapper" class="grad backOverride">
+        <div id="desktop">
+            <div id="test"></div>
+            <div id="selectbox"></div>
+            <div id="shadow"></div>
+        </div>
+    </div>
+
+    <!-- Context Menu -->
+    <div id="context">
+      <div class="contextitem">Open</div>
+      <div class="contextitem">Open All</div>
+      <div class="contextitem">Rename</div>
+      <div class="contextitem">Pin to taskbar</div>
+      <div class="contextitem">Pin</div>
+      <div class="contextitem">Unpin</div>
+      <div class="contextitem">Open new</div>
+      <div class="contextitem">Close</div>
+      <div class="contextitem">Fullscreen</div>
+      <div class="contextitem">Enable context menu</div>
+      <div class="contextitem">Change wallpaper</div>
+      <div class="contextitem tickbox" ticked="false">Lock taskbar</div>
+      <div class="contextitem tickbox" ticked="false">Lock the taskbah</div>
+      <div class="contextitem">Open</div>
+      <div class="contextitem">Go to directory</div>
+      <div class="contextitem">Open in new explorer</div>
+      <div class="contextitem">Open as HTML</div>
+      <div class="contextitem">System Configuration</div>
+    </div>
+
+    <!-- Taskbar -->
+    <div id="taskbar">
+        <div id="taskbar-main-section">
+            <button id="start-button" class="taskbar-button">
+                <img id="start-icon" src="images/win_icons/home.png" alt="Start">
+            </button>
+            <button id="search-button" class="taskbar-button">
+                <img id="search-icon" src="images/win_icons/started.png" alt="Search">
+            </button>
+            <div id="programbar">
+                <!-- Pinned and open app icons will be dynamically added here -->
+            </div>
+        </div>
+        <div id="taskbar-right-section">
+            <button id="volume-icon" class="taskbar-icon">
+                <i class="fas fa-volume-up"></i>
+                <div id="volume-slider-container" class="hidden">
+                    <input type="range" id="volume-slider" min="0" max="100" value="50">
+                    <span id="volume-value">50</span>
+                </div>
+            </button>
+            <button id="notification-area-toggle" class="taskbar-icon">
+                <i class="fas fa-bell"></i>
+            </button>
+            <div id="current-time"></div>
+            <button id="taskbar-power-button" class="taskbar-icon">
+                <img src="images/win_icons/power.png" alt="Power">
+                <div id="power-menu" class="hidden">
+                    <button id="restart-option" class="power-menu-item">
+                        <i class="fas fa-redo-alt"></i> Restart
+                    </button>
+                    <button id="shutdown-option" class="power-menu-item">
+                        <i class="fas fa-power-off"></i> Shut Down
+                    </button>
+                </div>
+            </button>
+        </div>
+    </div>
+
+    <!-- Start Menu -->
+    <div id="start-menu" class="hidden">
+        <div class="start-menu-header">
+            <h3>Start Menu</h3>
+            <button id="close-start-menu" class="close-btn"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="start-menu-content">
+            <div class="start-menu-section">
+                <h4>Pinned</h4>
+                <div id="pinned-apps-list" class="app-grid">
+                    </div>
+            </div>
+            <div class="start-menu-section">
+                <h4>Recommended</h4>
+                <div id="often-used-list" class="app-grid">
+                    </div>
+            </div>
+            <div class="start-menu-section">
+                <h4>Puzzles</h4>
+                <div id="puzzle-grid" class="app-grid">
+                    <!-- Puzzle images will be loaded here -->
+                </div>
+            </div>
+            <div class="start-menu-section">
+                <h4>All Apps</h4>
+                <ul id="all-apps-list" class="app-list">
+                    </ul>
+            </div>
+        </div>
+        <div class="start-menu-footer">
+            <button id="start-menu-power-button" class="start-menu-button">
+                <img src="images/win_icons/power.png" alt="Power">
+                <span>Power</span>
+            </button>
+            <button id="start-menu-settings-button" class="start-menu-button">
+                <img src="images/win_icons/cogbig.png" alt="Settings">
+                <span>Settings</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Search Overlay -->
+    <div id="search-overlay" class="hidden">
+        <input type="text" id="search-input" placeholder="Type here to search">
+        <div id="search-results">
+            </div>
+    </div>
+
+    <!-- Settings Window -->
+    <div id="settings-window" class="window hidden">
+        <div class="header">
+            <img src="images/win_icons/cogbig.png" alt="Settings Icon" class="window-icon">
+            <span class="title">Settings</span>
+            <button class="close-settings-btn close-btn"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="content">
+            <div class="settings-sidebar">
+                <div class="settings-sidebar-item active" data-section="personalization">
+                    <i class="fas fa-palette"></i> Personalization
+                </div>
+                <div class="settings-sidebar-item" data-section="system">
+                    <i class="fas fa-cogs"></i> System
+                </div>
+                <div class="settings-sidebar-item" data-section="about">
+                    <i class="fas fa-info-circle"></i> About
+                </div>
+            </div>
+            <div class="settings-main-content">
+                <div id="personalization-section" class="settings-section active">
+                    <h3>Personalization</h3>
+                    <div class="setting-group">
+                        <h4>Background</h4>
+                        <div id="wallpaper-thumbnails" class="wallpaper-grid">
+                            </div>
+                    </div>
+                    <div class="setting-group">
+                        <h4>Colors</h4>
+                        <div class="color-options">
+                            <button id="light-mode-btn" class="color-btn active">Light</button>
+                            <button id="dark-mode-btn" class="color-btn">Dark</button>
+                        </div>
+                    </div>
+                    <div class="setting-group">
+                        <h4>Taskbar</h4>
+                        <label for="taskbar-transparency-slider">Transparency:</label>
+                        <input type="range" id="taskbar-transparency-slider" min="0" max="100" value="90">
+                        <span id="taskbar-transparency-value">90%</span>
+                        <div class="taskbar-alignment-options">
+                            <button id="align-left-btn">Align Left</button>
+                            <button id="align-center-btn">Align Center</button>
+                        </div>
+                        <div class="taskbar-lock-option">
+                            <label for="lock-taskbar-checkbox">Lock Taskbar:</label>
+                            <input type="checkbox" id="lock-taskbar-checkbox">
+                        </div>
+                        <div class="taskbar-sound-option">
+                            <label for="lock-taskbah-checkbox">Taskbar Sound (LockIt.mp3):</label>
+                            <input type="checkbox" id="lock-taskbah-checkbox">
+                        </div>
+                    </div>
+                </div>
+                <div id="system-section" class="settings-section">
+                    <h3>System</h3>
+                    <div class="setting-group">
+                        <h4>Time & Language</h4>
+                        <label for="dateset">Set Date:</label>
+                        <input type="date" id="dateset" onchange="setTime()">
+                        <label for="timezone">Timezone:</label>
+                        <select id="timezone" onchange="updateTime()">
+                            <!-- Options populated by JS -->
+                        </select>
+                        <label for="prectz">Precise TZ Offset (minutes):</label>
+                        <input type="number" id="prectz" disabled onchange="setTime()">
+                        <p id="tzlbl">Current time: </p>
+                    </div>
+                    <div class="setting-group">
+                        <h4>Window Defaults</h4>
+                        <label for="winW">Window width: <span id="winW">60</span></label>
+                        <input type="range" class="sizeslider" id="winW-slider" min="20" max="100" value="60" oninput="updateSize(0)">
+                        <label for="winH">Window height: <span id="winH">35</span></label>
+                        <input type="range" class="sizeslider" id="winH-slider" min="15" max="100" value="35" oninput="updateSize(1)">
+                    </div>
+                    <div class="setting-group">
+                        <h4>Reset Options</h4>
+                        <button id="reset-names-btn">Reset Program Names</button>
+                        <button id="reset-all-btn">Reset All Data</button>
+                    </div>
+                </div>
+                <div id="about-section" class="settings-section">
+                    <h3>About</h3>
+                    <p>Dannz OS Simulation</p>
+                    <p>Version 1.0</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Area -->
+    <div id="notification-area" class="hidden">
+        <div class="notification-header">
+            <span>Notifications</span>
+            <button class="close-btn" onclick="toggleNotificationArea()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="notification-content">
+            <div id="calendar-container">
+                <div class="calendar-header">
+                    <button id="prev-month"><i class="fas fa-chevron-left"></i></button>
+                    <span id="current-month-year"></span>
+                    <button id="next-month"><i class="fas fa-chevron-right"></i></button>
+                </div>
+                <div class="calendar-weekdays">
+                    <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                </div>
+                <div id="calendar-days" class="calendar-days-grid">
+                    </div>
+            </div>
+            <div class="quick-settings">
+                <!-- Quick settings like brightness, network etc. can go here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Container for dynamically created application windows -->
+    <div id="window-container"></div>
+
+    <!-- Hidden buffers for explorer and console content -->
+    <div id="explorerbuffer" style="display:none;">
+        <div class="explorer-content-wrapper">
+            <div class="explorer-sidebar">
+                <div class="sidelinkwrapper"></div>
+            </div>
+            <div class="explorer-main">
+                <div class="path-bar">
+                    <button class="histbtn" onclick="moveUp(this)"><i class="fas fa-arrow-up"></i></button>
+                    <input type="text" class="path" value="P:\picturelements.github.io\contents">
+                    <button class="histbtn" onclick="moveHist(getParent(this, 'window').id, -1)"><i class="fas fa-chevron-left"></i></button>
+                    <button class="histbtn" onclick="moveHist(getParent(this, 'window').id, 1)"><i class="fas fa-chevron-right"></i></button>
+                </div>
+                <div class="filecontent"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="consolebuffer" style="display:none;">
+        <div class="console">
+            <div class="inputbox">
+                <div class="dir">P:\picturelements.github.io>&nbsp;</div>
+                <div>
+                    <input class="input" spellcheck="false" autocomplete="off"></input>
+                </div>
+            </div>
+            <div class="output"></div>
+        </div>
+    </div>
+
+    <!-- Hidden SVG buffer for icons -->
+    <div id="svgbuffer" style="display:none;">
+        <svg class="err_icon" width="90" height="90" viewBox="0 0 90 90">
+            <circle cx="45" cy="45" r="40" fill="#a00" stroke="#a00" stroke-width="5"></circle>
+            <path d="M42 20 L48 20 L50 35 L50 35 L48 60 L42 60" fill="#a00"></path>
+            <path d="M42 64 L48 64 L48 72 L42 72" fill="#a00"></path>
+        </svg>
+        <svg class="info_icon" width="90" height="90" viewBox="0 0 90 90">
+            <circle cx="45" cy="45" r="40" fill="#4af" stroke="#46f" stroke-width="5"></circle>
+            <path d="M37 20 L53 20 L50 55 L40 55" fill="white"></path>
+            <path d="M40 62 L50 62 L50 72 L40 72" fill="white"></path>
+        </svg>
+        <svg class="cog_icon" width="90" height="90" viewBox="0 0 90 90">
+            <path fill="none" stroke-width="5"></path>
+            <circle cx="45" cy="45" r="10" fill="none" stroke-width="5"></circle>
+        </svg>
+    </div>
+
+    <script src="indexMotor.js"></script>
+</body>
+</html>

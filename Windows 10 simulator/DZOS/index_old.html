@@ -1,0 +1,532 @@
+<!--If this page looks weird in IE, please follow one of these links to solve the problem: 
+  https://www.mozilla.org
+      -or-
+  https://www.google.com/chrome
+-->
+
+<html>
+  <title>PicturElements - home</title>
+  <link rel="icon" href="pelement.png">
+  <link href='https://fonts.googleapis.com/css?family=Roboto:300,700' rel='stylesheet' type='text/css'>
+  <link href="https://fonts.googleapis.com/css?family=VT323" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="PEhome.css" media="screen">
+  <script type="text/javascript" src="jQuery.js"></script>
+  <script type="text/javascript" src="jgestures.js"></script>
+
+  <head>
+    <style>
+      body{
+        margin:0;
+        height:100%;
+        background-color:white;
+      }
+      #header{
+        position:relative;
+        display:block;
+        width:100%;
+        height:15vw;
+        background-color: #3c005b;
+        background:-webkit-radial-gradient(center, ellipse cover, #3c005b 1%,#0d0011 100%);
+        background:-moz-radial-gradient(center, ellipse cover, #3c005b 1%,#0d0011 100%);
+      }
+      #content{
+        display:block;
+        position:relative;
+        min-height:10px;
+        overflow:hidden;
+      }
+      #showcasearea{
+        display:block;
+        position:relative;
+        width:100%;
+        height:30vw;
+        margin-top:2vw;
+        margin-bottom:2vw;
+      }
+      .linkoverlay{   /*LINK*/
+        display:none;
+        position:absolute;
+        width:50vw;
+        height:28vw;
+        top:1vw;
+        background-color: white;
+        transition:left 1.5s;
+        overflow:visible;
+        z-index:100;
+      }
+      .item,.desc{   /*LINK CONTENT*/
+        display: block;
+        position:absolute;
+        width: 100%;
+        height: 100%;
+        background-size: 50vw 28vw;
+        box-sizing:border-box;
+        border:0.2vw solid #3c005b;
+        transition:cubic-bezier(0.68, -0.55, 0.27, 1.55) 700ms;
+        -webkit-backface-visibility: hidden;
+       	backface-visibility: hidden;
+       	z-index:90;
+      }
+      .desc{
+        z-index:80 !important;
+        background-color:#eee;
+        border:0.2vw solid #ccc;
+        transform:perspective(2000px) rotate3d(1,0,0,180deg);
+      }
+      .desc h{
+        display: block;
+        position: absolute;
+        width: 90%;
+        top: 0.75vw;
+        left: 5%;
+        text-align: center;
+        font-family: Roboto,Arial,sans-serif;
+        font-size: 2.5vw;
+        color: #555;
+        font-weight: 700;
+        padding-bottom: 0.75vw;
+        border-bottom: 1px dashed #bbb;
+      }
+      .desc p{
+        display: block;
+        position: absolute;
+        width: 90%;
+        top: 4.5vw;
+        left: 5%;
+        text-align: left;
+        font-family: Roboto,Arial,sans-serif;
+        font-size: 1.15vw;
+        color: #555;
+        font-weight: 300;
+      }
+      #descImg{
+        display: block;
+        position: absolute;
+        width: 100%;
+        height: 12.65vw;
+        bottom: 0;
+        left: 0;
+        background-size: 50vw 28.125vw;
+        /*background-position: 0 -7.74vw;*/
+        background-position: 0 0;
+        border-top: 2px solid #ccc;
+        animation:scan 10s alternate ease-in-out infinite;
+      }
+      #swipeBtn{
+        display: block;
+        position: absolute;
+        width: 3vw;
+        height: 8vw;
+        line-height: 8vw;
+        top: 11vw;
+        font-family: Roboto,Arial,sans-serif;
+        font-weight: 100;
+        font-size: 3.5vw;
+        text-align: center;
+        background-color: #999;
+        color: #444;
+        cursor: pointer;
+        border:2px solid #555;
+        z-index: 100;
+      }
+      #logolink{
+        display:block;
+        position:absolute;
+        width:10vw;
+        height:10vw;
+        top:2.5vw;
+        left:45vw;
+        transition:1s;
+        transition-delay:250ms;
+        text-decoration:none;
+      }
+      #portfolio_back{
+        display: block;
+        position: absolute;
+        width: 10vw;
+        height: 10vw;
+        background-color: #3d317d;
+        transform-origin: 0 50%;
+        transform: perspective(400px) rotate3d(0, 1, 0, 20deg);
+        transition:1s;
+        transition-delay:250ms;
+      }
+      #textContainer,#name{
+        display:block;
+        width:100%;
+        height:100%;
+        text-align:right;
+        line-height:10vw;
+        font-family:Roboto,Arial,sans-serif;
+        font-size:3vw;
+        font-weight:300;
+        text-decoration:none;
+        color:white;
+        overflow:hidden;
+      }
+      #name{
+        position:relative;
+        right:0;
+        margin-left:-11vw;
+        transition:1s;
+      }
+      #logo{
+        display:block;
+        position:absolute;
+        width:10vw;
+        height:10vw;
+        background-image:url(pelement.png);
+        background-size:10vw 10vw;
+        top:0;
+        left:0;
+        transform-origin: 0 50%;
+        transition:1s;
+        transition-delay:250ms;
+      }
+      #footer{
+        position:relative;
+        display:block;
+        width:100%;
+        height:7vw;
+        background-color: #3c005b;
+        bottom:0;
+      }
+      #terminaloverlay{
+        display:none;
+        position:fixed;
+        width:100%;
+        height:100%;
+        left:0;
+        top:0;
+        background-color:black;
+        color:#0c0;
+        font-size:1.5vw;
+        font-family:VT323,monospace;
+        z-index:100;
+      }
+      @keyframes scan{
+        to{background-position:0 -15.475vw;}
+      }
+    </style>
+    <script>
+      var leftmost=0,rightmost;
+      var stepsMoved=100000;
+      var itemCount
+      var sincePress=0,movable=1;
+      
+      //Create mobile events
+      /*$(document).on("pagecreate","#body",function(){
+        $("#showcasearea").on("swipeleft",function(){
+          move(-1);
+        });
+        
+        $("#showcasearea").on("swiperight",function(){
+          move(1);
+        });
+      });*/
+      
+      jQuery('#showcasearea').bind('swipeleft',move(-1));
+      jQuery('#showcasearea').bind('swiperight',move(1));
+      
+      function init(){
+        if (window.location.href.endsWith("fromTerminal")){
+          var term=document.getElementById("terminaloverlay");
+          term.style.display="block";
+          //term.innerHTML=document.getElementsByTagName("html")[0].innerHTML;
+          //term.innerHTML=document.documentElement.outerHTML;
+          term.innerHTML=document.body.outerHTML;
+        }
+        
+        var items=document.getElementsByClassName("linkoverlay");
+        itemCount=items.length;
+        for (i=0;i<itemCount;i++){
+          items[i].style.left=""+(25+(55)*((i+stepsMoved)%itemCount-2))+"vw";
+          items[i].style.display="block";
+          if ((i+stepsMoved)%itemCount==itemCount-1){
+            items[i].style.display="none";
+          }
+        }
+        rightmost=items.length-1;
+        setInterval(time,100);
+      }
+      
+      function time(){
+        if (movable==1){
+          sincePress++;
+          if (sincePress==50){move(-1)}
+        }
+      }
+      
+      function hover(input){
+        movable=input;
+      }
+      
+      window.onfocus = function () { 
+        movable=1;
+      }; 
+      
+      window.onblur = function () { 
+        movable=0;
+      }; 
+      
+      function flip(linkID){
+        if (document.getElementsByClassName("linkoverlay")[linkID].style.left=="25vw"){
+          document.getElementsByClassName("item")[linkID].style.transform="perspective(2000px) rotate3d(1,0,0,180deg)";
+          document.getElementsByClassName("desc")[linkID].style.transform="perspective(2000px) rotate3d(1,0,0,360deg)";
+        }
+      }
+      
+      function flipBack(linkID){
+        if (document.getElementsByClassName("linkoverlay")[linkID].style.left=="25vw"){
+          document.getElementsByClassName("item")[linkID].style.transform="perspective(2000px) rotate3d(1,0,0,0deg)";
+          document.getElementsByClassName("desc")[linkID].style.transform="perspective(2000px) rotate3d(1,0,0,180deg)";
+        }
+      }
+      
+      function display(type){
+        if (type==1){
+          document.getElementById("logo").style.transform="perspective(400px) rotate3d(0,1,0,-30deg)";
+          document.getElementById("name").style.marginLeft="0";
+          document.getElementById("logolink").style.width="32vw";
+          document.getElementById("logolink").style.left="33vw";
+          document.getElementById("portfolio_back").style.marginLeft="3.5vw";
+        }else{
+          document.getElementById("logo").style.transform="perspective(400px) rotate3d(0,1,0,0deg)";
+          document.getElementById("name").style.marginLeft="-11vw";
+          document.getElementById("logolink").style.width="10vw";
+          document.getElementById("logolink").style.left="45vw";
+          document.getElementById("portfolio_back").style.marginLeft="0";
+        }
+      }
+      
+      function move(moveDir){
+        var items=document.getElementsByClassName("linkoverlay");
+        stepsMoved+=moveDir;
+        for (i=0;i<itemCount;i++){
+          items[i].style.display="block";
+          if ((i+stepsMoved)%itemCount==itemCount-1){
+            items[i].style.display="none";
+          }
+          items[i].style.left=""+(25+(55)*((i+stepsMoved)%itemCount-2))+"vw";
+        }
+        sincePress=0;
+      }
+    </script>
+  </head>
+  <body id="body" onload=init()>
+    <div id="header">
+      <a href="https://github.com/PicturElements" id="logolink" onmouseOver=display(1) onmouseleave=display(0)>
+        <div id="portfolio_back"></div>
+        <div id="textcontainer">
+          <div id="name"><b>Pictur</b>Elements</div>
+        </div>
+        <div id="logo"></div>
+      </a>
+    </div>
+    <div id="content">
+      <div id="showcasearea" onmouseover=hover(0) onmouseleave=hover(1)>
+        <a class="linkoverlay" href="http://picturelements.github.io/egghunt" target="_blank" onmouseover=flip(0) onmouseleave=flipBack(0)>
+          <div class="desc">
+            <h>Egg hunt</h>
+            <p>My first serious [citation needed], large-scale JavaScript work. I made this in March 2016 for /r/ConfusedTravolta as an excuse to make a game.
+              <br><br>
+              <b>Written in:</b> HTML, JavaScript</b>
+              <br>
+              <b>Project duration:</b> Mar 26-27, 2016
+            </p>
+            <div id="descImg" style="background-image:url(images/egghunt.png);"></div>
+          </div>
+          <div class="item" style="background-image:url(images/egghunt.png);"></div>
+        </a>
+        <a class="linkoverlay" href="http://aquaplexus.net/gameoflife" target="_blank" onmouseover=flip(1) onmouseleave=flipBack(1)>
+          <div class="desc">
+            <h>Game of Life</h>
+            <p>Game of Life, devised by mathematician John Conway, written in JavaScript by me, for aguaplexus.net, a project a friend and I had in 12th grade.
+              <br><br>
+              <b>Written in:</b> HTML, JavaScript</b>
+              <br>
+              <b>Project duration:</b> Mar 12-30 2016
+            </p>
+            <div id="descImg" style="background-image:url(images/gameoflife.png);"></div>
+          </div>
+          <div class="item" style="background-image:url(images/gameoflife.png);"></div>
+        </a>
+        <a class="linkoverlay" href="http://picturelements.github.io/hitLawyer" target="_blank" onmouseover=flip(2) onmouseleave=flipBack(2)>
+          <div class="desc">
+            <h>Hit Lawyer</h>
+            <p>Many variations of "Lawyer up, hit the gym, delete facebook" have been circulating the web. There are in fact 7!=5040 ways to do this. This little web app does that for you so you can shitpost away!
+              <br><br>
+              <b>Written in:</b> HTML, JavaScript</b>
+              <br>
+              <b>Project duration:</b> Apr 16 2016
+            </p>
+            <div id="descImg" style="background-image:url(images/hitLawyer.png);"></div>
+          </div>
+          <div class="item" style="background-image:url(images/hitLawyer.png);"></div>
+        </a>
+        <a class="linkoverlay" href="http://aquaplexus.net/fractal" target="_blank" onmouseover=flip(3) onmouseleave=flipBack(3)>
+          <div class="desc">
+            <h>Fractal</h>
+            <p>Based on the structure famous Koch Snowflake fractal, this little thing creates all sorts of fractals using trigonometry to repeat patterns.
+              <br><br>
+              <b>Written in:</b> HTML, JavaScript, CSS</b>
+              <br>
+              <b>Completed:</b> Apr 3 2016
+            </p>
+            <div id="descImg" style="background-image:url(images/fractal.png);"></div>
+          </div>
+          <div class="item" style="background-image:url(images/fractal.png);"></div>
+        </a>
+        <a class="linkoverlay" href="http://picturelements.github.io/multiples" target="_blank" onmouseover=flip(4) onmouseleave=flipBack(4)>
+          <div class="desc">
+            <h>Multiples</h>
+            <p>Inspired by a video by Mathologer on YouTube, this app creates circular times tables. A circle is lined with d points and is specified to represent times table m. Starting from point p=0, each point p2 is calculated like so: p2=(p*m)%d. A line is drawn between these two points.
+              <br>
+              <b>Written in:</b> HTML, JavaScript</b>
+              <br>
+              <b>Project duration:</b> Apr 30-May 1 2016
+            </p>
+            <div id="descImg" style="background-image:url(images/multiples.png);"></div>
+          </div>
+          <div class="item" style="background-image:url(images/multiples.png);"></div>
+        </a>
+        <a class="linkoverlay" href="http://aquaplexus.net/firework" target="_blank" onmouseover=flip(5) onmouseleave=flipBack(5)>
+          <div class="desc">
+            <h>Firework</h>
+            <p>A fun and aesthetic HTML5 canvas thing. It utilises the fact that canvases will not be cleared unless specified to do so. A semi-transparent frame is added between frames of fireworks to slowly delete parts of the firework.
+              <br><br>
+              <b>Written in:</b> HTML, JavaScript</b>
+              <br>
+              <b>Project duration:</b> Apr 2-3 2016
+            </p>
+            <div id="descImg" style="background-image:url(images/firework.png);"></div>
+          </div>
+          <div class="item" style="background-image:url(images/firework.png);"></div>
+        </a>
+        <a class="linkoverlay" href="http://picturelements.github.io/phonesnake" target="_blank" onmouseover=flip(6) onmouseleave=flipBack(6)>
+          <div class="desc">
+            <h>Phone Snake</h>
+            <p>A website somewhere decided that letting users select phone numbers using dropdown menus was a great idea. The internet and all its webdevs went nuts with creating horribly inefficient phone number selectors. This is mine.
+              <br><br>
+              <b>Written in:</b> HTML, JavaScript</b>
+              <br>
+              <b>Project duration:</b> May 4-5 2016
+            </p>
+            <div id="descImg" style="background-image:url(images/phonesnake.png);"></div>
+          </div>
+          <div class="item" style="background-image:url(images/phonesnake.png);"></div>
+        </a>
+        <a class="linkoverlay" href="http://pitchforkemporium.github.io/" target="_blank" onmouseover=flip(7) onmouseleave=flipBack(7)>
+          <div class="desc">
+            <h>Pitchfork Emporium</h>
+            <p>Me testing my abilities to make flexible pages and templates. PitchforkEmporium is a made-up store for purchase of pitchforks to slay OP. It uses a lot of JavaScript for the cart and Reddit API to log in users to imaginary accounts.
+              <br><br>
+              <b>Written in:</b> HTML, CSS, JavaScript (+jQuery)</b>
+              <br>
+              <b>Project duration:</b> Apr 22-27 2016, cont. 
+            </p>
+            <div id="descImg" style="background-image:url(images/pitchforkemporium.png);"></div>
+          </div>
+          <div class="item" style="background-image:url(images/pitchforkemporium.png);"></div>
+        </a>
+        <a class="linkoverlay" href="http://aquaplexus.net/fishSim" target="_blank" onmouseover=flip(8) onmouseleave=flipBack(8)>
+          <div class="desc">
+            <h>Fish Simulation</h>
+            <p>A fish simulation, based on Craig Reynolds' Boids from 1986. The original program was written in Java by a friend of mine, and I transposed it into JavaScript. The source code can be found at aquaplexus.net/downloads.
+              <br><br>
+              <b>Written in:</b> Java (original), HTML, CSS, JavaScript</b>
+              <br>
+              <b>Completed:</b> Apr 3 2016
+            </p>
+            <div id="descImg" style="background-image:url(images/fishsim.png);"></div>
+          </div>
+          <div class="item" style="background-image:url(images/fishsim.png);"></div>
+        </a>
+        <a class="linkoverlay" href="http://picturelements.github.io/editor" target="_blank" onmouseover=flip(9) onmouseleave=flipBack(9)>
+          <div class="desc">
+            <h>HTML Editor</h>
+            <p>My first attempt at using iFrames to create a HTML editor. It's also the first time I have used iFrames and they are indeed awesome!
+              <br><br>
+              <b>Written in:</b> HTML, JavaScript</b>
+              <br>
+              <b>Project duration:</b> May 13 2016, cont. 
+            </p>
+            <div id="descImg" style="background-image:url(images/editor.png);"></div>
+          </div>
+          <div class="item" style="background-image:url(images/editor.png);"></div>
+        </a>
+        <a class="linkoverlay" href="http://picturelements.github.io/bezier" target="_blank" onmouseover=flip(10) onmouseleave=flipBack(10)>
+          <div class="desc">
+            <h>Bézier</h>
+            <p>Bézier curves are awesome. They're used for so many things and they're cool to play with. In this little fun web app, you can modify points and draw neat curves with ease.
+              <br><br>
+              <b>Written in:</b> HTML, JavaScript</b>
+              <br>
+              <b>Project duration:</b> May 2016. 
+            </p>
+            <div id="descImg" style="background-image:url(images/Bezier.png);"></div>
+          </div>
+          <div class="item" style="background-image:url(images/Bezier.png);"></div>
+        </a>
+        <a class="linkoverlay" href="http://picturelements.github.io/mandelbrot" target="_blank" onmouseover=flip(11) onmouseleave=flipBack(11)>
+          <div class="desc">
+            <h>Fractal generator</h>
+            <p>Mandelbrot/Julia sets are amazing things. This little thing can generate lots of cool fractals, zoom in and out, change colors, plot escape paths, and much more.
+              <br><br>
+              <b>Written in:</b> HTML, JavaScript</b>
+              <br>
+              <b>Project duration:</b> June 2016. 
+            </p>
+            <div id="descImg" style="background-image:url(images/MandelJS.png);"></div>
+          </div>
+          <div class="item" style="background-image:url(images/MandelJS2.png);"></div>
+        </a>
+        <a class="linkoverlay" href="http://picturelements.github.io/isitprime" target="_blank" onmouseover=flip(12) onmouseleave=flipBack(12)>
+          <div class="desc">
+            <h>Is it prime?</h>
+            <p>A very simple prime number calculator. It generates a database of primes from 1-1M and uses them to check if numbers less than 10<sup>12</sup> are prime with lightning speed. 
+              <br><br>
+              <b>Written in:</b> HTML, JavaScript</b>
+              <br>
+              <b>Project duration:</b> June 13 2016. 
+            </p>
+            <div id="descImg" style="background-image:url(images/isitprime.png);"></div>
+          </div>
+          <div class="item" style="background-image:url(images/isitprime.png);"></div>
+        </a>
+        <a class="linkoverlay" href="http://picturelements.github.io/nthPrime" target="_blank" onmouseover=flip(13) onmouseleave=flipBack(13)>
+          <div class="desc">
+            <h>n:th prime</h>
+            <p>A spin-off on another JS project. This calculator lets you explore primes by index. Generate millions of primes in a matter of minutes and get to know useless stuff!
+              <br><br>
+              <b>Written in:</b> HTML, JavaScript</b>
+              <br>
+              <b>Project duration:</b> August 2016. 
+            </p>
+            <div id="descImg" style="background-image:url(images/nthPrime.png);"></div>
+          </div>
+          <div class="item" style="background-image:url(images/nthPrime.png);"></div>
+        </a>
+        <a class="linkoverlay" href="http://picturelements.github.io/redditLive" target="_blank" onmouseover=flip(14) onmouseleave=flipBack(14)>
+          <div class="desc">
+            <h>reddit live 2.0</h>
+            <p>Insert a URL to a reddit post, and see it live! See how the score and comments change, and more! 
+              <br><br>
+              <b>Written in:</b> HTML, JavaScript</b>
+              <br>
+              <b>Project duration:</b> August 2016. 
+            </p>
+            <div id="descImg" style="background-image:url(images/redditLive.png);"></div>
+          </div>
+          <div class="item" style="background-image:url(images/redditLive.png);"></div>
+        </a>
+        <!--Buttons-->
+        <div id="swipeBtn" style="left:0; border-left:none;" onclick=move(1)><</div>
+        <div id="swipeBtn" style="right:0; border-right:none;" onclick=move(-1)>></div>
+      </div>
+    </div> 
+    <div id="footer">
+    </div>
+    <div id="terminaloverlay"></div>
+  </body>
+</html>

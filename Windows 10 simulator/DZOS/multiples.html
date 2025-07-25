@@ -1,0 +1,397 @@
+<html>
+  <head>
+    <link href='https://fonts.googleapis.com/css?family=Roboto:100,500' rel='stylesheet' type='text/css'>
+    <link rel="icon" href="home.png">
+    <title>Multiples - Dannz</title>
+    <script>
+      var side,points=100,multiple=2,expanded=1;
+      var pressed,nuanced=0;
+      
+      function init(){
+        if (localStorage.getItem("points")!=null){
+          points=localStorage.getItem("points");
+        }
+        if (localStorage.getItem("multiple")!=null){
+          multiple=localStorage.getItem("multiple");
+        }
+        if (localStorage.getItem("nuanced")!=null){
+          nuanced=localStorage.getItem("nuanced");
+        }
+        if (localStorage.getItem("expanded")==0){
+          expanded=0;
+          document.getElementById("sliderContainer").style.left="-35vw";
+          document.getElementById("expandoIcon").style.transform="rotate(180deg)";
+        }
+        
+        var url=window.location.href;
+        var id=0,parse=0;
+        var sub="";
+        for (i=0;i<url.length;i++){
+          if (url.charAt(i)=='='){
+            parse=1;
+          }else if(url.charAt(i)=='&'){
+            if (id==0){points=parseInt(sub);}
+            else{multiple=parseInt(sub);}
+            id++;
+            sub="";
+            parse=0;
+          }else if (parse==1){
+            sub+=url.charAt(i);
+          }
+        }
+        if (id==2){
+          nuanced=parseInt(sub);
+        }
+        document.getElementById("selection").selectedIndex=nuanced;
+        setCanvas();
+      }
+      
+      function setCanvas(){
+        if (window.innerHeight<window.innerWidth){
+          side=window.innerHeight-100;
+        }else{
+          side=window.innerWidth-100;
+        }
+        document.getElementById("canvas").width=side;
+        document.getElementById("canvas").height=side;
+        document.getElementById("canvas").style="display:block; position:fixed; width:"+side+"px; height:"+side+"px; left:"+(window.innerWidth-side)/2+"px; top:"+(window.innerHeight-side)/2+"px;";
+        setInfo();
+      }
+      
+      function press(i){
+        pressed=i;
+      }
+      
+      function move(e){
+        if (pressed==1){
+          var x=e.clientX-(window.innerWidth-side)/2;
+          var y=e.clientY-(window.innerHeight-side)/2;
+          points=Math.floor((x/(side/491))+10);
+          multiple=100-Math.floor((y/(side/100)));
+          document.getElementById("canvas").style.cursor="default";
+          setInfo();
+        }
+      }
+      
+      function typeIn(){
+        points=document.getElementById("inP").value;
+        multiple=document.getElementById("inM").value;
+        document.getElementById("points").value=points;
+        document.getElementById("multiple").value=multiple;
+        localStorage.setItem("points",points);
+        localStorage.setItem("multiple",multiple);
+        paint();
+      }
+      
+      function setNuance(){
+        nuanced=document.getElementById("selection").selectedIndex;
+        paint();
+      }
+      
+      window.onresize = function(event) {
+        setCanvas();
+      };
+      
+      function setStuff(){
+        points=document.getElementById("points").value;
+        multiple=document.getElementById("multiple").value;
+        document.getElementById("inP").value=points;
+        document.getElementById("inM").value=multiple;
+        localStorage.setItem("points",points);
+        localStorage.setItem("multiple",multiple);
+        paint();
+      }
+      
+      function setInfo(){
+        document.getElementById("inP").value=points;
+        document.getElementById("inM").value=multiple;
+        document.getElementById("points").value=points;
+        document.getElementById("multiple").value=multiple;
+        localStorage.setItem("points",points);
+        localStorage.setItem("multiple",multiple);
+        paint();
+      }
+      
+      function expand(){
+        expanded=Math.abs(expanded-1);
+        if (expanded==0){
+          document.getElementById("sliderContainer").style.left="-35vw";
+          document.getElementById("expandoIcon").style.transform="rotate(180deg)";
+        }else{
+          document.getElementById("sliderContainer").style.left="-3vw";
+          document.getElementById("expandoIcon").style.transform="rotate(0deg)";
+        }
+        localStorage.setItem("expanded",expanded);
+      }
+      
+      function saveUrl(){
+        window.location.href="http://picturelements.github.io/multiples?points="+points+"&multiply="+multiple+"&render="+nuanced;
+      }
+      
+      function paint(){
+        var ctx=document.getElementById("canvas").getContext("2d");
+        ctx.clearRect(0,0,side,side);
+        ctx.strokeStyle="#222";
+        ctx.fillStyle="#222";
+        ctx.lineWidth=2; 
+        ctx.beginPath();
+        ctx.arc(side/2,side/2,side/2-10,0,2*Math.PI);
+        ctx.stroke();
+        for (i=0;i<points;i++){
+          ctx.beginPath();
+          ctx.arc(side/2+Math.cos(-Math.PI+(Math.PI*2/points)*i)*(side/2-10),side/2+Math.sin(-Math.PI+(Math.PI*2/points)*i)*(side/2-10),3,0,2*Math.PI);
+          ctx.fill();
+        }
+        ctx.strokeStyle="#909";
+        if (nuanced==0||nuanced==1){
+          for (i=0;i<points;i++){
+            var x1=side/2+Math.cos(-Math.PI+(Math.PI*2/points)*i)*(side/2-10),x2=side/2+Math.cos(-Math.PI+((Math.PI*2*Math.floor((i*multiple)%points))/points))*(side/2-10);
+            var y1=side/2+Math.sin(-Math.PI+(Math.PI*2/points)*i)*(side/2-10),y2=side/2+Math.sin(-Math.PI+((Math.PI*2*Math.floor((i*multiple)%points))/points))*(side/2-10);
+            if (nuanced==1){
+              var length=Math.sqrt(Math.pow((x2-x1),2)+Math.pow((y2-y1),2));
+              ctx.strokeStyle="rgb("+Math.floor(255-Math.pow(length/(side-20),2)*255)+",0,"+Math.floor(Math.pow(length/(side-20),2)*255)+")";
+            }
+            ctx.beginPath();
+            ctx.moveTo(x1,y1);
+            ctx.lineTo(x2,y2);
+            ctx.stroke();
+          }
+        }else{
+          for (mod=points-1;mod>0;mod--){
+            for (i=0;i<points;i++){
+              //var max;
+              var length1=Math.abs((i*multiple)%points-i);
+              /*var length2=points-(i*multiple)%points+i;
+              if (length1<length2){max=length1}
+              else{max=length2}*/
+              if (length1==mod){
+                var x1=side/2+Math.cos(-Math.PI+(Math.PI*2/points)*i)*(side/2-10),x2=side/2+Math.cos(-Math.PI+((Math.PI*2*Math.floor((i*multiple)%points))/points))*(side/2-10);
+                var y1=side/2+Math.sin(-Math.PI+(Math.PI*2/points)*i)*(side/2-10),y2=side/2+Math.sin(-Math.PI+((Math.PI*2*Math.floor((i*multiple)%points))/points))*(side/2-10);
+                var length=Math.sqrt(Math.pow((x2-x1),2)+Math.pow((y2-y1),2));
+                ctx.strokeStyle="rgb("+Math.floor(255-Math.pow(length/(side-20),2)*255)+",0,"+Math.floor(Math.pow(length/(side-20),2)*255)+")";
+                ctx.beginPath();
+                ctx.moveTo(x1,y1);
+                ctx.lineTo(x2,y2);
+                ctx.stroke();
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body{
+        background-color:white;
+        margin:0;
+        /*box-sizing: border-box;
+        border: 10px solid #ddd;*/
+      }
+      
+      #sliderContainer{
+        display:block;
+        position:fixed;
+        width:30vw;
+        min-height:10px;
+        bottom:0;
+        left:-3vw;
+        padding:1vw;
+        padding-left:4vw;
+        background-color:#ddd;
+        transition:cubic-bezier(0.68, -0.55, 0.27, 1.55) left 800ms;
+      }
+      
+      #points,#multiple{
+        position:relative;
+        display:block;
+        width:100%;
+        margin-top:15px;
+        margin-bottom:15px;
+      }
+      
+      #data,#save{
+        position: absolute;
+        display: block;
+        min-width: 20px;
+        background-color: #DDDDDD;
+        top: -2.75vw;
+        left: 0;
+        font-family: Roboto,Arial,sans-serif;
+        color: #444;
+        font-size: 1.5vw;
+        padding: 0.5vw;
+        padding-left:3.5vw;
+        font-weight: 900;
+      }
+      
+      #save{
+        top: 0;
+        padding-left: 1vw;
+        padding-right: 1vw;
+        left: 29.9vw;
+        background-color: #DE3F3F;
+        color: white;
+        cursor: pointer;
+        -webkit-touch-callout: none; 
+        -webkit-user-select: none;   
+        -khtml-user-select: none;    
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;       
+      }
+      
+      #inP,#inM{
+        position: relative;
+        border: none;
+        background-color: transparent;
+        width: 3vw;
+        overflow: hidden;
+        font-family: Roboto,Arial,sans-serif;
+        font-size: 1.5vw;
+        color: #444;
+      }
+      
+      #expando{
+        display: block;
+        position: absolute;
+        height: 100%;
+        width: 3vw;
+        background-color: #aaa;
+        margin-left: 31vw;
+        top: 0;
+        font-family: Roboto,Arial,sans-serif;
+        font-size:2vw;
+        color:white;
+        cursor:pointer;
+      }
+      
+      #expandoIcon{
+        position: absolute;
+        display: block;
+        width: 3vw;
+        height: 3vw;
+        top: 54%;
+        margin-top: -1.5vw;
+        transition: cubic-bezier(0.68, -0.55, 0.27, 1.55) transform 500ms 0.7s;
+        font-family: Roboto,Arial,sans-serif;
+        color: #444;
+        text-align: center;
+        line-height: 3vw;
+        font-size: 4vw;
+        font-weight:100;
+      }
+      
+      #selection{
+        height: 1.7vw;
+        width: 5.4vw;
+        top: 0;
+        margin-right: 0.5vw;
+      }
+      
+      input[type=range] {
+        -webkit-appearance: none;
+        width: 100%;
+      }
+      
+      input[type=range]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+      }
+      
+      input[type=range]:focus {
+        outline: none;
+      }
+      
+      input[type=range]::-ms-track {
+        width: 100%;
+        cursor: pointer;
+        background: transparent;
+        border-color: transparent;
+        color: transparent;
+      }
+      
+      input[type=range]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        height: 36px;
+        width: 16px;
+        background-color:#444;
+        cursor: pointer;
+        margin-top:-15px;
+      }
+      
+      input[type=range]::-moz-range-thumb {
+        margin-top:-15px;
+        height: 36px;
+        width: 16px;
+        background-color:#444;
+        cursor: pointer;
+      }
+      
+      input[type=range]::-ms-thumb {
+        margin-top:-15px;
+        height: 36px;
+        width: 16px;
+        background-color:#444;
+        cursor: pointer;
+      }
+      
+      input[type=range]::-webkit-slider-runnable-track {
+        width: 100%;
+        height: 5px;
+        cursor: pointer;
+        background-color: #aaa;
+      }
+      
+      input[type=range]:focus::-webkit-slider-runnable-track {
+        background: #aaa;
+      }
+      
+      input[type=range]::-moz-range-track {
+        width: 100%;
+        height: 5px;
+        cursor: pointer;
+        background-color: #aaa;
+      }
+      
+      input[type=range]::-ms-track {
+        width: 100%;
+        height: 5px;
+        cursor: pointer;
+        background-color: #aaa;
+      }
+      input[type=range]::-ms-fill-lower {
+        width: 100%;
+        height: 5px;
+        cursor: pointer;
+        background-color: #aaa;
+      }
+      input[type=range]:focus::-ms-fill-lower {
+        background: #aaa;
+      }
+      input[type=range]::-ms-fill-upper {
+        width: 100%;
+        height: 5px;
+        cursor: pointer;
+        background-color: #aaa;
+      }
+      input[type=range]:focus::-ms-fill-upper {
+        background: #aaa;
+      }
+    </style>
+  </head>
+  <body onload=init() onmouseup=press(0)>
+    <canvas id="canvas" onmousedown=press(1) onmousemove=move(event) onmouseup=press(0)></canvas>
+    <div id="sliderContainer">
+      <div id="expando" onclick=expand()>
+        <div id="expandoIcon"><</div>
+      </div>
+      <div id="data">Points: <input id="inP" value=10 onkeyup=typeIn()></input>Multiply: <input id="inM" value=2 onkeyup=typeIn()></input>Fill:
+      <select id="selection" onchange=setNuance()>
+        <option value="0">normal</option>
+        <option value="1">nuanced</option>
+        <option value="2">smart β</option>
+      </select><div id="save" onclick=saveUrl()>save</div></div>
+      <input type="range" id="points" min="10" max="500" value="10" oninput=setStuff()></input>
+      <input type="range" id="multiple" min="1" max="100" value="2" style="margin-top: 40px;" oninput=setStuff()></input>
+    </div>
+    <div style="position:fixed; display:block; font-family:Roboto,Arial,sans-serif; font-weight:500; font-size:1vw; color:#aaa; bottom:5px; right:5px">A twiddle by /u/PicturElements</div>
+  </body>
+</html>

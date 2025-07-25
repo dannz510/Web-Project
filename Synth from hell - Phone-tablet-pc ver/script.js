@@ -12,16 +12,15 @@
 		audio_context, 
 		oscillator;
 
-	function Piano(octave, target) {
-    this.octave = octave;
-    this.notes = ['c', 'd', 'e', 'f', 'g', 'a', 'b'];
-    this.susNotes = ['c', 'd', 'f', 'g', 'a'];
-    this.mapNotes = ['c', 'd', 'e', 'f', 'g', 'a', 'b','c#', 'd#', 'f#', 'g#', 'a#', 'c', 'd', 'e', 'c#', 'd#', 'f#', 'g#'];
-    this.keymap = ['a','s','d','f','g','h','j','w','e','r','t','y','k','l','ç','u','i','o','p','1','2','3','4','5','6'];
-    this.whiteKeymap = ['a','s','d','f','g','h','j','k','l','ç','7','8','9','z','x','c','v','b','n'];
-    this.target = target;
-    this.init();
-}
+	function Piano( octave, target ) {
+		this.octave = octave;
+		this.notes = ['c', 'd', 'e', 'f', 'g', 'a', 'b'];
+		this.susNotes = ['c', 'd', 'f', 'g', 'a'];
+		this.mapNotes = ['c', 'd', 'e', 'f', 'g', 'a', 'b','c#', 'd#', 'f#', 'g#', 'a#', 'c', 'd', 'e', 'c#', 'd#', 'f#', 'g#'];
+		this.keymap = ['a', 's', 'd', 'f', 'g','h', 'j','w',  'e',  'r',   't', 'y',  'k', 'l', 'ç',  'u', 'i',   'o',  'p'];
+		this.target = target;
+		this.init();
+	}
 
 	Piano.prototype = {
 		init: function() {
@@ -77,32 +76,30 @@
 			return 	$('<div><div class="tec y90-left size-lr"></div><div class="tec y90-right size-lr"></div><div class="tec x90-top keyTop size-t"></div><div class="tec x90-front"><span class="f-keymap"></span><span class="f-notes"></span></div> </div> ');
 		},
 		bindEvents: function() {
-    var $keys = $( '.key' );
-    $keys.on( 'mouseenter touchstart', function( e ) {
-        e.preventDefault();
-        var $el = $( e.currentTarget ), freqs, freq;
-        if( $el.hasClass('white-key-group') ) {
-            $el.addClass( 'pressed' );
-        } else {
-            $el.addClass( 'pressed-black ' );
-        }
-        $el.addClass( 'active' );
-        freq = mplay.getFrequency( $el.attr( 'data-note' ) );
-        freqs = mplay.getInstrument( freq, __INSTRUMENT, __VIBRATO );
-        mplay.play( freqs );
-    });
-    $keys.on( 'mouseout touchend', function( e ) {
-        e.preventDefault();
-        var $el = $( e.currentTarget );
-        if( $el.hasClass('white-key-group') ) {
-            $el.removeClass( 'pressed' );
-        } else {
-            $el.removeClass( 'pressed-black ' );
-        }
-        $el.removeClass( 'active' );
-        mplay.stop();
-    });
-}
+			var $keys = $( '.key' );
+			$keys.on( 'mouseenter', function( e ) {
+				var $el = $( e.currentTarget ), freqs, freq;
+				if( $el.hasClass('white-key-group') ) {
+					$el.addClass( 'pressed' );
+				} else {
+					$el.addClass( 'pressed-black ' );
+				}
+				$el.addClass( 'active' );
+				freq = mplay.getFrequency( $el.attr( 'data-note' ) );
+				freqs = mplay.getInstrument( freq, __INSTRUMENT, __VIBRATO );
+				mplay.play( freqs );
+			});
+			$keys.on( 'mouseout', function( e ) {
+				var $el = $( e.currentTarget );
+				if( $el.hasClass('white-key-group') ) {
+					$el.removeClass( 'pressed' );
+				} else {
+					$el.removeClass( 'pressed-black ' );
+				}
+				$el.removeClass( 'active' );
+				mplay.stop();
+			});
+		}
 	};
 
 	$( doc ).ready(function() {
@@ -155,7 +152,7 @@
 		});
 		$( '#animate').on( 'change', function( e ) {
 			if( $( e.currentTarget ).is(':checked') ) {
-				win.piano.$target.removeClass( 'animate' );
+				win.piano.$target.addClass( 'animate' );
 			} else {
 				win.piano.$target.removeClass( 'animate' );
 			}

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>meatspin - Dannz</title>
+    <link rel="icon" href="home.png">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:700,900" rel="stylesheet" type="text/css">
+    <style>
+      body{
+        background-color:#3597ff;
+        margin:0;
+      }
+      
+      #headertext{
+        position: fixed;
+        width: 100%;
+        text-align: center;
+        font-family: Roboto,Arial,sans-serif;
+        font-weight: bold;
+        color: white;
+        font-size: 1.3vw;
+        top: calc(50vh - 18vw); 
+      }
+      
+      #container{
+        display: block;
+        position: fixed;
+        width: 44vw;
+        height: 31vw;
+        background-color: white;
+        left: 28vw;
+        top: 50%;
+        margin-top: -15.5vw;
+        font-family: Roboto,Arial,sans-serif;
+        font-weight: 700;
+        text-align: center;
+        font-size: 2vw;
+        line-height: 58vw;
+      }
+      
+      #rollin{
+        display: none;
+        position: absolute;
+        width: 40vw;
+        height: 25vw;
+        background-color: red;
+        background-image:url("images/roll.gif");
+        background-size:contain;
+        top: 2vw;
+        left: 2vw;
+      }
+      
+      .gboob{
+        display: block;
+        position: absolute;
+        width: 40vw;
+        height: 25vw;
+        background-color: red;
+        background-image:url("images/GBback.png");
+        background-size:40vw 25vw;
+        top: 2vw;
+        left: 2vw;
+        transition:left 15s;
+        transition-timing-function:linear;
+      }
+      
+      #pizza{
+        display: block;
+        position: absolute;
+        width: 7.5vw;
+        height: 7.5vw;
+        background-image: url("images/pizza.png");
+        background-size: contain;
+        top: 18vw;
+        left: 18vw;
+        animation: spin 2s linear infinite;
+        cursor:pointer;
+      }
+      
+      @keyframes spin{
+        to{transform:rotate(360deg);}
+      }
+      
+      @keyframes scare{
+        50%{margin-left:1vw;}
+        100%{margin-left:-1vw;}
+      }
+    </style>
+    <script>
+      var count=0,counting=true;
+      
+      function init(){
+        setInterval(increment,2000);
+      }
+      
+      window.onfocus = function () { 
+        counting=true;
+      }; 
+      
+      window.onblur = function () { 
+        counting=false;
+      }; 
+      
+      function roll(){
+        //window.location.href="https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+        document.getElementById("roll").play();
+        document.getElementById("rollin").style.display="block";
+        var rolls=document.getElementsByClassName("gboob");
+        rolls[1].style.width="20vw";
+        rolls[0].style.left="42vw";
+        rolls[1].style.left="-18vw";
+      }
+      
+      function scream(){
+        document.getElementById("scream").currentTime=0;
+        document.getElementById("scream").play();
+        document.getElementById("pizza").style.animation="scare 20ms alternate 100";
+        setTimeout(resetAni,1000);
+      }
+      
+      function resetAni(){
+        document.getElementById("pizza").style.animation="spin 2s linear infinite";
+      }
+      
+      function increment(){
+        if (counting){count++;}
+        document.getElementsByTagName("count")[0].innerHTML=""+count+" spins";
+        if (count==1){document.getElementsByTagName("count")[0].innerHTML="1 spin";}
+      }
+    </script>
+  </head>
+  <body onload=init()>
+    <audio loop preload=auto id="roll" src="images/nggyu.mp3" type="audio/mp3"></audio>
+    <audio preload=auto id="scream" src="images/scream.wav" type="audio/wav"></audio>
+    <div id="headertext">If you're under the age of 18 or find this too arousing please <lnk style="color:#009; font-weight:900; cursor:pointer" onclick=roll()>LEAVE NOW</lnk></div>
+    <div id="container">
+      <div id="rollin"></div>
+      <div class="gboob" style="width:20vw; left:22vw; background-position:-20vw 0;"></div>
+      <div class="gboob"></div>
+      <div id="pizza" onclick=scream()></div>
+      You have sat through <count>0 spins</count>!
+    </div>
+  </body>
+</html>

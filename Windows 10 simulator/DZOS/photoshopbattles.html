@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dannz for PSB president 2016</title>
+    <link rel="icon" href="home.png">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,700" rel="stylesheet" type="text/css">
+    <style>
+      body{
+        background-color:white;
+        margin:0;
+        -webkit-user-select:none;
+        -moz-user-select:none;
+        -ie-user-select:none;
+        transition:background-color 1s;
+      }
+      
+      #gridcanvas{
+        display:block;
+        position:fixed;
+        background-color:#ddd;
+        width:60vw;
+        height:33.75vw;
+        left:20vw;
+        top:50%;
+        margin-top:-16.875vw;
+        box-sizing:border-box;
+        border:1px solid black;
+      }
+      
+      #celebrate{
+        display:block;
+        position:fixed;
+        width:100%;
+        height:100%;
+        left:0;
+        top:0;
+        z-index:-1;
+      }
+      
+      .piece{
+        display:block;
+        position:fixed;
+        width:15vw;
+        height:8.4375vw;
+        background-color:#ccc;
+        background-image:url(images/psb3small.png);
+        background-size:60vw 33.75vw;
+        margin-left:calc(50% - 7.5vw);
+        margin-top:calc(50vh - 4.21875vw);
+        cursor:move;
+        transition:margin 300ms;
+      }
+      
+      .piece:hover{
+        background-color:#aaa;
+      }
+      
+      #desc{
+        display: block;
+        position: fixed;
+        width: 100%;
+        text-align: center;
+        font-family: Roboto,Arial,sans-serif;
+        margin-top: 2vw;
+        font-size: 1.5vw;
+        transition:color 1s;
+      }
+      
+      #apBtn{
+        display: none;
+        position: fixed;
+        width: 10vw;
+        height: 3vw;
+        font-family: Roboto,Arial,sans-serif;
+        font-weight: bold;
+        background-color: #ddd;
+        color:#111;
+        border: none;
+        bottom: 2vw;
+        left: 45vw;
+        line-height:3vw;
+        cursor:pointer;
+      }
+      
+      #apBtn:hover{
+        background-color:#ccc;
+        color:black;
+      }
+      
+      #overlay{
+        display:none;
+        position:fixed;
+        width:100%;
+        height:100%;
+        left:0;
+        top:0;
+        background-color:rgba(0,0,0,0.7);
+        z-index:1000;
+      }
+      
+      a{
+        text-decoration:none;
+        color:#99f;
+      }
+    </style>
+    <script>
+      var pressNo=-1;
+      var xPos,yPos,ucx,ucy,pW,pH;
+      var margins=[];
+      var movable=false;
+      var pieces=document.getElementsByClassName("piece");
+      var movespaceX=window.innerWidth*0.85,movespaceY=window.innerHeight-window.innerWidth*0.084375-200;
+      var xPos2=[],yPos2=[],stps=[],fireCols=[],checks=[0,0,0,0],points=15,sinusoid=0.1,dissipate=0.3;
+      var pointFld=[],sine=[],stepNo=[],fade=0.3,size=25,counter=0;
+      var celebrated=false;
+      
+      function init(){
+        ucx=window.innerWidth*0.2;
+        ucy=(window.innerHeight-window.innerWidth*0.084375*4)/2;
+        pW=window.innerWidth*0.15;
+        pH=window.innerWidth*0.084375;
+        for (var i=0;i<pieces.length;i++){
+          pieces[i].style.marginLeft=""+(ucx+(i%4)*pW)+"px";
+          pieces[i].style.marginTop=""+(ucy+Math.floor(i/4)*pH)+"px";
+          pieces[i].style.backgroundPosition=""+(-15*(i%4))+"vw "+(-8.4375*Math.floor(i/4))+"vw";
+          pieces[i].style.transitionDelay=""+200*i+"ms";
+          pieces[i].style.zIndex=100-i;
+        }
+        var canvas=document.getElementById("gridcanvas");
+        canvas.width=window.innerWidth*0.6;
+        canvas.height=window.innerWidth*0.3375;
+        canvas=document.getElementById("celebrate");
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        //canvas.style.top="0";
+        //canvas.style.marginTop=""+ucy+"px";
+        setTimeout(randomize,4500);
+        paint();
+      }
+      
+      function randomize(){
+        for (var i=0;i<pieces.length;i++){
+          margins.push(Math.random()*movespaceX);
+          pieces[i].style.marginLeft=""+margins[i*2]+"px";
+          margins.push(100+Math.random()*movespaceY);
+          pieces[i].style.marginTop=""+margins[i*2+1]+"px";
+        }
+        setTimeout(resetStuff,3500);
+      }
+      
+      function resetStuff(){
+        for (var i=0;i<pieces.length;i++){
+          pieces[i].style.transition="initial"
+          pieces[i].style.transitionDelay="initial";
+        }
+        document.getElementById("apBtn").style.display="block";
+        movable=true;
+      }
+      
+      function placePieces(){
+        for (var i=0;i<pieces.length;i++){
+          margins[i*2]=ucx+(i%4)*pW;
+          margins[i*2+1]=ucy+Math.floor(i/4)*pH;
+          pieces[i].style.marginLeft=""+margins[i*2]+"px";
+          pieces[i].style.marginTop=""+margins[i*2+1]+"px";
+          pieces[i].style.transition="500ms";
+          pieces[i].style.transitionDelay=""+200*i+"ms";
+        }
+        setTimeout(partay,3500);
+      }
+      
+      function paint(){
+        var ctx=document.getElementById("gridcanvas").getContext("2d");
+        for (var a=1;a<4;a++){
+          ctx.beginPath();
+          ctx.moveTo(0,window.innerWidth*0.3375*(a/4));
+          ctx.lineTo(window.innerWidth*0.6,window.innerWidth*0.3375*(a/4));
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(window.innerWidth*0.6*(a/4),0);
+          ctx.lineTo(window.innerWidth*0.6*(a/4),window.innerWidth*0.3375);
+          ctx.stroke();
+        }
+      } 
+      
+      function press(inID){
+        pressNo=inID;
+        xPos=event.clientX;
+        yPos=event.clientY;
+      }
+      
+      function isFull(){
+        for (var i=0;i<16;i++){
+          if (Math.abs(margins[i*2]-ucx-(i%4)*pW)>=10||Math.abs(margins[i*2+1]-ucy-Math.floor(i/4)*pH)>=10){
+            return false;
+          }
+        }
+        return true;
+      }
+      
+      function partay(){
+        for (var i=0;i<pieces.length;i++){
+          pieces[i].style.transition="initial"
+          pieces[i].style.transitionDelay="initial";
+        }
+        document.getElementById("desc").innerHTML="<b>CONGRATULATIONS! You either know how to lay a puzzle or how to press a button!<\/b><br>Here's my application in its full glory: <a href=\"http://i.imgur.com/KQ02PqR.jpg\">CLICK HERE<\/a>";
+        document.getElementsByTagName("body")[0].style.backgroundColor="black";
+        document.getElementById("desc").style.color="white";
+        document.getElementById("apBtn").style.display="none";
+        setInterval(paint2,30);
+      }
+      
+      function movePieces(){
+        if (pressNo>-1&&movable){
+          margins[pressNo*2]+=(event.clientX-xPos);
+          margins[pressNo*2+1]+=(event.clientY-yPos);
+          pieces[pressNo].style.marginLeft=""+margins[pressNo*2]+"px";
+          pieces[pressNo].style.marginTop=""+margins[pressNo*2+1]+"px";
+          /*var modX=(margins[pressNo*2]-ucx)%pW,modY=(margins[pressNo*2+1]-ucy)%pH;
+          if (modX<10&&modY<10){
+            pieces[pressNo].style.marginLeft=""+(Math.floor((margins[pressNo*2]-ucx)/pW)*pW+ucx)+"px";
+            pieces[pressNo].style.marginTop=""+(Math.floor((margins[pressNo*2+1]-ucy)/pH)*pH+ucy)+"px";
+          }*/
+          for (var a=0;a<4;a++){
+            if (Math.abs(margins[pressNo*2]-ucx-pW*a)<10){
+              for (var b=0;b<4;b++){
+                if (Math.abs(margins[pressNo*2+1]-ucy-pH*b)<10){
+                  pieces[pressNo].style.marginLeft=""+(ucx+a*pW)+"px";
+                  pieces[pressNo].style.marginTop=""+(ucy+b*pH)+"px";
+                }
+              }
+            }
+          }
+          xPos=event.clientX;
+          yPos=event.clientY;
+          for (var a=0;a<pieces.length;a++){
+            pieces[a].style.zIndex=1;
+          }
+          pieces[pressNo].style.zIndex=10;
+          if (isFull()&&!celebrated){
+            celebrated=true;
+            partay();
+          }
+        }
+      }
+      
+      function setPos(){
+        xPos2.push(Math.random()*window.innerWidth);
+        yPos2.push(Math.random()*window.innerHeight);
+        fireCols.push(Math.floor(Math.random()*155+100),Math.floor(Math.random()*155+100),Math.floor(Math.random()*155+100));
+        
+          var tmp=Math.random()*size*0.5+0.5*size;
+          stepNo.push(tmp);
+          stps.push(tmp);
+          pointFld.push(Math.floor(Math.random()*(points+1)+1));
+          sine.push(sinusoid);
+      }
+      
+      function paint2(){
+        var ctx=document.getElementById("celebrate").getContext("2d");
+        ctx.fillStyle="rgba(0,0,0,"+fade+")";
+        ctx.fillRect(0,0,window.innerWidth,window.innerHeight);
+        for (var i=0;i<xPos2.length;i++){
+          var rot=i%(360/points)*Math.PI/18;
+          if (stps[i]>0){
+            ctx.fillStyle="rgb("+fireCols[i*3]+","+fireCols[i*3+1]+","+fireCols[i*3+2]+")";
+            for (var n=0;n<pointFld[i];n++){
+              ctx.beginPath();
+              ctx.arc(xPos2[i]+Math.cos(n*2*Math.PI/pointFld[i]+rot+sine[i]*Math.sin(Math.pow((stepNo[i]-stps[i])+1.45,3)/100)*(-1/stepNo[i]*(stepNo[i]-stps[i])+1))*(stepNo[i]-stps[i])*5,yPos2[i]+Math.sin(n*2*Math.PI/pointFld[i]+rot+sine[i]*Math.sin(Math.pow((stepNo[i]-stps[i])+1.45,3)/100)*(-1/stepNo[i]*(stepNo[i]-stps[i])+1))*(stepNo[i]-stps[i])*5,stps[i],0,2*Math.PI);
+              ctx.fill();
+            }
+            stps[i]--;
+          }
+        }
+        counter++;
+        if (counter%20==0){
+          setPos();
+        }
+      }
+    </script>
+  </head>
+  <body onload=init() onmouseup=press(-1) onmousemove=movePieces()>
+    <div id="desc"><b>I thought I'd let you put my application together for yourselves.</b><br>Yup, I used BIRTH OF A HERO. Could've almost used Comic Sans instead.</div>
+    <canvas id="celebrate"></canvas>
+    <canvas id="gridcanvas"></canvas>
+    <div class="piece" onmousedown=press(0)></div>
+    <div class="piece" onmousedown=press(1)></div>
+    <div class="piece" onmousedown=press(2)></div>
+    <div class="piece" onmousedown=press(3)></div>
+    <div class="piece" onmousedown=press(4)></div>
+    <div class="piece" onmousedown=press(5)></div>
+    <div class="piece" onmousedown=press(6)></div>
+    <div class="piece" onmousedown=press(7)></div>
+    <div class="piece" onmousedown=press(8)></div>
+    <div class="piece" onmousedown=press(9)></div>
+    <div class="piece" onmousedown=press(10)></div>
+    <div class="piece" onmousedown=press(11)></div>
+    <div class="piece" onmousedown=press(12)></div>
+    <div class="piece" onmousedown=press(13)></div>
+    <div class="piece" onmousedown=press(14)></div>
+    <div class="piece" onmousedown=press(15)></div>
+    <button id="apBtn" onclick=placePieces()>Auto-place</button>
+    <div id="overlay">
+      
+    </div>
+  </body>
+</html>

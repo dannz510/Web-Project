@@ -1,0 +1,308 @@
+<html>
+  <head>
+    <title>Höhö sån där färg skulle man ha!</title>
+    <link rel="icon" href="home.png">
+    <meta name="description" content="HEY, THAT'S WHAT A COLOR YOU SHOULD HAVE!!!">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <style>
+      body {
+        margin: 0;
+        height: 100vh;
+        overflow: hidden;
+        touch-action: none;
+        font-family: "Open Sans", Arial, sans-serif;
+      }
+
+      .data-bar {
+        position: absolute;
+        width: 100%;
+        height: 5em;
+        text-align: center;
+        color: #888;
+        font-size: 2vh;
+        line-height: 5em;
+      }
+
+      .data-bar + .data-bar {
+        bottom: 0;
+      }
+
+      .data-bar span:not(.no-bold) {
+        font-weight: bold;
+      }
+
+      #board-wrapper {
+        position: absolute;
+        font-size: 1vh;
+        width: 80em;
+        height: 80em;
+        top: 50%;
+        left: 50%;
+        margin: -40em;
+      }
+
+      .board {
+        position: absolute;
+        width: 80em;
+        height: 80em;
+        margin-left: 1em;
+        background: #efe2d1;
+        box-shadow: -0.5em 0 0.5em rgba(0,0,0,0.1);
+      }
+
+      .board.first {
+        box-shadow: -0.5em 0 0.5em transparent;
+      }
+
+      .board.first, .board.first > .board {
+        margin-left: 0;
+      }
+
+      #grid {
+        position: absolute;
+        background: #fba02b;
+        height: 100%;
+      }
+
+      #boardc {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      #tomt {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        font-family: serif;
+        font-size: 6.6667em;
+        text-align: center;
+        color: #dcc3a3;
+      }
+
+      .switch #board{
+        position: fixed;
+        top: 50%;
+        margin: -40em -37em;
+        left: 50%;
+        animation: slideAway 1s forwards 1;
+      }
+
+      .switch .board.first {
+        animation: shadowIn 1s forwards 1;
+      }
+
+      .switch .board.first > .board {
+        animation: slideIn 1s forwards 1;
+      }
+
+      @keyframes slideAway {
+        50% {
+          opacity: 1;
+        }
+        100% {
+          margin-left: 0;
+          left: 100%;
+          opacity: 0;
+        }
+      }
+
+      @keyframes slideIn {
+        to {
+          margin-left: 1em;
+        }
+      }
+
+      @keyframes shadowIn {
+        to {
+          box-shadow: -0.5em 0 0.5em rgba(0,0,0,0.1);
+        }
+      }
+
+      @media (max-aspect-ratio: 1/1){
+        #board-wrapper {
+          font-size: 1vw;
+        }
+
+        .data-bar {
+          font-size: 3vw;
+          top: 50%;
+          margin: -18.3em 0;
+        }
+
+        .data-bar + .data-bar {
+          margin: 13.333em 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="data-bar">
+      <span id="finished">0</span> <span id="board-txt" class="no-bold">pre-painted boards</span> | <span id="time">0,00</span>s
+    </div>
+    <div class="data-bar" style="display:none">
+      last painting took <span id="last"></span>s | snitt <span id="avg"></span>s
+    </div>
+    <div id="board-wrapper">
+      <div class="board first">
+        <div class="board">
+          <div class="board">
+            <div class="board">
+              <div id="tomt">Dannz</div>
+              <div id="board" class="board">
+                <svg id="grid" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <pattern id="backgrid" x="0" y="0" width="0.25" height="0.25">
+                      <rect x="0" y="0" width="5" height="5"></rect>
+                      <rect x="5" y="5" width="5" height="5"></rect>
+                    </pattern>
+                  </defs>
+                  <rect fill="url(#backgrid)" width="40" height="40"></rect>
+                </svg>
+                <canvas id="boardc"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      var canv=document.getElementById("boardc"),
+          ctx=canv.getContext("2d"),
+          radius=30,
+          drawing=false,
+          prevCoords=[],
+          timestamp=0,
+          lastTS=0,
+          gameData={
+            finished: 0,
+            last: 0,
+            avg: 0
+          };
+
+      gameData=JSON.parse(localStorage.getItem("gameData")) || gameData;
+
+      function init(){
+        var bcr=document.getElementById("board").getBoundingClientRect(),
+            s=bcr.width;
+        radius=s/6;
+        canv.width=s;
+        canv.height=s;
+        ctx.fillStyle="#efe2d1";
+        ctx.fillRect(0,0,s,s);
+        ctx.font=(radius/2)+"px serif";
+        ctx.fillStyle="#dcc3a3";
+        ctx.textAlign="center";
+        ctx.textBaseline="middle";
+        ctx.fillText("Tom T. leksaker AB",s/2,s/2);
+
+        timestamp=Date.now();
+        document.getElementById("finished").innerHTML=gameData.finished;
+        document.getElementById("board-txt").innerHTML=gameData.finished==1?"pre-painted board":"pre-painted boards"
+        var lst=document.getElementById("last");
+        if (gameData.finished){
+          lst.parentElement.style.display="";
+          lst.innerText=gameData.last.toFixed(2).replace(".",",");
+          document.getElementById("avg").innerText=gameData.avg.toFixed(2).replace(".",",");
+        }
+      }
+
+      function erase(x,y){
+        ctx.fillStyle="rgba(0,0,0,0.2)";
+        ctx.globalCompositeOperation="source-atop";
+        ctx.beginPath();
+        ctx.arc(x+2,y+2,radius,0,Math.PI*2);
+        ctx.fill();
+        ctx.fillStyle="black";
+        ctx.globalCompositeOperation="destination-out";
+        ctx.beginPath();
+        ctx.arc(x,y,radius,0,Math.PI*2);
+        ctx.fill();
+      }
+
+      function eraseStart(evt){
+        drawing=true;
+        smartErase(evt);
+      }
+
+      function smartErase(evt){
+        if (!drawing)
+          return;
+
+        var t=evt.touches,
+            bcr=document.getElementById("board").getBoundingClientRect(),
+            top=bcr.top,
+            left=bcr.left;
+        if (t){
+          for (var i=0;i<t.length;i++)
+            erase(t[i].clientX-left,t[i].clientY-top);
+        }else
+          erase(evt.clientX-left,evt.clientY-top);
+        evt.preventDefault();
+      }
+
+      function relayEraseEnd(){
+        eraseEnd(true);
+      }
+
+      function eraseEnd(block){
+        if (block!==true)
+          drawing=false;
+        if (checkBlank()&&timestamp!=1e15){
+          var bw=document.getElementById("board-wrapper");
+          bw.classList.add("switch");
+          setTimeout(function(){
+            bw.classList.remove("switch");
+            init();
+          },1000);
+          var fin=(lastTS-timestamp)/1000;
+          gameData.finished++;
+          gameData.last=fin;
+          gameData.avg=((gameData.finished-1)*gameData.avg+fin)/gameData.finished;
+          drawing=false;
+          timestamp=1e15;
+          localStorage.setItem("gameData",JSON.stringify(gameData));
+        }
+      }
+
+      function checkBlank(){
+        var s=canv.width,
+            id=ctx.getImageData(0,0,s,s),
+            sampleW=Math.floor(s/20);
+
+        for (var i=10;i<s;i+=sampleW){
+          for (var j=10;j<s;j+=sampleW){
+            if (id.data[(i*s+j)*4+3])
+              return false;
+          }
+        }
+        return true;
+      }
+
+      function tick(){
+        var diff=Date.now()-timestamp;
+        lastTS=Date.now();
+        if (diff>0)
+          document.getElementById("time").innerHTML=(diff/1000).toFixed(2).replace(".",",");
+      }
+
+      document.body.addEventListener("mousedown",eraseStart);
+      document.body.addEventListener("touchstart",eraseStart);
+      document.body.addEventListener("mousemove",smartErase);
+      document.body.addEventListener("touchmove",smartErase);
+      document.body.addEventListener("mouseup",eraseEnd);
+      document.body.addEventListener("touchend",eraseEnd);
+      document.body.addEventListener("mouseleave",relayEraseEnd);
+      document.body.addEventListener("touchleave",relayEraseEnd);
+      setInterval(tick,20);
+
+      window.onresize=init;
+      init();
+    </script>
+  </body>
+</html>

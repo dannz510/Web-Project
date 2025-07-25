@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Home - Dannz</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="home.png">
+    <link rel="stylesheet" type="text/css" href="indexStylever3.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,900" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=VT323" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="console.css" rel="stylesheet" type="text/css">
+    <style id="specCols"></style>
+</head>
+<body oncontextmenu="return contextShow">
+    <audio id="taskbahSound" loop preload="auto">
+        <source src="images/win_icons/LockIt.mp3">
+    </audio>
+
+    <button id="gofull" style="display:none; position:fixed; z-index:100;">GO FULLSCREEN</button>
+
+    <div id="desktopwrapper" class="grad backOverride">
+        <div id="desktop">
+            <div id="test"></div>
+            <div id="selectbox"></div>
+            <div id="shadow"></div>
+        </div>
+    </div>
+
+    <div id="context">
+      <div class="contextitem">Open</div>
+      <div class="contextitem">Open All</div>
+      <div class="contextitem">Rename</div>
+      <div class="contextitem">Pin to taskbar</div>
+      <div class="contextitem">Pin</div>
+      <div class="contextitem">Unpin</div>
+      <div class="contextitem">Open new</div>
+      <div class="contextitem">Close</div>
+      <div class="contextitem">Fullscreen</div>
+      <div class="contextitem">Enable context menu</div>
+      <div class="contextitem">Change wallpaper</div>
+      <div class="contextitem tickbox" ticked="false">Lock taskbar</div>
+      <div class="contextitem tickbox" ticked="false">Lock the taskbah</div>
+      <div class="contextitem">Open</div>
+      <div class="contextitem">Go to directory</div>
+      <div class="contextitem">Open in new explorer</div>
+      <div class="contextitem">Open as HTML</div>
+      <div class="contextitem">System Configuration</div> </div>
+
+    <div id="taskbar">
+        <div id="taskbar-main-section">
+            <button id="start-button" class="taskbar-button">
+                <img id="start-icon" src="images/win_icons/home.png" alt="Start">
+            </button>
+            <button id="search-button" class="taskbar-button">
+                <img id="search-icon" src="images/win_icons/started.png" alt="Search">
+            </button>
+            <div id="programbar">
+                </div>
+        </div>
+        <div id="taskbar-right-section">
+            <button id="volume-icon" class="taskbar-icon">
+                <i class="fas fa-volume-up"></i>
+                <div id="volume-slider-container" class="hidden">
+                    <input type="range" id="volume-slider" min="0" max="100" value="50">
+                    <span id="volume-value">50</span>
+                </div>
+            </button>
+            <button id="notification-area-toggle" class="taskbar-icon">
+                <i class="fas fa-bell"></i>
+            </button>
+            <div id="current-time"></div>
+            <button id="taskbar-power-button" class="taskbar-icon">
+                <img src="images/win_icons/power.png" alt="Power">
+                <div id="power-menu" class="hidden">
+                    <button id="restart-option" class="power-menu-item">
+                        <i class="fas fa-redo-alt"></i> Restart
+                    </button>
+                    <button id="shutdown-option" class="power-menu-item">
+                        <i class="fas fa-power-off"></i> Shut Down
+                    </button>
+                </div>
+            </button>
+        </div>
+    </div>
+
+    <div id="start-menu" class="hidden">
+        <div class="start-menu-header">
+            <h3>Start Menu</h3>
+            <button id="close-start-menu" class="close-btn"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="start-menu-content">
+            <div class="start-menu-section">
+                <h4>Pinned</h4>
+                <div id="pinned-apps-list" class="app-grid">
+                    </div>
+            </div>
+            <div class="start-menu-section">
+                <h4>Recommended</h4>
+                <div id="often-used-list" class="app-grid">
+                    </div>
+            </div>
+            <div class="start-menu-section">
+                <h4>All Apps</h4>
+                <ul id="all-apps-list" class="app-list">
+                    </ul>
+            </div>
+        </div>
+        <div class="start-menu-footer">
+            <button id="start-menu-power-button" class="start-menu-button">
+                <img src="images/win_icons/power.png" alt="Power">
+                <span>Power</span>
+            </button>
+            <button id="start-menu-settings-button" class="start-menu-button">
+                <img src="images/win_icons/cogbig.png" alt="Settings">
+                <span>Settings</span>
+            </button>
+        </div>
+    </div>
+
+    <div id="search-overlay" class="hidden">
+        <input type="text" id="search-input" placeholder="Type here to search">
+        <div id="search-results">
+            </div>
+    </div>
+
+    <div id="settings-window" class="window hidden">
+        <div class="header">
+            <img src="images/win_icons/cogbig.png" alt="Settings Icon" class="window-icon">
+            <span class="title">Settings</span>
+            <button class="close-settings-btn close-btn"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="content">
+            <div class="settings-sidebar">
+                <div class="settings-sidebar-item active" data-section="personalization">
+                    <i class="fas fa-palette"></i> Personalization
+                </div>
+                <div class="settings-sidebar-item" data-section="system">
+                    <i class="fas fa-cogs"></i> System
+                </div>
+                <div class="settings-sidebar-item" data-section="about">
+                    <i class="fas fa-info-circle"></i> About
+                </div>
+            </div>
+            <div class="settings-main-content">
+                <div id="personalization-section" class="settings-section active">
+                    <h3>Personalization</h3>
+                    <div class="setting-group">
+                        <h4>Background</h4>
+                        <div id="wallpaper-thumbnails" class="wallpaper-grid">
+                            </div>
+                    </div>
+                    <div class="setting-group">
+                        <h4>Colors</h4>
+                        <div class="color-options">
+                            <button id="light-mode-btn" class="color-btn active">Light</button>
+                            <button id="dark-mode-btn" class="color-btn">Dark</button>
+                        </div>
+                    </div>
+                    <div class="setting-group">
+                        <h4>Taskbar</h4>
+                        <label for="taskbar-transparency-slider">Transparency:</label>
+                        <input type="range" id="taskbar-transparency-slider" min="0" max="100" value="90">
+                        <span id="taskbar-transparency-value">90%</span>
+                        <div class="taskbar-alignment-options">
+                            <button id="align-left-btn">Align Left</button>
+                            <button id="align-center-btn">Align Center</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="system-section" class="settings-section">
+                    <h3>System</h3>
+                    <div class="setting-group">
+                        <h4>General</h4>
+                        <button id="reset-names-btn">Reset Program Names</button>
+                        <button id="reset-all-btn">Reset All Data</button>
+                    </div>
+                    </div>
+                <div id="about-section" class="settings-section">
+                    <h3>About</h3>
+                    <p>Dannz OS Simulation</p>
+                    <p>Version 1.0</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification-area" class="hidden">
+        <div class="notification-header">
+            <span>Notifications</span>
+            <button class="close-btn" onclick="toggleNotificationArea()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="notification-content">
+            <div id="calendar-container">
+                <div class="calendar-header">
+                    <button id="prev-month"><i class="fas fa-chevron-left"></i></button>
+                    <span id="current-month-year"></span>
+                    <button id="next-month"><i class="fas fa-chevron-right"></i></button>
+                </div>
+                <div class="calendar-weekdays">
+                    <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                </div>
+                <div id="calendar-days" class="calendar-days-grid">
+                    </div>
+            </div>
+            <div class="quick-settings">
+                </div>
+        </div>
+    </div>
+
+    <div id="window-container"></div>
+
+    <script src="indexMotorver3.js"></script>
+</body>
+</html>

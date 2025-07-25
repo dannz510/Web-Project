@@ -1,0 +1,71 @@
+<html>
+  <head>
+    <link rel="icon" href="http://picturelements.github.io/pitchforkemporium/PEicon.png">
+    <link href='https://fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Roboto:100,300,900' rel='stylesheet' type='text/css'>
+    <link href='pitchfork.css' rel='stylesheet' type='text/css'>
+    <script>
+      function setCart(){
+        var pitchforks=[],info=[],no=[];
+        var items=0,tot=0;
+        items=sessionStorage.getItem("items");
+        if (items==null){items=0;}
+        
+        
+        for (i=0;i<items;i++){
+          if (sessionStorage.getItem("item"+i)!=""){tot++;}
+        }
+        if (tot==0){
+          document.getElementById("displayBox").style="text-align:center; font-size:5vw; height:500px; line-height:500px; font-family:Roboto,Arial,sans-serif; font-weight:900;";
+          document.getElementById("displayBox").innerHTML="Cart empty";
+        }else{
+          var isDuplicate;
+          for (i=0;i<items;i++){
+            var check=sessionStorage.getItem("item"+i);
+            isDuplicate=0;
+            for (n=0;n<pitchforks.length;n++){
+              if (check==pitchforks[n]&&check!=""){isDuplicate=1; no[n]++; break;}
+            }
+            if (check==""){isDuplicate=1;}
+            if (isDuplicate==0){
+              pitchforks.push(check);
+              info.push(sessionStorage.getItem("info"+i));
+              no.push(1);
+            }
+          }
+          var outStr="<table><tr><th>Type</th><th>Model number</th><th>Price</th><th>Quantity</th><th>Total</th></tr>";
+          var totSum=0;
+          for (i=0;i<pitchforks.length;i++){
+            var pitch=pitchforks[i];
+            var sum=0;
+            for (n=0;n<pitch.length;n++){sum+=pitch.charCodeAt(n);}
+            outStr+="<tr><td>"+pitchforks[i]+"</td><td>"+info[i]+"</td><td>"+sum+" karma</td><td>"+no[i]+"</td><td>"+sum*no[i]+" karma</td></tr>";
+            totSum+=sum*parseInt(no[i]);
+          }
+          outStr+="</table><br><br><table><tr><th>Total quantity</th><th>Grand total</th></tr><tr><td>"+tot+"</td><td>"+totSum+"</td></tr></table>";
+          document.getElementById("displayBox").innerHTML=outStr;
+        }
+      }
+    </script>
+  </head>
+  <body onload=setCart()>
+    <div id="wrapper">
+      <div id="header">
+        <div id="name"><a href="http://picturelements.github.io/pitchforkemporium/">Pitchfork Emporium</a></div>
+        <div id="subtitle">Premium source of anti-OP wares</div>
+      </div>
+      <div id="content">
+        <div id="displayBox" style="margin-top:50px; font-family:Roboto,Arial,sans-serif;">
+          <!--<div id="checkInner" style="display:block; position:absolute; width:90%; height:90%; top:5%; left:5%; font-family:Roboto,Arial,sans-serif; font-weight:900;"></div>-->
+        </div>
+      </div>
+      <div id="footer">
+        <inner>
+          Pitchfork Emporium reserves the right to test-stab OP before wares are shipped. Any damages induced during stabbing will be repaired by the Pitchfork Emporium repairs and replacement division free of charge. Pitchforks misused to move or stack hay void all warranty.
+          <br><br>
+          © 2016 Pitchfork Emporium Industries
+        </inner>
+      </div>
+    </div>
+  </body>
+</html>

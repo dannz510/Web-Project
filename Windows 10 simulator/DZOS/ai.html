@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>AI - Dannz</title>
+    <link rel="icon" href="home.png">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,700" rel="stylesheet" type="text/css">
+    <style>
+      body{
+        background-color:white;
+        margin:0;
+      }
+      
+      #imgcontainer{
+        display:block;
+        position:fixed;
+        right:0;
+        top:0;
+        width:70%;
+        height:100%;
+        background-color:#ccc;
+      }
+      
+      #inner{
+        display:block;
+        position:absolute;
+        width:90%;
+        left:5%;
+        height:90%;
+        top:5%;
+      }
+      
+      img{
+        display:block;
+        position:absolute;
+        width:100%;
+        background-size:contain;
+      }
+    </style>
+    <script>
+      function getImage(){
+        var image=document.getElementById("image");
+        var inner=document.getElementById("inner");
+        image.src=document.getElementById("input").value;
+        var r1=image.offsetWidth/image.offsetHeight;
+        var r2=inner.offsetWidth/inner.offsetHeight;
+        console.log("Image ratio: "+r1+", Container ratio: "+r2);
+        if (r1>r2){
+          image.style.width=""+(100*(r2/r1))+"%";
+          image.style.top="0";
+          //image.style.left=""+((100-(100*(height/inHeight)))/2)+"%";
+        }else{
+          image.style.left="0";
+          //image.style.top=""+(50*(inHeight-height)/inHeight)+"%";
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <input id="input"></input>
+    <button onclick=getImage()>Upload</button>
+    <div id="imgcontainer">
+      <div id="inner">
+        <img id="image"></img>
+      </div>
+    </div>
+  </body>
+</html>

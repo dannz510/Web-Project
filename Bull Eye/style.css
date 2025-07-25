@@ -1,0 +1,305 @@
+/* General Body and Container Styles */
+body {
+    margin: 0;
+    background: var(--bg-color, #222); /* Default background color */
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    overflow: hidden; /* Prevent scrolling */
+}
+
+.game-container {
+    position: relative;
+    width: 100%;
+    height: 100vh; /* Full viewport height */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-image, none) center center / cover no-repeat; /* Background image for themes */
+    transition: background-color 0.5s ease, background-image 0.5s ease;
+}
+
+/* SVG Styles */
+svg {
+    width: 100%;
+    height: 100%;
+    position: absolute; /* Position relative to .game-container */
+    top: 0;
+    left: 0;
+}
+
+/* Text Hint Styles */
+span {
+    color: var(--text-color, white);
+    font-family: sans-serif;
+    opacity: .7;
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.2em;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+    z-index: 10;
+}
+
+/* Settings Button */
+.settings-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    background-color: #4CAF50; /* Green */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    z-index: 100; /* Ensure it's above other elements */
+}
+
+.settings-button:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+}
+
+.settings-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Modal Styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 200; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: var(--modal-bg, #fefefe);
+    margin: auto;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    width: 80%; /* Smaller width for better mobile view */
+    max-width: 500px; /* Max width for larger screens */
+    position: relative;
+    color: var(--modal-text-color, #333);
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.close-button {
+    color: var(--modal-text-color, #aaa);
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    font-size: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: #000;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: var(--modal-title-color, #222);
+    font-size: 1.8em;
+}
+
+.setting-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.setting-group label {
+    font-size: 1.1em;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.setting-group select,
+.setting-group input[type="color"] {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid var(--input-border, #ccc);
+    font-size: 1em;
+    background-color: var(--input-bg, #fff);
+    color: var(--input-text, #333);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.setting-group select:focus,
+.setting-group input[type="color"]:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
+
+/* Specific styling for color input to make it larger */
+.setting-group input[type="color"] {
+    height: 40px;
+    padding: 0;
+    border-radius: 8px;
+    overflow: hidden; /* Hide default color picker border */
+    cursor: pointer;
+}
+
+
+/* Theme Variables (Default) */
+:root {
+    --bg-color: #222;
+    --bg-image: none;
+    --text-color: white;
+    --arc-gradient-stop1: #fff;
+    --arc-gradient-stop2: #fff;
+    --bow-stroke: #ddd;
+    --arrow-stroke: #888;
+    --arrow-fill-front: #88ce02; /* Default archery color */
+    --target-fill-outer: #FFF;
+    --target-fill-inner: #F4531C;
+    --miss-fill: #aaa;
+    --bullseye-fill: #F4531C;
+    --hit-fill: #ffcc00;
+
+    --modal-bg: #fefefe;
+    --modal-text-color: #333;
+    --modal-title-color: #222;
+    --input-border: #ccc;
+    --input-bg: #fff;
+    --input-text: #333;
+}
+
+/* Theme Overrides */
+body.theme-light-beach {
+    --bg-color: #87CEEB; /* Sky blue */
+    --bg-image: url('https://placehold.co/1920x1080/87CEEB/FFFFFF/png?text=Light+Beach'); /* Placeholder image */
+    --text-color: #333;
+    --arc-gradient-stop1: rgba(255, 255, 255, 0.5);
+    --arc-gradient-stop2: rgba(255, 255, 255, 0);
+    --bow-stroke: #A0522D; /* Sienna (wood-like) */
+    --arrow-stroke: #8B4513; /* SaddleBrown */
+    --target-fill-outer: #F5DEB3; /* Wheat (sand) */
+    --target-fill-inner: #FF6347; /* Tomato */
+    --miss-fill: #6A5ACD; /* SlateBlue */
+    --bullseye-fill: #FF4500; /* OrangeRed */
+    --hit-fill: #ADFF2F; /* GreenYellow */
+
+    --modal-bg: #F5DEB3;
+    --modal-text-color: #555;
+    --modal-title-color: #A0522D;
+    --input-border: #D2B48C;
+    --input-bg: #FFF8DC;
+    --input-text: #333;
+}
+
+body.theme-ocean {
+    --bg-color: #0077BE; /* Deep Ocean Blue */
+    --bg-image: url('https://placehold.co/1920x1080/0077BE/FFFFFF/png?text=Ocean'); /* Placeholder image */
+    --text-color: #E0FFFF; /* Light Cyan */
+    --arc-gradient-stop1: rgba(255, 255, 255, 0.4);
+    --arc-gradient-stop2: rgba(255, 255, 255, 0);
+    --bow-stroke: #4682B4; /* SteelBlue */
+    --arrow-stroke: #1E90FF; /* DodgerBlue */
+    --target-fill-outer: #ADD8E6; /* LightBlue */
+    --target-fill-inner: #FFD700; /* Gold (sunken treasure) */
+    --miss-fill: #8A2BE2; /* BlueViolet */
+    --bullseye-fill: #FF4500; /* OrangeRed */
+    --hit-fill: #00FF7F; /* SpringGreen */
+
+    --modal-bg: #ADD8E6;
+    --modal-text-color: #004080;
+    --modal-title-color: #0056B3;
+    --input-border: #6A5ACD;
+    --input-bg: #E0FFFF;
+    --input-text: #004080;
+}
+
+body.theme-on-the-moon {
+    --bg-color: #0A0A1A; /* Very Dark Blue/Black */
+    --bg-image: url('https://placehold.co/1920x1080/0A0A1A/FFFFFF/png?text=Moon'); /* Placeholder image */
+    --text-color: #E0E0E0; /* Light Gray */
+    --arc-gradient-stop1: rgba(255, 255, 255, 0.1);
+    --arc-gradient-stop2: rgba(255, 255, 255, 0);
+    --bow-stroke: #A9A9A9; /* DarkGray */
+    --arrow-stroke: #778899; /* LightSlateGray */
+    --target-fill-outer: #C0C0C0; /* Silver (moon rock) */
+    --target-fill-inner: #FFD700; /* Gold (moon dust) */
+    --miss-fill: #505050; /* Gray */
+    --bullseye-fill: #FF6347; /* Tomato */
+    --hit-fill: #00FFFF; /* Cyan */
+
+    --modal-bg: #2C3E50;
+    --modal-text-color: #ECF0F1;
+    --modal-title-color: #BDC3C7;
+    --input-border: #7F8C8D;
+    --input-bg: #34495E;
+    --input-text: #ECF0F1;
+}
+
+body.theme-mountain {
+    --bg-color: #4A6D7C; /* Mountain Grey-Blue */
+    --bg-image: url('https://placehold.co/1920x1080/4A6D7C/FFFFFF/png?text=Mountain'); /* Placeholder image */
+    --text-color: #F8F8F8; /* Off-white */
+    --arc-gradient-stop1: rgba(255, 255, 255, 0.3);
+    --arc-gradient-stop2: rgba(255, 255, 255, 0);
+    --bow-stroke: #6B4226; /* Dark Brown */
+    --arrow-stroke: #8B4513; /* SaddleBrown */
+    --target-fill-outer: #D3D3D3; /* LightGray (snow) */
+    --target-fill-inner: #A0522D; /* Sienna (rock) */
+    --miss-fill: #778899; /* LightSlateGray */
+    --bullseye-fill: #8B0000; /* DarkRed */
+    --hit-fill: #32CD32; /* LimeGreen */
+
+    --modal-bg: #607D8B;
+    --modal-text-color: #ECEFF1;
+    --modal-title-color: #CFD8DC;
+    --input-border: #90A4AE;
+    --input-bg: #B0BEC5;
+    --input-text: #263238;
+}
+
+body.theme-volcano {
+    --bg-color: #330000; /* Dark Red-Brown */
+    --bg-image: url('https://placehold.co/1920x1080/330000/FFFFFF/png?text=Volcano'); /* Placeholder image */
+    --text-color: #FFD700; /* Gold */
+    --arc-gradient-stop1: rgba(255, 165, 0, 0.6); /* Orange */
+    --arc-gradient-stop2: rgba(255, 69, 0, 0); /* Red-Orange */
+    --bow-stroke: #A52A2A; /* Brown */
+    --arrow-stroke: #8B0000; /* DarkRed */
+    --target-fill-outer: #444; /* Dark gray (ash) */
+    --target-fill-inner: #FF4500; /* OrangeRed (lava) */
+    --miss-fill: #555; /* Darker gray */
+    --bullseye-fill: #FF0000; /* Red */
+    --hit-fill: #FFFF00; /* Yellow */
+
+    --modal-bg: #4B0000;
+    --modal-text-color: #FFD700;
+    --modal-title-color: #FF8C00;
+    --input-border: #8B0000;
+    --input-bg: #660000;
+    --input-text: #FFD700;
+}

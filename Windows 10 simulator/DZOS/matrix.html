@@ -1,0 +1,122 @@
+<html>
+  <head>
+    <title>Matrix - Dannz</title>
+    <link rel="icon" href="home.png">
+    <style>
+      body{
+        background-color:white;  
+      }
+      
+      #canvaswrapper{
+        display:block;
+        position:fixed;
+        left:50%;
+        top:50%;
+        background-color:#ddd;
+      }
+
+      #backmatrix,#frontmatrix{
+        display:block;
+        position:absolute;
+        width:100%;
+        height:100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="canvaswrapper">
+      <canvas id="backmatrix"></canvas>
+      <canvas id="frontmatrix"></canvas>
+    </div>
+    <script>
+      var matrixSize=59,size,sqS,topL,roundOff=true;
+      document.getElementById("canvaswrapper").addEventListener("mousemove",function(event){matrixMove(event)});
+      lastTime=0,refresh=50;
+
+      function init(){
+        var canv=document.getElementById("backmatrix");
+        size=Math.min(window.innerHeight*0.7,window.innerHeight*0.7);
+        sqS=size/(matrixSize*2.5);
+        canv.width=size;
+        canv.height=size;
+        var ctx=canv.getContext("2d");
+        ctx.clearRect(0,0,size,size);
+        var padding=size/(matrixSize+1);
+        for (var h=1;h<=matrixSize;h++){
+          for (var w=1;w<=matrixSize;w++){
+            ctx.fillStyle="#999";
+            ctx.beginPath();
+            ctx.arc(w*padding,h*padding,sqS,0,2*Math.PI);
+            ctx.fill();
+          }
+        }
+
+        canv=document.getElementById("frontmatrix");
+        canv.width=size;
+        canv.height=size;
+
+        var wrapper=document.getElementById("canvaswrapper").style;
+        wrapper.width=size+"px";
+        wrapper.height=size+"px";
+        wrapper.marginLeft=-size/2+"px";
+        wrapper.marginTop=-size/2+"px";
+        topL={
+          x: (window.innerWidth-size)/2,
+          y: (window.innerHeight-size)/2
+        };
+      }
+
+      window.onresize=function(){
+        init();
+      };
+
+      function matrixMove(evt){
+        var x=-1,y=-1;
+        var xPos=evt.clientX-topL.x,yPos=evt.clientY-topL.y;
+        var padd=size/(matrixSize+1);
+        if (roundOff){
+          xPos=Math.floor((xPos+padd/2)/padd)*padd;
+          yPos=Math.floor((yPos+padd/2)/padd)*padd;
+        }
+        for (var i=1;i<=matrixSize;i++){
+          if (Math.abs(xPos-padd*i)<=sqS){x=i;}
+          if (Math.abs(yPos-padd*i)<=sqS){y=i;}
+        }
+        var time=new Date().getTime();
+        if (time-lastTime>refresh){
+          draw(x,y);
+          lastTime=time;
+        }
+      }
+
+      function draw(x,y){
+        var ctx=document.getElementById("frontmatrix").getContext("2d");
+        ctx.clearRect(0,0,size,size);
+        ctx.fillStyle="#609";
+        var padding=size/(matrixSize+1);
+        for (var h=1;h<=matrixSize;h++){
+          for (var w=1;w<=matrixSize;w++){
+            if ((w==x||h==y)&&(x!=-1&&y!=-1)){
+            var mult=(w==x&&h==y)?1.5:1;
+              ctx.beginPath();
+              ctx.arc(w*padding,h*padding,sqS*mult,0,2*Math.PI);
+              ctx.fill();
+            }
+          }
+        }
+        ctx.strokeStyle="#609";
+        ctx.lineWidth=sqS/2;
+        if (x!=-1&&y!=-1){
+          for (var i=1;i<=matrixSize;i++){
+            ctx.beginPath();
+            ctx.moveTo(i*padding,y*padding);
+            ctx.lineTo(x*padding,i*padding);
+            ctx.stroke();
+          }
+        }
+      }
+
+      init();
+    </script>
+  </body>
+</html>

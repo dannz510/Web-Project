@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>HTML editor - Dannz</title>
+    <link rel="icon" href="home.png">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,700" rel="stylesheet" type="text/css">
+    <style id="editorcss">
+      html{
+        height:100%;
+        overflow-x:hidden;
+      }
+    
+      body{
+        background-color:white;
+        margin:0;
+        width:100%;
+        height:100%;
+      }
+      
+      #buttoncontainer{
+        display:block;
+        position:fixed;
+        right:0;
+        bottom:0;
+        min-width:10px;
+        min-height:10px;
+        padding-top:20px;
+        padding-right:10px;
+        background-color:#333;
+        z-index:200;
+        animation: highlight 0.5s alternate 12;
+      }
+      
+      button{
+        display:block;
+        position:relative;
+        margin-left:10px;
+        float:left;
+        bottom:10px;
+        z-index:100;
+        cursor:pointer;
+        padding:5px;
+        border:none;
+        background:#999;
+        color:#111;
+        font-family:monospace;
+      }
+      
+      textarea{
+        display:block;
+        position:fixed;
+        width:40%;
+        height:-webkit-calc(100% - 90px);
+        height:-moz-calc(100% - 90px);
+        height:-ms-calc(100% - 90px);
+        height:calc(100% - 90px);
+        left:0;
+        top:0;
+        background-color: #222;
+        font-family: monospace;
+        color: #7DFF54;
+        padding:10px;
+        border:none;
+        outline:none;
+      }
+      
+      #infopane{
+        display:block;
+        position:fixed;
+        width:40%;
+        padding-left:10px;
+        padding-right:10px;
+        height:70px;
+        bottom:0;
+        left:0;
+        font-family: monospace;
+        background-color:#111;
+        color:#7DFF54;
+        font-size:20px;
+        line-height:70px;
+        text-align:center;
+      }
+      
+      #resizebar{
+        display:block;
+        position:absolute;
+        width:20px;
+        height:100%;
+        left:-webkit-calc(40% + 20px);
+        left:-moz-calc(40% + 20px);
+        left:-ms-calc(40% + 20px);
+        left:calc(40% + 20px);
+        top:0;
+        cursor: col-resize;
+        z-index:100;
+      }
+      
+      #inner{
+        display:block;
+        position:absolute;
+        width:20px;
+        height:100%;
+        left:50%;
+        background-color:#444;
+        margin-left:-10px;
+        box-sizing:border-box;
+        border-left:3px solid #777;
+        border-right:3px solid #777;
+      }
+      
+      #displaypane{
+        display:block;
+        position:fixed;
+        width:-webkit-calc(60% - 40px);
+        width:-moz-calc(60% - 40px);
+        width:-ms-calc(60% - 40px);
+        width:calc(60% - 40px);
+        height:100%;
+        top:0;
+        right:0;
+        border:none;
+        z-index:0;
+      }
+      
+      @keyframes highlight{
+        to{box-shadow:-20px 10px 200px white,-20px 10px 200px white;}
+      }
+    </style>
+    <script>
+      var draggable=0;  //fuck it; easier than boolean...
+      var documentId=0;
+      
+      
+      function setIt(){
+        //thank god for stackoverflow!
+        var iframe = document.getElementById("displaypane");
+        iframe = iframe.contentWindow ? 
+                 iframe.contentWindow : 
+                 (
+                     iframe.contentDocument.document ?
+                     iframe.contentDocument.document : 
+                     iframe.contentDocument
+                 );
+        iframe.document.open();
+        iframe.document.write(document.getElementById("editorpane").value);
+        iframe.document.close();
+      }
+      
+      function init(){
+        var input=["",""],texts=["JS Clock","Squares"];
+        input[0]="\<!DOCTYPE html>\n\<html>\n  \<head>\n    \<style>\n      body{\n        background-color:#111;\n      }\n      #clockface{\n        display:block;\n        position:fixed;\n        left:50%;\n        top:50%;\n        width:500px;\n        height:500px;\n        margin-left:-250px;\n        margin-top:-250px;\n        border-radius:250px;\n        background-color:#eee;\n      }\n      #timebar{\n        display:block;\n        position:fixed;\n        left:50%;\n        top:50%;\n        width:4px;\n        height:480px;\n        margin-top:-240px;\n        margin-left:-2px;\n        background-color:#999;\n      }\n      #hour,#minute,#second{\n        display:block;\n        position:fixed;\n        left:50%;\n        top:50%;\n        width:12px;\n        height:190px;\n        margin-top:-40px;\n        margin-left:-6px;\n        border-radius:10px;\n        background-color:#222;\n        transform-origin: 50% 40px;\n        transform:rotate(180deg);\n        \/*animation:rot steps(43200,end) 43200s infinite;*\/\n      }\n      #minute{\n        height:260px;\n        background-color:#555;\n        \/*animation:rot steps(3600,end) 3600s infinite;*\/\n      }\n      #second{\n        margin-left:-2.5px;\n        margin-top:-70px;\n        transform-origin: 50% 70px;\n        width:5px;\n        height:260px;\n        background-color:#c22;\n        \/*animation:rot steps(60,end) 60s infinite;*\/\n      }\n      #secondDot{\n        display:block;\n        position:fixed;\n        left:50%;\n        top:50%;\n        width:14px;\n        height:14px;\n        margin-top:-7px;\n        margin-left:-7px;\n        border-radius:10px;\n        background-color:#c22;\n      }\n      @keyframes rot{\n        to{transform:rotate(540deg);}\n      }\n    \<\/style>\n    \<script>\n      function init(){\n        setInterval(move,1000);\n      }\n      function move(){\n        var date=new Date();\n        document.getElementById(\"second\").style.transform=\"rotate(\"+(date.getSeconds()*6+180)+\"deg)\";\n        document.getElementById(\"minute\").style.transform=\"rotate(\"+(date.getMinutes()*6+date.getSeconds()\/10+180)+\"deg)\";\n        document.getElementById(\"hour\").style.transform=\"rotate(\"+(date.getHours()%12*30+date.getMinutes()\/2+180)+\"deg)\";\n      }\n    \<\/script>\n  \<\/head>\n  \<body onload=init()>\n    \<div id=\"background\">\<\/div>\n    \<div id=\"clockface\">\<\/div>\n    \<div id=\"timebar\">\<\/div>\n    \<div id=\"timebar\" style=\"transform:rotate(30deg)\">\<\/div>\n    \<div id=\"timebar\" style=\"transform:rotate(60deg)\">\<\/div>\n    \<div id=\"timebar\" style=\"transform:rotate(90deg)\">\<\/div>\n    \<div id=\"timebar\" style=\"transform:rotate(120deg)\">\<\/div>\n    \<div id=\"timebar\" style=\"transform:rotate(150deg)\">\<\/div>\n    \<div id=\"clockface\" style=\"width:400px; height:400px; margin-top:-200px; margin-left:-200px\">\<\/div>\n    \<div id=\"minute\">\<\/div>\n    \<div id=\"hour\">\<\/div>\n    \<div id=\"second\">\<\/div>\n    \<div id=\"secondDot\">\<\/div>\n  \<\/body>\n\<\/html>";
+        input[1]="<!DOCTYPE html>\n<html>\n  <head>\n    <style>\n      body{\n        background-color:white;\n      }\n      #box{\n        display:block;\n        position:fixed;\n        left:50%;\n        top:50%;\n        width:300px;\n        height:300px;\n        margin-left:-150px;\n        margin-top:-150px;\n        /*border-radius:100px 100px 100px 0;*/\n      }\n\n      @keyframes rot{\n        to{transform:rotate(360deg);}\n      }\n    </style>\n  </head>\n  <body>\n    <div id=\"box\" style=\"background-color:rgba(255,0,0,0.5); animation:rot 6s linear infinite;\"></div>\n    <div id=\"box\" style=\"background-color:rgba(0,255,0,0.5); animation:rot 4s linear infinite;\"></div>\n    <div id=\"box\" style=\"background-color:rgba(0,0,255,0.5); animation:rot 3s linear infinite;\"></div>\n  </body>\n</html>";
+        document.getElementById("editorpane").value=input[documentId%2];
+        documentId++;
+        document.getElementById("initbtn").innerHTML=texts[documentId%2];
+        setIt();
+        setInputInfo();
+      }
+      
+      function press(inId){
+        draggable=inId;
+        if (inId==0){
+          var calcX=event.clientX;
+          if (calcX<10){calcX=10;}
+          if (calcX>window.innerWidth-10){calcX=window.innerWidth-10;}
+          document.getElementById("resizebar").style.width="20px";
+          document.getElementById("resizebar").style.left="calc("+100*calcX/window.innerWidth+"% - 10px)";
+        }else{
+          document.getElementById("resizebar").style.width="400px";
+          resize(event);
+        }
+      }
+      
+      function setStandard(){
+        document.getElementById("editorpane").value="\<!DOCTYPE html>\n\<html>\n  \<head>\n    \<style>\n      body{\n        background-color:#eee;\n        margin:0;\n      }\n    \<\/style>\n    \<script>\<\/script>\n  \<\/head>\n  \<body>\n\n  \<\/body>\n\<\/html>";
+        setIt();
+      }
+      
+      function setNone(){
+        document.getElementById("editorpane").value="";
+        setIt();
+      }
+      
+      function setInputInfo(){
+        var code=document.getElementById("editorpane").value;
+        var lines=0;
+        if (code.length>0){lines=1;}
+        for (var a=0;a<code.length;a++){
+          if (code.charAt(a)=='\n'){lines++;}
+        }
+        for (var a=code.length-1;a>0;a--){
+          if (code.charAt(a)=='\n'){lines--;}
+          else {break;}
+        }
+        document.getElementById("infopane").innerHTML="Lines: "+lines;
+      }
+      
+      function resize(e){
+        if (draggable==1){
+          var calcX=e.clientX;
+          if (calcX<10){calcX=10;}
+          if (calcX>window.innerWidth-10){calcX=window.innerWidth-10;}
+          document.getElementById("resizebar").style.left="calc("+100*calcX/window.innerWidth+"% - 200px)";
+          document.getElementById("editorpane").style.width="calc("+100*calcX/window.innerWidth+"% - 30px)";
+          document.getElementById("infopane").style.width="calc("+100*calcX/window.innerWidth+"% - 30px)";
+          document.getElementById("displaypane").style.width="calc("+100*(window.innerWidth-calcX)/window.innerWidth+"% - 10px)";
+        }
+      }
+    </script>
+  </head>
+  <body onload=init()>
+    <textarea id="editorpane" spellcheck="false" onkeyup=setInputInfo()></textarea>
+    <div id="infopane"></div>
+    <div id="buttoncontainer">
+      <button onclick=setIt() title="update frame with written code">Update output</button>
+      <button onclick=setStandard() title="load convenient HTML template">Load HTML template</button>
+      <button onclick=init() id="initbtn" title="toggle ready-made documents"></button>
+      <button onclick=setNone() title="clear frame and code">Clear</button>
+    </div>
+    <div id="resizebar" onmousedown=press(1) onmousemove=resize(event) onmouseup=press(0)>
+      <div id="inner"></div>
+    </div>
+    <iframe id="displaypane"></iframe>
+  </body>
+</html>

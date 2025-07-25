@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Northern England Color Mixer</title>
+    <link rel="icon" href="home.png">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,700" rel="stylesheet" type="text/css">
+    <style>
+      body{
+        background-color:#333;
+        margin:0;
+      }
+      
+      #colorpnl{
+        display:block;
+        position:fixed;
+        width:48vw;
+        height:30vw;
+        background-color:#ddd;
+        top:50%;
+        left:50%;
+        margin-top:-15vw;
+        margin-left:-24vw;
+        box-shadow: .5vw .5vw 0 rgba(0,0,0,0.4);
+      }
+      
+      #outputcol{
+        display:block;
+        position:absolute;
+        background-color:black;
+        width:28vw;
+        height:28vw;
+        left:1vw;
+        top:1vw;
+        box-sizing:border-box;
+        border:1vw solid #666;
+      }
+      
+      .slider{
+        display:block;
+        position:relative;
+        float:left;
+        width:5vw;
+        height:28vw;
+        top:1vw;
+        left:30vw;
+        margin-right:1vw;
+        cursor:pointer;
+      }
+      
+      .slidermarker{
+        display: block;
+        position: absolute;
+        width: 5vw;
+        height: 0.2vw;
+        left: -0.15vw;
+        bottom: 0;
+        border: 0.2vw solid #666;
+        margin-bottom: -0.25vw;
+        -moz-pointer-events:none;
+        -ie-pointer-events:none;
+        -webkit-pointer-events:none;
+        pointer-events:none;
+      }
+      
+      #red{
+        background: red;
+        background: -moz-linear-gradient(top, red 0%, black 100%);
+        background: -webkit-linear-gradient(top, red 0%, black 100%);
+        background: linear-gradient(to bottom, red 0%, black 100%);
+      }
+      
+      #green{
+        background: lime;
+        background: -moz-linear-gradient(top, lime 0%, black 100%);
+        background: -webkit-linear-gradient(top, lime 0%, black 100%);
+        background: linear-gradient(to bottom, lime 0%, black 100%);
+      }
+      
+      #blue{
+        background: blue;
+        background: -moz-linear-gradient(top, blue 0%, black 100%);
+        background: -webkit-linear-gradient(top, blue 0%, black 100%);
+        background: linear-gradient(to bottom, blue 0%, black 100%);
+      }
+      
+      #forbidden{
+        display:block;
+        position:absolute;
+        width:100%;
+        height:50%;
+        top:0;
+        left:0;
+        background-color:rgba(0,0,0,0.9);
+        cursor:not-allowed;
+      }
+    </style>
+    <script>
+      var colors=[0,0,0];
+      var cutoff=0.5;
+      var pressed=false;
+      
+      function setColor(inID,press){
+        if (press==0){pressed=false;}
+        else if (press==1){pressed=true;}
+        
+        if (pressed){
+          var slH=window.innerWidth*0.28;
+          var yPos=slH-(event.clientY-(window.innerHeight-slH)/2);
+          if (yPos>slH*cutoff){yPos=slH*cutoff}
+          colors[inID]=Math.floor(yPos/slH*255);
+          document.getElementById("outputcol").style.backgroundColor="rgb("+colors[0]+","+colors[1]+","+colors[2]+")";
+          document.getElementsByClassName("slidermarker")[inID].style.bottom=""+(yPos/slH*100)+"%";
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div id="colorpnl">
+      <div id="outputcol"></div>
+      <div class="slider" id="red" onmousedown=setColor(0,1) onmousemove=setColor(0,2) onmouseup=setColor(0,0)>
+        <div id="forbidden" title="no! no more red!"></div>
+        <div class="slidermarker"></div>
+      </div>
+      <div class="slider" id="green" onmousedown=setColor(1,1) onmousemove=setColor(1,2) onmouseup=setColor(1,0)>
+        <div id="forbidden" title="no! no more green!"></div>
+        <div class="slidermarker"></div>
+      </div>
+      <div class="slider" id="blue" onmousedown=setColor(2,1) onmousemove=setColor(2,2) onmouseup=setColor(2,0)>
+        <div id="forbidden" title="no! no more blue!"></div>
+        <div class="slidermarker"></div>
+      </div>
+    </div>
+  </body>
+</html>

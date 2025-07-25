@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>reddit live</title>
+    <link rel="icon" href="home.png">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,500,700" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet">
+    <script type="text/javascript" src="jQuery.js"></script>
+    
+    <style>
+      body{
+        background-color:#bfdcff;
+        margin:0;
+        font-family:Varela Round;
+      }
+      
+      #startupcontainer,#redditcontainer{
+        display:block;
+        position:fixed;
+        width:100%;
+        height:100%;
+        top:0;
+        left:0;
+      }
+      
+      #redditcontainer{
+        overflow:auto;
+      }
+      
+      #title{
+        display: block;
+        position: absolute;
+        width: 100%;
+        font-size: 4vw;
+        text-align: center;
+        top: 25%;
+        margin-top: -3vw;
+        color: #555;
+      }
+      
+      #maininput{
+        display: block;
+        position: absolute;
+        width: 40vw;
+        height: 2.5vw;
+        top: 50%;
+        left: 50%;
+        margin-top: -1.25vw;
+        margin-left: -20vw;
+        text-align: center;
+        font-size: 1.5vw;
+        font-family: Roboto;
+        color: #666;
+        border: 0.2vw solid #aaa;
+        outline: none;
+      }
+      
+      .gobutton_active,.gobutton_inactive{
+        display: block;
+        position: absolute;
+        padding: 1vw;
+        width: 7vw;
+        text-align: center;
+        background-color: #4a9cff;
+        border: 0.25vw solid #107cff;
+        color: white;
+        left: 50%;
+        margin-left: -4.75vw;
+        top: 50%;
+        font-size: 1.5vw;
+        margin-top: 4vw;
+        cursor: pointer;
+      }
+      
+      .gobutton_active:hover{
+        background-color: #107cff;
+        border: 0.25vw solid #4a9cff;
+      }
+      
+      .gobutton_inactive{
+        background-color: #ccc;
+        border: 0.25vw solid #aaa;
+        color:#aaa;
+        cursor:default;
+      }
+      
+      .gobutton_inactive:hover{
+        background-color: #aaa;
+        border: 0.25vw solid #ccc;
+        color:#ccc;
+      }
+      
+      #main{
+        display: block;
+        position: absolute;
+        width: 70vw;
+        left: 15vw;
+        top: 10vw;
+        min-height: 5vw;
+        overflow:hidden;
+        background-color: white;
+        border-radius: 1vw;
+        margin-bottom: 10vw;
+      }
+      
+      #title a:hover{
+        color:#888;
+      }
+      
+      #score_thumbnail{
+        display:block;
+        position:relative;
+        float:left;
+        width:13vw;
+        min-height:5vw;
+      }
+      
+      #maincontent{
+        display: block;
+        position: relative;
+        float: left;
+        width: 56vw;
+        min-height: 5vw;
+      }
+      
+      #score{
+  	    display: block;
+		    position: absolute;
+		    font-family: Roboto,sans-serif;
+		    font-weight: bold;
+		    color: #aaa;
+		    width: 5.5vw;
+		    text-align: center;
+		    line-height: 6vw;
+      }
+      
+      #thumbnail{
+        display: block;
+        position: relative;
+        float: right;
+        right: 0.5vw;
+        top: 0.5vw;
+        width: 7vw;
+        height: 5vw;
+        background-color: #eaeaea;
+        background-size: cover;
+        margin-bottom: 0.5vw;
+      }
+      
+      #posttitle{
+        display: block;
+        position: relative;
+        float: left;
+        width: 55vw;
+        min-height: 1vw;
+        margin-top: 0.5vw;
+        font-family: Roboto,verdana,sans-serif;
+        font-weight:500;
+        font-size: 1.5vw;
+      }
+      
+      #flair{
+      	display: inline-table;
+		    position: absolute;
+		    padding: 0.2vw;
+		    margin-left: 0.25vw;
+		    background-color: #eee;
+		    border-radius: 0.4vw;
+		    border: 0.1vw solid #ccc;
+		    font-size: 1vw;
+		    color: #666;
+      }
+      
+      #posttitle a,#postinfo a{
+        text-decoration:none;
+        color:#5d5dfd;
+      }
+      
+      #postinfo{
+        font-size: 1vw;
+        color: #999;
+      }
+      
+      .button{
+        display:block;
+        position:relative;
+        float:left;
+        font-size:1vw;
+        margin-right:0.75vw;
+        font-weight:bold;
+      }
+      
+      .abtn{
+        text-decoration:none;
+        color:#666;
+      }
+      
+      .abtn:hover{
+        text-decoration:underline;
+      }
+      
+      gold{
+        display: inline-table;
+		    position: absolute;
+		    width: 1.2vw;
+		    height: 1.2vw;
+		    margin-left: 0.5vw;
+		    margin-top: 0.1vw;
+		    background-image: url("images/gold.png");
+		    background-size: contain;
+		    background-repeat: no-repeat;
+      }
+      
+      gold p{
+        position: relative;
+        left: 1.3vw;
+        font-size: 1vw;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+      
+      #selfbody{
+        display: none;
+        position: relative;
+        float: left;
+        width: 56vw;
+        min-height: 1vw;
+        margin-top: 0.5vw;
+        margin-bottom: 0.5vw;
+        background-color: #f1f1f1;
+        border-radius: 0.5vw;
+        box-sizing: border-box;
+        border: 0.1vw solid #b1b2b3;
+      }
+      
+      #selftext{
+        display: block;
+        position: relative;
+        width: 55vw;
+        margin: 0.5vw;
+        font-size: 1vw;
+        color: #555;
+      }
+      
+      /*Loader stuff*/
+      #logocontainer{
+        display:none;
+        position:fixed;
+        top:50%;
+        left:50%;
+        width:34vh;
+        height:34vh;
+        margin-left:-17vh;
+        margin-top:-17vh;
+        overflow:hidden;
+        zoom:0.5;
+      }
+      
+      #pelogo{
+        display: block;
+        position: absolute;
+        left: 2vh;
+        top: 2vh;
+        width: 30vh;
+        height: 30vh;
+        background: #34324b;
+        background: -moz-linear-gradient(-45deg, #34324b 0%, #161222 100%);
+        background: -webkit-linear-gradient(-45deg, #34324b 0%,#161222 100%);
+        background: linear-gradient(135deg, #34324b 0%,#161222 100%);
+        background-size: contain;
+        font-family: Trebuchet MS, sans-serif;
+        font-size: 20vh;
+        font-weight: bold;
+        color: #3ebffa;
+        text-align: center;
+        line-height: 30vh;
+      }
+      
+      .loader{
+        display:block;
+        position:absolute;
+        background-color:#3ebffa;
+      }
+      
+      /*Pretty complex animation, so each side needs its own @keyframes.*/
+      
+      @keyframes slide1{
+        50%{width:32vh; margin-left:0;}
+        100%{margin-left:32vh;}
+      }
+      
+      @keyframes slide2{
+        50%{height:32vh; margin-top:0;}
+        100%{margin-top:32vh;}
+      }
+      
+      @keyframes slide3{
+        50%{width:32vh; margin-right:0;}
+        100%{margin-right:32vh;}
+      }
+      
+      @keyframes slide4{
+        50%{height:32vh; margin-bottom:0}
+        100%{margin-bottom:32vh;}
+      }
+    </style>
+    <script>
+      var clickable=false;
+      var glob_id="",glob_url;
+      var thread=null;
+      var hasFlair=false;
+      
+      function onloadCheck(){
+        if (!window.location.href.endsWith("picturelements.github.io/redditLive")){
+          document.getElementById("startupcontainer").style.display="none";
+          document.getElementById("logocontainer").style.display="block";
+          
+          var url=window.location.href,newUrl="";
+          for (var i=0;i<6;i++){
+            newUrl+=url.charAt(url.length-6+i);
+          }
+          var url="https://www.reddit.com/comments/"+newUrl+".json?raw_json=1";
+          glob_url=url;
+          $(function(){
+      	    $.getJSON(url,function(data){
+							var branch=data[0].data.children[0].data;
+							console.log(branch);
+							setStuff(branch);
+              document.getElementById("redditcontainer").style.display="block";
+              document.getElementById("logocontainer").style.display="none";
+              thread=setInterval(refresh,3000);
+      	    });
+        	});
+        }
+      }
+      
+      function refresh(){
+      	$(function(){
+    	    $.getJSON(glob_url,function(data){
+						setStuff(data[0].data.children[0].data);
+            document.getElementById("redditcontainer").style.display="block";
+            document.getElementById("logocontainer").style.display="none";
+    	    });
+      	});
+      }
+      
+      function setStuff(branch){
+        document.getElementById("thumbnail").style.backgroundImage="url("+branch.thumbnail+")";
+  			document.getElementById("posturl").innerHTML=branch.title;
+  			document.getElementById("posturl").href=branch.url;
+  			document.getElementById("score").innerHTML=branch.score;
+  			if (!hasFlair){
+	  			if (branch.link_flair_text!=null){
+	  				var flair=document.createElement("div");
+	  				flair.setAttribute("id","flair");
+	  				var text=document.createTextNode(branch.link_flair_text);
+	  				flair.appendChild(text);
+	  				document.getElementById("posttitle").appendChild(flair);
+	  				hasFlair=true;
+	  			}
+  			}else if(branch.link_flair_text!=null){
+  				document.getElementById("flair").innerHTML=branch.link_flair_text;
+  			}
+  			var time=Math.floor((new Date().getTime()/1000-branch.created_utc)/60);
+  			var gold="",edited="";
+  			if (branch.gilded==1){gold="<gold></gold>"}
+  			else if (branch.gilded>0){gold="<gold><p>x"+branch.gilded+"</p></gold>"}
+  			if (branch.edited!=false){
+  				edited="* (last edited "+timeSince(Math.floor((new Date().getTime()/1000-branch.edited)/60))+" ago)";
+  			}
+  			//document.getElementById("postinfo").innerHTML="submitted "+timeSince(time)+" by <a href=\"https://www.reddit.com/user/"+branch.author+"/\">"+branch.author+"</a> to <a href=\"https://www.reddit.com/r/"+branch.subreddit+"\">"+branch.subreddit+"</a>";
+  			document.getElementById("postinfo").innerHTML="submitted "+timeSince(time)+" ago"+edited+" by <a href=\"https://www.reddit.com/user/"+branch.author+"/\">"+branch.author+"</a>"+gold;
+  		  var direct="https://www.reddit.com"+branch.permalink;
+	      var buttons=document.getElementsByClassName("abtn");
+	      buttons[0].innerHTML=(branch.num_comments>0?branch.num_comments:"")+" comment"+(branch.num_comments==1?"":"s");
+	      for (var i=0;i<buttons.length;i++){
+	        buttons[i].href=direct;
+	      }
+	      if (branch.domain.startsWith("self.")){
+	        if (branch.selftext!=""){
+  	        document.getElementById("selfbody").style.display="block";
+  	        document.getElementById("selftext").innerHTML=branch.selftext_html;
+	        }
+	        document.getElementById("thumbnail").style="background-image:url(\"images/placeholders.png\"); background-size:14vw 5vw";
+	      }
+	      if (branch.thumbnail=="default"){
+	        document.getElementById("thumbnail").style="background-image:url(\"images/placeholders.png\"); background-size:14vw 5vw; background-position:-7vw 0";
+	      }
+      }
+      
+      function timeSince(time){
+      	var timeAgo="";
+  			if (time<60){timeAgo=time+" minute"+(time==1?"":"s");}
+  			else if (Math.floor(time/60)<24){time=Math.floor(time/60); timeAgo=time+" hour"+(time==1?"":"s");}
+  			else if (Math.floor(time/1440)<30){time=Math.floor(time/1440); timeAgo=time+" day"+(time==1?"":"s");}
+  			else{time=Math.floor(time/43200); timeAgo=time+" month"+(time==1?"":"s");}
+  			return timeAgo;
+      }
+      
+      function checkUrlWrapper(element){
+        var el=document.getElementById("gobutton");
+        clickable=checkUrl(element);
+        if (clickable){
+          el.className="gobutton_active";
+        }else{
+          el.className="gobutton_inactive";
+        }
+      }
+      
+      function checkUrl(element){
+        var url=element.value;
+        var checkfor=["comments","redd.it"]
+        var checkChar=[0,0];
+        for (var i=0;i<url.length;i++){
+          for (var n=0;n<2;n++){
+            if (url.charAt(i)==checkfor[n].charAt(checkChar[n])){
+              checkChar[n]++;
+              if (checkChar[n]==checkfor[n].length){
+                var id="";
+                for (var m=0;m<6;m++){
+                  id+=url.charAt(i+2+m);
+                }
+                console.log(id);
+                glob_id=id;
+                return true;
+              }
+            }else{
+              checkChar[n]=0;
+            }
+          }
+        }
+        return false
+      }
+      
+      function createUrl(){
+        if (clickable){window.location.href=(window.location.href+"?id="+glob_id);}
+      }
+    </script>
+  </head>
+  <body onload=onloadCheck()>
+    <div id="startupcontainer">
+      <div id="title">reddit live 2.0</div>
+      <input id="maininput" onkeyup=checkUrlWrapper(this) placeholder="insert URL">
+      <div id="gobutton" class="gobutton_inactive" onclick=createUrl()>Let's go!</div>
+    </div>
+    <div id="redditcontainer" style="display:none">
+      <div id="title" style="top:6vw;">
+        <a href="http://picturelements.github.io/redditLive" style="text-decoration:none; color:#555">reddit live 2.0</a>
+      </div>
+      <div id="main">
+        <div id="score_thumbnail">
+        	<div id="score"></div>
+          <div id="thumbnail"></div>
+        </div>
+        <div id="maincontent">
+          <div id="posttitle">
+            <a id="posturl" target="_blank"></a>
+          </div>
+          <div id="postinfo"></div>
+          <div id="buttons">
+            <div class="button">
+              <a class="abtn" target="_blank">comment</a>
+            </div>
+            <div class="button">
+              <a class="abtn" target="_blank">share</a>
+            </div>
+            <div class="button">
+              <a class="abtn" target="_blank">save</a>
+            </div>
+            <div class="button">
+              <a class="abtn" target="_blank">hide</a>
+            </div>
+            <div class="button">
+              <a class="abtn" target="_blank" style="color:#988143">give gold</a>
+            </div>
+            <div class="button">
+              <a class="abtn" target="_blank">report</a>
+            </div>
+          </div>
+          <div id="selfbody">
+            <div id="selftext"></div>
+          </div>
+        </div>
+        <div id="empty" style="display:block; position:relative; float:left; bottom:0; width:100%; height:0.5vw"></div>
+      </div>
+    </div>
+    <div id="logocontainer">
+      <div id="pelogo">Pe</div>
+      <div class="loader" style="left:2vh; top:0; height:2vh; width:0; animation:slide1 1s linear forwards infinite"></div>
+      <div class="loader" style="right:0; top:2vh; width:2vh; height:0; animation:slide2 1s linear forwards infinite; animation-delay:0.5s"></div>
+      <div class="loader" style="right:2vh; bottom:0; height:2vh; width:0; animation:slide3 1s linear forwards infinite"></div>
+      <div class="loader" style="left:0; bottom:2vh; width:2vh; height:0; animation:slide4 1s linear forwards infinite; animation-delay:0.5s"></div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,329 @@
+<html>
+  <head>
+    <title>Egg hunt</title>
+    <link rel="icon" href="images/egghunt/icon.png" type="image/png">
+    <link href='https://fonts.googleapis.com/css?family=Bangers' rel='stylesheet' type='text/css'>
+    <audio id="sound" src="images/egghunt/soundtrack.mp3" type="audio/mpeg"></audio>
+    <audio id="plop" src="images/egghunt/plop.wav" type="audio/wav"></audio>
+  </head>
+  <style>
+    #body{
+      background-color:#749AD9;
+      width:100%;
+      height:100%;
+      top:0;
+      left:0;
+      position: fixed;
+      margin: 0;
+    }
+    
+    #grass{
+      display:block;
+      position:fixed;
+      left:0;
+      bottom:0;
+      width:100%;
+      height:100px;
+      background-size:200px 100px;
+      background-repeat:repeat-x;
+    }
+    
+    #shade{
+      display:block;
+      position:fixed;
+      width:100%;
+      height:100%;
+      background-color:rgba(0,0,0,0.6);
+    }
+    
+    #infobox{
+      display: block;
+      position: fixed;
+      width:500px;
+      height:425px;
+      top:50%;
+      left:50%;
+      margin-left:-250px;
+      margin-top:-212.5px;
+      background-color:white;
+    }
+    
+    #cross{
+      display: block;
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 25px;
+      height: 25px;
+      background-color: #999;
+      color: white;
+      font-size: 20px;
+      line-height: 25px;
+      text-align: center;
+      cursor:pointer;
+      z-index: 1000;
+    }
+    
+    #countdown,#countdown2,#countdown3,#showScore,#showHiscore{
+      display:block;
+      position:fixed;
+      font-family:Bangers,Trebuchet MS,sans-serif;
+      font-size: 200px;
+      width:1000px;
+      height:200px;
+      top:-200px;
+      left:50%;
+      margin-left:-500px;
+      text-align:center;
+      color: #FFCA00;
+      transition: 1s cubic-bezier(0, 0.8, 1, 0.2);
+      text-shadow:0 20px 0 #ff8a00;
+    }
+    
+    #travolta{
+      display:block;
+      position:absolute;
+      width:300px;
+      height:242px;
+      background-image:url(images/egghunt/ConfusedTravoltaSprite.png);
+      bottom:0;
+      left:100px;
+      animation: aniTravolta 2s steps(25) infinite;
+      animation-direction:alternate;
+      transition:bottom 2000ms;
+    }
+    
+    #info1,#info2,#info3,#info4{
+      position:absolute;
+      display:block;
+      top:25px;
+      left:25px;
+      width:450px;
+      height:300px;
+      background-color:#999;
+    }
+    
+    #btn{
+      position:absolute;
+      display:block;
+      width:212.5px;
+      height:50px;
+      top:350px;
+      font-family:Bangers,Trebuchet MS,sans-serif;
+      font-size:40px;
+      line-height:52px;
+      text-align:center;
+      background-color:#999;
+      color:white;
+      cursor:pointer;
+    }
+    
+    #eggsDropped,#eggsCaught,#eggsMissed,#hiscore,#score{
+      position:fixed;
+      font-family:Bangers,Trebuchet MS,sans-serif;
+      font-size:30px;
+      left:5px;
+      color: #FFCA00;
+      text-shadow:0 2px 0 #ff8a00;
+    }
+    
+    @keyframes aniTravolta{
+      0%{background-position: 0 0;}
+      50%{background-position: -7500px 0;}
+      50.0001%{background-position: 0 -242px;}
+      100%{background-position: -7500px -242px;}
+    }
+  </style>
+  
+  <script>
+    var eggPosX=[];
+    var eggPosY=[];
+    var eggType=[];
+    var eggSpeed=[];
+    var eggRelease=[];
+    var eggs=[];
+    var basket=[];
+    eggs.push(new Image(80,80));
+    eggs[0].src="images/egghunt/egg1.png";
+    eggs.push(new Image(80,80));
+    eggs[1].src="images/egghunt/egg2.png";
+    eggs.push(new Image(80,80));
+    eggs[2].src="images/egghunt/egg3.png";
+    eggs.push(new Image(80,80));
+    eggs[3].src="images/egghunt/egg4.png";
+    basket.push(new Image(400,200));
+    basket[0].src="images/egghunt/travoltaBasket1.png";
+    basket.push(new Image(400,200));
+    basket[1].src="images/egghunt/travoltaBasket2.png";
+    var frameCount=0,travoltaPos=window.innerWidth/2,move=0;
+    var dropped=0,caught=0,missed=0,score=0,hi=0,countUp;
+    var thread,won=0,slideNo=0;
+    
+    function init(){
+      var tot=0;
+      for (i=0;i<100;i++){
+        eggPosX.push(Math.random()*(window.innerWidth-200)+100);
+        eggPosY.push(-40);
+        eggType.push(Math.floor(Math.random()*4));
+        eggSpeed.push(Math.random()*5+8);
+        if (i==0){
+          eggRelease.push(0);
+        }else{
+          eggRelease.push(tot+100+Math.random()*(100-i));
+          tot+=(eggRelease[i]-tot);
+        }
+      }
+      var scale=5160/tot;
+      for (i=0;i<100;i++){
+        eggRelease[i]=Math.floor(eggRelease[i]*scale); 
+        //console.log(eggRelease[i]);
+      }
+      document.getElementById("canvas").width=window.innerWidth;
+      document.getElementById("canvas").height=window.innerHeight;
+      if (localStorage.getItem("highscore")!=null){
+        hi=localStorage.getItem("highscore");
+      }
+      document.getElementById("hiscore").innerHTML="Highscore: "+hi+"";
+    }
+
+    function nextSlide(){
+      slideNo++;
+      var slideStuff="info"+slideNo;
+      document.getElementById(slideStuff).style.display="none";
+      if (slideNo==4){cross();}
+    }
+
+    function cross(){
+      document.getElementById("sound").play();
+      document.getElementById("infobox").style.display="none";
+      document.getElementById("shade").style.display="none";
+      document.getElementById("countdown").style.top="100%";
+      document.getElementById("countdown2").style.top="100%";
+      document.getElementById("countdown3").style.top="100%";
+      document.getElementById("countdown").style.transitionDelay="1s";
+      document.getElementById("countdown2").style.transitionDelay="2s";
+      document.getElementById("countdown3").style.transitionDelay="3s";
+      document.getElementById("travolta").style.bottom="-240px";
+      waitforit();
+    }
+    
+    function waitforit(){
+      setTimeout(start,3500);
+    }
+    
+    function start(){
+      thread=setInterval(paint,25);
+    }
+    
+    function moveTravolta(e){
+      if (e.keyCode==37){
+        move=-10;
+      }else if (e.keyCode==39){
+        move=10;
+      }else if (e.keyCode==83){
+        move-=30;
+      }else if (e.keyCode==68){
+        move+=30;
+      }
+    } 
+    
+    function yayWin(){
+      document.getElementById("winscreen").style.display="block";
+      document.getElementById("showScore").innerHTML="Score: "+score+"";
+      document.getElementById("showHiscore").innerHTML="Highscore: "+hi+"";
+      won=1;
+    }
+    
+    function paint(){
+      var ctx=document.getElementById("canvas").getContext("2d");
+      ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+      ctx.drawImage(basket[1],travoltaPos-220,window.innerHeight-200,400,200);
+      travoltaPos+=move;
+      if (travoltaPos<0){
+        travoltaPos=0;
+        move=0;
+      }else if (travoltaPos>window.innerWidth){
+        travoltaPos=window.innerWidth;
+        move=0;
+      }
+      if (move>0){
+        move--;
+      }else if (move<0){
+        move++;
+      }
+      for (i=0;i<100;i++){
+        if (eggRelease[i]<=frameCount){
+          ctx.drawImage(eggs[eggType[i]],eggPosX[i]-40,eggPosY[i]-40,80,80);
+          eggPosY[i]+=eggSpeed[i];
+          if (eggRelease[i]==frameCount){
+            dropped++;
+            document.getElementById("eggsDropped").innerHTML="Eggs dropped: "+dropped+"";
+          }
+          if (eggPosY[i]>window.innerHeight&&eggPosY[i]<window.innerHeight+100){
+            missed++;
+            document.getElementById("eggsMissed").innerHTML="Eggs missed: "+missed+"";
+            eggPosY[i]+=1000;
+          }
+          if (eggPosY[i]>window.innerHeight-50&&eggPosY[i]<window.innerHeight+50&&eggPosX[i]>=travoltaPos-80&&eggPosX[i]<=travoltaPos+50){
+            caught++;
+            document.getElementById("eggsCaught").innerHTML="Eggs caught: "+caught+"";
+            score+=(10*Math.floor(eggSpeed[i]));
+            document.getElementById("score").innerHTML="Score: "+score+"";
+            document.getElementById("plop").currentTime=0;
+            document.getElementById("plop").play();
+            if (score>hi){
+              hi=score;
+              document.getElementById("hiscore").innerHTML="Highscore: "+hi+"";
+              localStorage.setItem("highscore",hi);
+            }
+            eggPosY[i]+=1000;
+          }
+        }
+      }
+      //if (won==0){
+      if (caught+missed==100||frameCount==135*40){
+        yayWin();
+      }
+      /*}else{
+        if (countUp<=100){
+          document.getElementById("showScore").innerHTML="Score: "+Math.floor(score*(countUp/100))+"";
+        }else{
+          document.getElementById("showHiscore").innerHTML="Highscore: "+hi+"";
+        }
+        countUp++;
+      }*/
+      ctx.drawImage(basket[0],travoltaPos-220,window.innerHeight-200,400,200);
+      frameCount++;
+    }
+  </script>
+    
+    
+  <body id="body" onload=init() onkeydown=moveTravolta(event)>
+    <grass id="grass" style="background-image:url(images/egghunt/grass.png)"></grass>
+    <canvas id="canvas" style="display:block; position:fixed; top:0; left:0;"></canvas>
+    <travolta id="travolta"></travolta>
+    <div id="countdown">3</div>
+    <div id="countdown2">2</div>
+    <div id="countdown3">1</div>
+    <grass id="grass" style="background-image:url(images/egghunt/grass2.png)"></grass>
+    <eggsDropped id="eggsDropped" style="top:5px">Eggs dropped: 0</eggsDropped>
+    <eggsCaught id="eggsCaught" style="top:40px">Eggs caught: 0</eggsCaught>
+    <eggsMissed id="eggsMissed" style="top:75px">Eggs missed: 0</eggsMissed>
+    <hiscore id="hiscore" style="top:110px">Highscore: 0</hiscore>
+    <score id="score" style="top:145px">Score: 0</score>
+    <div id="shade"></div>
+    <div id="infobox">
+      <div id="info4" style="background-image:url(images/egghunt/info4.png)"></div>
+      <div id="info3" style="background-image:url(images/egghunt/info3.png)"></div>
+      <div id="info2" style="background-image:url(images/egghunt/info2.png)"></div>
+      <div id="info1" style="background-image:url(images/egghunt/info1.png)"></div>
+      <div id="btn" style="left:25px" onclick=nextSlide()>next</div>
+      <div id="btn" style="left:262.5px" onclick=cross()>skip</div>
+      <!--<div id="cross" onclick=cross()>✕</div>-->
+    </div>
+    <div id="winscreen" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.7);">
+      <div id="showScore" style="top:50% !important; margin-top:-200px !important;">Score: 0</div>
+      <div id="showHiscore" style="top:50% !important; margin-top:50 !important; font-size:100px !important; text-shadow:0 10px 0 #ff8a00 !important;"></div>
+    </div>
+  </body>
+</html>

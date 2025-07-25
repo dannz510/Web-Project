@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>LaserPop</title>
+    <link rel="icon" href="http://picturelements.github.io/pelement.png">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,700" rel="stylesheet" type="text/css">
+    
+    <style>
+      body{
+        margin:0;
+        overflow:hidden;
+        background-color:#81C8FE;
+        background-image:url("media/brushed.jpg");
+        background-size:cover;
+      }
+      
+      #gameboard,#transitioncanvas{
+        display:block;
+        position:fixed;
+        width:100%;
+        height:100%;
+      }
+      
+      #transitioncanvas{
+        pointer-events:none; 
+      }
+      
+      #overlay{
+        display:block;
+        position:fixed;
+        width:100%;
+        height:100%;
+        background-color:rgba(0,0,0,0.35);
+      }
+      
+      #logo{
+        display:block;
+        position:fixed;
+        top:50%;
+        left:50%;
+        margin-left:-52vh;
+        margin-top:-39vh;
+        width:104vh;
+        height:78vh;
+        background-image:url("media/logo.png");
+        background-size:contain;
+        background-repeat:no-repeat;
+      }
+      
+      #startbutton {
+        display: block;
+        position: absolute;
+        background-image: url("media/buttonsprite.png");
+        cursor: pointer;
+        width: 32.7vh;
+        height: 7.2vh;
+        background-size: 38vh 29.2vh;
+        left: 50%;
+        top: 50%;
+        margin-top: 8.12vh;
+        margin-left: -15.7vh;
+        background-position: -2.69vh -2.92vh;
+        outline:none;
+      }
+      
+      #startbutton:hover{
+        background-position:-2.69vh -11.69vh;
+      }
+      
+      #startupcontainer{
+        display:block;
+        position:fixed;
+        width:100%;
+        height:100%;
+        background-color: #3c005b;
+        background: -webkit-radial-gradient(center, ellipse cover, #3c005b 1%,#0d0011 100%);
+        background: -moz-radial-gradient(center, ellipse cover, #3c005b 1%,#0d0011 100%);
+        background: -ie-radial-gradient(center, ellipse cover, #3c005b 1%,#0d0011 100%);
+      }
+      
+      #logocontainer{
+        display:block;
+        position:fixed;
+        top:50%;
+        left:50%;
+        width:34vh;
+        height:34vh;
+        margin-left:-17vh;
+        margin-top:-17vh;
+        overflow:hidden;
+        /*Zoom, just in case...*/
+        zoom:0.7;
+      }
+      
+      #pelogo{
+        display: block;
+        position: absolute;
+        left: 2vh;
+        top: 2vh;
+        width: 30vh;
+        height: 30vh;
+        background: #34324b;
+        background: -moz-linear-gradient(-45deg, #34324b 0%, #161222 100%);
+        background: -webkit-linear-gradient(-45deg, #34324b 0%,#161222 100%);
+        background: linear-gradient(135deg, #34324b 0%,#161222 100%);
+        background-size: contain;
+        font-family: Trebuchet MS, sans-serif;
+        font-size: 20vh;
+        font-weight: bold;
+        color: #3ebffa;
+        text-align: center;
+        line-height: 30vh;
+      }
+      
+      .loader{
+        display:block;
+        position:absolute;
+        background-color:#3ebffa;
+      }
+      
+      /*@keyframes slide1{
+        25%{width:32vh; margin-left:0;}
+        50%{margin-left:32vh;}
+        100%{width:32vh; margin-left:32vh;}
+      }
+      
+      @keyframes slide2{
+        25%{height:32vh; margin-top:0;}
+        50%{margin-top:32vh;}
+        100%{height:32vh; margin-top:32vh;}
+      }
+      
+      @keyframes slide3{
+        25%{width:32vh; margin-right:0;}
+        50%{margin-right:32vh;}
+        100%{width:32vh; margin-right:32vh;}
+      }
+      
+      @keyframes slide4{
+        25%{height:32vh; margin-bottom:0}
+        50%{margin-bottom:32vh;}
+        100%{height:32vh; margin-bottom:32vh;}
+      }*/
+      
+      @keyframes slide1{
+        50%{width:32vh; margin-left:0;}
+        100%{margin-left:32vh;}
+      }
+      
+      @keyframes slide2{
+        50%{height:32vh; margin-top:0;}
+        100%{margin-top:32vh;}
+      }
+      
+      @keyframes slide3{
+        50%{width:32vh; margin-right:0;}
+        100%{margin-right:32vh;}
+      }
+      
+      @keyframes slide4{
+        50%{height:32vh; margin-bottom:0}
+        100%{margin-bottom:32vh;}
+      }
+    </style>
+    
+    <!--General stuff-->
+    <script>
+      var ctx,ctx2,transPos=-1;
+      var balloons=[],dY=[];
+      var thread;
+      
+      function init(){
+        for (var n=0;n<7;n++){
+          addBalloon(30+Math.random()*20,Math.random()-0.5,Math.random()*window.innerWidth,Math.random()*window.innerHeight);
+          dY.push(Math.random()*2+1);
+        }
+        var canvas=document.getElementById("gameboard");
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        ctx=canvas.getContext("2d");
+        canvas=document.getElementById("transitioncanvas");
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        ctx2=canvas.getContext("2d");
+        thread=setInterval(paintStartup,20);
+        setTimeout(function(){document.getElementById("startupcontainer").style.display="none";},2500);
+      }
+      
+      window.onresize = function(event) {
+        var canvas=document.getElementById("gameboard");
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        canvas=document.getElementById("transitioncanvas");
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        paint();
+      };
+      
+      function paint(){
+        ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+        ctx.strokeStyle="#D11300";
+        ctx.lineWidth=2;
+        //balloons
+        for (var b=0;b<balloons.length;b++){
+          var outAng=Math.sqrt(balloons[b].bottom*balloons[b].bottom-balloons[b].radius*balloons[b].radius);
+          var bAng=Math.atan(outAng/balloons[b].radius);
+          var tmpX=balloons[b].x+Math.cos(Math.PI/2+balloons[b].angle)*balloons[b].bottom,
+              tmpY=balloons[b].y+Math.sin(Math.PI/2+balloons[b].angle)*balloons[b].bottom;
+      
+          ctx.fillStyle="#EA210A";
+          ctx.beginPath();
+          ctx.arc(balloons[b].x,balloons[b].y,balloons[b].radius,Math.PI/2+bAng+balloons[b].angle,Math.PI/2-bAng+balloons[b].angle);
+          ctx.lineTo(tmpX,tmpY);
+          ctx.lineTo(balloons[b].x+Math.cos(Math.PI/2+bAng+balloons[b].angle)*balloons[b].radius,balloons[b].y+Math.sin(Math.PI/2+bAng+balloons[b].angle)*balloons[b].radius);
+          ctx.fill();
+          ctx.stroke();
+      
+          ctx.fillStyle="#D11300";
+          ctx.beginPath();
+          ctx.moveTo(tmpX,tmpY);
+          ctx.lineTo(tmpX+Math.cos(Math.PI/3+balloons[b].angle)*(balloons[b].radius/3),tmpY+Math.sin(Math.PI/3+balloons[b].angle)*(balloons[b].radius/3));
+          ctx.lineTo(tmpX+Math.cos(Math.PI-Math.PI/3+balloons[b].angle)*(balloons[b].radius/3),tmpY+Math.sin(Math.PI-Math.PI/3+balloons[b].angle)*(balloons[b].radius/3));
+          ctx.fill();
+        }
+      }
+    </script>
+    
+    <!--balloon stuff-->
+    <script>
+      function addBalloon(rad,ang,xin,yin){
+        balloons.push({
+          //default values
+          radius:rad,
+          bottom:65,
+          angle:ang,
+          x:xin,
+          y:yin
+        });
+      }
+      
+      function paintStartup(){
+        if (Math.random()*30<1){
+          addBalloon(30+Math.random()*20,Math.random()-0.5,Math.random()*window.innerWidth,window.innerHeight+100);
+          dY.push(Math.random()*2+1);
+        }
+        for (var i=0;i<balloons.length;i++){
+          balloons[i].y-=dY[i];
+          if (balloons[i].y<-100){
+            balloons.splice(i,1);
+            dY.splice(i,1);
+          }
+        }
+        if (transPos>-1){paintTransition();}
+        paint();
+      }
+      
+      function start(){
+        document.getElementById("startbutton").style.backgroundPosition="-2.69vh -20.46vh";
+        transPos=0;
+      }
+    </script>
+    
+    <!--Transition stuff-->
+    <script>
+      function paintTransition(){
+        ctx2.lineWidth=3;
+        var tmpTrans=transPos;
+        ctx2.clearRect(0,0,window.innerWidth,window.innerHeight);
+        ctx2.fillStyle="#222";
+        if (tmpTrans>window.innerWidth){tmpTrans=window.innerWidth;}
+        ctx2.beginPath();
+        ctx2.moveTo(0,0);
+        ctx2.lineTo(tmpTrans,0);
+        ctx2.lineTo(0,window.innerHeight);
+        ctx2.fill();
+        ctx2.beginPath();
+        ctx2.moveTo(window.innerWidth,0);
+        ctx2.lineTo(window.innerWidth-tmpTrans,window.innerHeight);
+        ctx2.lineTo(window.innerWidth,window.innerHeight);
+        ctx2.fill();
+        
+        var opacity=(230+Math.cos(transPos*(Math.PI/45))*25)/255;
+        ctx2.shadowBlur=20;
+        for (var i=0;i<3;i++){
+          ctx2.shadowColor="#77f";
+          ctx2.strokeStyle="rgba(240,240,255,"+opacity+")";
+          ctx2.beginPath();
+          ctx2.moveTo(0,window.innerHeight);
+          ctx2.lineTo(tmpTrans,0);
+          ctx2.stroke();
+          ctx2.shadowColor="#f77";
+          ctx2.strokeStyle="rgba(255,240,240,"+opacity+")";
+          ctx2.beginPath();
+          ctx2.moveTo(window.innerWidth,0);
+          ctx2.lineTo(window.innerWidth-tmpTrans,window.innerHeight);
+          ctx2.stroke();
+        }
+        ctx2.shadowBlur=0;
+        transPos+=10;
+      }
+    </script>
+  </head>
+  <!--Brushed steel texture courtesy of http://www.myfreetextures.com/brushed-metal-texture-35-great-free-images-from-aluminum-and-steel-through-to-gold/-->
+  <body onload=init()>
+    <canvas id="gameboard"></canvas>
+    <div id="overlay"></div>
+    <div id="logo">
+      <div id="startbutton" onmousedown=start()></div>
+    </div>
+    <div id="startupcontainer">
+      <div id="logocontainer">
+        <div id="pelogo">Pe</div>
+        <!--<div class="loader" style="left:2vh; top:0; height:2vh; width:0; animation:slide1 2s linear forwards infinite"></div>
+        <div class="loader" style="right:0; top:2vh; width:2vh; height:0; animation:slide2 2s linear forwards infinite; animation-delay:0.5s"></div>
+        <div class="loader" style="right:2vh; bottom:0; height:2vh; width:0; animation:slide3 2s linear forwards infinite; animation-delay:1s"></div>
+        <div class="loader" style="left:0; bottom:2vh; width:2vh; height:0; animation:slide4 2s linear forwards infinite; animation-delay:1.5s"></div>-->
+        <div class="loader" style="left:2vh; top:0; height:2vh; width:0; animation:slide1 1s linear forwards infinite"></div>
+        <div class="loader" style="right:0; top:2vh; width:2vh; height:0; animation:slide2 1s linear forwards infinite; animation-delay:0.5s"></div>
+        <div class="loader" style="right:2vh; bottom:0; height:2vh; width:0; animation:slide3 1s linear forwards infinite"></div>
+        <div class="loader" style="left:0; bottom:2vh; width:2vh; height:0; animation:slide4 1s linear forwards infinite; animation-delay:0.5s"></div>
+      </div>
+    </div>
+    <canvas id="transitioncanvas"></canvas>
+  </body>
+</html>

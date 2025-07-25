@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>nthPrime</title>
+    <link rel="icon" href="home.png">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,700" rel="stylesheet" type="text/css">
+    
+    <style>
+      body{
+        background-image:url("images/stripes.png");
+        margin:0;
+        font-family: Roboto,Arial,sans-serif;
+        font-weight: 700;
+      }
+      
+      #primegen{
+        display: block;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        font-size: 3vw;
+        color: #069;
+        text-align: center;
+        line-height: 100vh;
+        text-shadow: 0.3vw 0.3vw 0.5vw rgba(0,0,0,0.1);
+      }
+      
+      #primepanel,#stats{
+        display: block;
+        position: fixed;
+        width: 60%;
+        height: 30vw;
+        left: 20%;
+        top: 50%;
+        margin-top: -15vw;
+        background-color: white;
+        border-radius: 1vw;
+        box-shadow: 0.3vw 0.3vw 1vw rgba(0,0,50,0.3);
+        overflow:hidden;
+      }
+      
+      input{
+        position: absolute;
+        width: 90%;
+        left: 5%;
+        height: 5vw;
+        border: none;
+        text-align: center;
+        font-size: 4vw;
+        font-family: Trebuchet MS;
+        top: 4vw;
+        border-bottom: 0.2vw solid #999;
+        outline: none;
+      }
+      
+      button{
+        position: absolute;
+        width: 20vw;
+        height: 3vw;
+        left: 20vw;
+        background-color:#ddd;
+        font-size: 1.7vw;
+        font-family: inherit;
+        top: 11.5vw;
+        border: none;
+        outline: none;
+        cursor: pointer;
+      }
+      
+      button:hover{
+        background-color:#ccc;
+      }
+      
+      #output{
+        position: absolute;
+        width: 54vw;
+        height: 9vw;
+        left: 2vw;
+        top: 17vw;
+        padding: 1vw;
+        background-color: #eee;
+        text-align: center;
+        font-size: 1.15vw;
+      }
+      
+      canvas{
+        display:block;
+        position:absolute;
+        width:54vw;
+        height:27vw;
+        left:3vw;
+        top:1.5vw;
+      }
+      
+      #statsbtn{
+        display: block;
+        position: relative;
+        padding: 1vw;
+        background-color: #6F00FF;
+        color: white;
+        width: 10vw;
+        left: 50%;
+        margin-left: -6vw;
+        top: 1vw;
+        cursor: pointer;
+      }
+      
+      #statsbtn:hover{
+        background-color:#4900A8;
+      }
+      
+      #closebtn{
+        display:block;
+        position:absolute;
+        font-size:1.5vw;
+        font-weight:300;
+        right:0.5vw;
+        top:0.5vw;
+        color:#ccc;
+        cursor:pointer;
+        z-index:100;
+      }
+      
+      #title{
+        display: block;
+        position: absolute;
+        width: 100%;
+        text-align: center;
+        font-size: 1.5vw;
+        top: 1.5vw;
+        color: #666;
+      }
+      
+      #subtitle{
+        display: block;
+        position: absolute;
+        width: 100%;
+        text-align: center;
+        font-size: 1vw;
+        top: 3.4vw;
+        color: #aaa;
+      }
+    </style>
+    <script>
+      var primes=[2],times=[];
+      var primeNo=1,startPos=1,checkNo,timeNow,maxVal=0;
+      var thread=null;
+    
+      function gen(){
+        if (event.keyCode==13){check();}
+      }
+      
+      function check(){
+        checkNo=parseInt(document.getElementById("input").value);
+        var isPrime=true;
+        if (checkNo>primeNo){
+          startPos=primeNo;
+          thread=setInterval(loopWrapper,0);
+        }else{
+          var addbtn=primeNo>=50000?"<div id=\"statsbtn\" onclick=openStats()>Statistics</div>":"";
+          document.getElementById("output").innerHTML="Prime "+checkNo+" is "+primes[checkNo-1]+"."+addbtn;
+        }
+      }
+      
+      function loopWrapper(){
+        timeNow=new Date().getTime();
+        genPrimes();
+        var newTime=new Date().getTime();
+        times.push(newTime-timeNow);
+        timeNow=newTime;
+        startPos+=10000;
+        document.getElementById("output").innerHTML="Finished generating "+Math.floor(primeNo/10000)*10000+" primes.";
+        if (primeNo==checkNo){
+          clearInterval(thread);
+          var addbtn=checkNo>=50000?"<div id=\"statsbtn\" onclick=openStats()>Statistics</div>":"";
+          document.getElementById("output").innerHTML="Finished generating "+checkNo+" primes<br><br>Prime "+checkNo+" is "+primes[checkNo-1]+"."+addbtn;
+          console.log("done!");
+          maxVal=0;
+          for (var i=0;i<times.length;i++){
+            if (times[i]>maxVal){maxVal=times[i];}
+          }
+          paintStats(-1);
+        }
+      }
+      
+      function genPrimes(){
+        var isPrime;
+        for (var i=primes[startPos-1]+1;i>0;i++){
+          isPrime=true;
+          for (var a=0;primes[a]*primes[a]<=i;a++){
+            if (i%primes[a]==0){
+              isPrime=false;
+              break;
+            }
+          }
+          if (isPrime){
+            primes.push(i);
+            primeNo++;
+            if (primeNo==startPos+10000||primeNo==checkNo){return 0;}   //return meaningless value just to quit function
+          }
+        }
+      }
+      
+      function setText(){
+        var suffix="th";
+        var checkNo=parseInt(document.getElementById("input").value);
+        if (checkNo>10&&checkNo<20){/*do nothing*/}
+        else if (checkNo%10==1){suffix="st";}
+        else if(checkNo%10==2){suffix="nd";}
+        else if(checkNo%10==3){suffix="rd";}
+        document.getElementById("button").innerHTML=""+checkNo+""+suffix+" prime?";
+      }
+      
+      function paintStats(index){
+        var ctx=document.getElementById("canvas").getContext("2d");
+        ctx.clearRect(0,0,2000,1000);
+        ctx.fillStyle="#6F00FF";
+        var offset=2000/times.length;
+        var h;
+        for (var i=0;i<times.length;i++){
+          h=(times[i]/maxVal*0.8)*1000;
+          ctx.fillRect(offset*i,1000-h,offset,h);
+        }
+        if (index>-1){
+          ctx.fillStyle="#4900A8";
+          h=(times[index]/maxVal*0.8)*1000;
+          ctx.fillRect(offset*index,1000-h,offset,h);
+          ctx.fillStyle="#6F00FF";
+        }
+      }
+      
+      function openStats(){
+        document.getElementById("stats").style.display="block";
+      }
+      
+      function closeStats(){
+        document.getElementById("stats").style.display="none";
+      }
+      
+      function getInfo(){
+        var vw=window.innerWidth/100;
+        var xPos=(event.clientX-23*vw)/(54*vw),yPos=(event.clientY-(window.innerHeight/2-13.5*vw))/(27*vw);
+        var index=Math.floor(xPos*times.length);
+        var st=document.getElementById("subtitle");
+        if (1-yPos<=(times[index]/maxVal)*0.8){
+          paintStats(index);
+          st.innerHTML="Interval: "+index*10000+"-"+(index+1)*10000+" | Time: "+times[index]+"ms";
+        }else{
+          paintStats(-1);
+          st.innerHTML="Hover over graph for details";
+        }
+      } 
+    </script>
+  </head>
+  <body>
+    <div id="primepanel">
+      <input id="input" placeholder="input number" onkeydown=gen() onkeyup="setText()">
+      <button id="button" onclick="check()">n:th prime?</button>
+      <div id="output">Info will appear here.</div>
+    </div>
+    <div id="stats" style="display: none;">
+      <div id="closebtn" onclick=closeStats()>[X]</div>
+      <canvas id="canvas" width=2000 height=1000 onmousemove=getInfo()></canvas>
+      <div id="title">Time taken to render 10000 primes</div>
+      <div id="subtitle">Hover over graph for details</div>
+    </div>
+  </body>
+</html>
