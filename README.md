@@ -184,7 +184,6 @@ You can also view live demos of most projects directly in your browser using `ra
 * VER 1: [https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Windows%2010%20simulator/DZOS/indexver1.html](https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Windows%2010%20simulator/DZOS/indexver1.html)
 * VER 4: [https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Windows%2010%20simulator/DZOS/indexver4.html](https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Windows%2010%20simulator/DZOS/indexver4.html)
 
-*(Note: A direct link for "Space Escape" was not provided in your request. If you have one, you can add it here.)*
 
 ---
 
@@ -208,4 +207,4 @@ This project is licensed under the [MIT License](https://github.com/dannz510/Web
 If you have any questions or feedback, feel free to reach out:
 
 * **GitHub:** [danzz510](https://github.com/danzz510)
-* [Add your email or other contact info here if you wish]
+* **Gmail:** [dannz510](mini51019158@gmail.com)
