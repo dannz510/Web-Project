@@ -207,4 +207,4 @@ This project is licensed under the [MIT License](https://github.com/dannz510/Web
 If you have any questions or feedback, feel free to reach out:
 
 * **GitHub:** [danzz510](https://github.com/danzz510)
-* **Gmail:** (mini51019158@gmail.com)
+* **Gmail:** [mini51019158@gmail.com](https://mail.google.com/mail/u/0/)
