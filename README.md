@@ -181,8 +181,8 @@ You can also view live demos of most projects directly in your browser using `ra
 * **Stack Game:** [https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Stack%20Game/index.html](https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Stack%20Game/index.html)
 * **Train puzzle:** [https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Train%20puzzle/public/index.html](https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Train%20puzzle/public/index.html)
 * **Windows 10 simulator:**
-* VER 1: [https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Windows%2010%20simulator/DZOS/indexver1.html](https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Windows%2010%20simulator/DZOS/indexver1.html)
-* VER 4: [https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Windows%2010%20simulator/DZOS/indexver4.html](https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Windows%2010%20simulator/DZOS/indexver4.html)
++ VER 1: [https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Windows%2010%20simulator/DZOS/indexver1.html](https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Windows%2010%20simulator/DZOS/indexver1.html)
++ VER 4: [https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Windows%2010%20simulator/DZOS/indexver4.html](https://raw.githubusercontent.com/dannz510/Web-Project/refs/heads/main/Windows%2010%20simulator/DZOS/indexver4.html)
 
 
 ---
@@ -207,4 +207,4 @@ This project is licensed under the [MIT License](https://github.com/dannz510/Web
 If you have any questions or feedback, feel free to reach out:
 
 * **GitHub:** [danzz510](https://github.com/danzz510)
-* **Gmail:** [dannz510](mini51019158@gmail.com)
+* **Gmail:** (mini51019158@gmail.com)
